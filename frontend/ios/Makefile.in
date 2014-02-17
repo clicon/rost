@@ -1,0 +1,73 @@
+# 
+# Makefile 
+# CVS Version: $Id: Makefile.in,v 1.22 2014/07/11 12:07:46 olof Exp $ 
+#
+# Copyright (C) 2009-2014 Olof Hagsand and Benny Holmgren
+#
+# This file is part of ROST.
+#
+# ROST is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+#  ROST is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along wth ROST; see the file COPYING.  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+
+prefix		= @prefix@
+plugindir	= $(prefix)/frontend/ios
+srcdir  	= @srcdir@
+top_srcdir  	= @top_srcdir@
+CC		= @CC@
+CPP		= @CPP@
+CFLAGS  	= @CFLAGS@
+CPPFLAGS  	= @CPPFLAGS@ 
+LIBS    	= -L../lib -L../../lib -Wl,--whole-archive -lfront -losr -lblkid -Wl,--no-whole-archive -lsqlite3 -lcurl @LIBS@
+INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/frontend/lib -I$(top_srcdir)/lib
+SHELL		= /bin/sh
+
+SUBDIRS = 
+
+SRC     =  master.c ios-config.c system.c quagga.c syslog.c grub.c \
+	   linux-vlan.c linux-tunnel.c
+OBJS    = $(SRC:.c=.o)
+SHOBJS	= $(OBJS:.o=.so)
+STXCPP  = $(wildcard *.cpp)
+STXCLI	= $(STXCPP:.cpp=.cli)
+
+all:	 $(SHOBJS) $(STXCLI)
+
+.c.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c -rdynamic -fPIC $<
+
+.o.so: 
+	$(CC) $(LDFLAGS) -shared -o $@ -lc $< $(LIBS)
+
+.cpp.cli:
+	$(CPP) -P -x assembler-with-cpp $(INCLUDES) -o $@ $<
+
+.SUFFIXES:
+.SUFFIXES: .c .o .so .cpp .cli
+
+install: $(SHOBJS) $(STXCLI)
+	install -d $(plugindir)
+	install $^ $(plugindir)
+
+uninstall:
+	for i in $(SHOBJS); do \
+	rm -f $(plugindir)/$$i; done
+
+clean:
+	rm -f $(OBJS) $(SHOBJS) *.core *.so *.o  *.cli  # last to clean old unknown binaries
+
+distclean: clean
+	rm -f *~
+
+

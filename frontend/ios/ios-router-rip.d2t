@@ -1,0 +1,52 @@
+#
+#  CVS Version: $Id: ios-router-rip.d2t,v 1.1 2014/01/10 02:23:57 benny Exp $
+#
+# Copyright (C) 2009-2014 Olof Hagsand and Benny Holmgren
+#
+# This file is part of ROST.
+#
+# ROST is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+#  ROST is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along wth ROST; see the file COPYING.  If not, see
+# <http://www.gnu.org/licenses/>.
+# 
+router rip
+@IF($router.rip.version->version ? " version $router.rip.version->version\n")
+@IF($router.rip.timers.basic->update ? " timers basic $router.rip.timers.basic->update $router.rip.timers.basic->timeout $router.rip.timers.basic->garbage\n")
+@IF($router.rip.default-information->status ? " default-information originate\n")
+@IF($router.rip.redistribute.bgp->metric != nil)# XXXX FIX ME
+ redistribute bgp @IF($dist->metric ? " metric $dist->metric")@IF($dist->route_map ? " route-map $dist->route_map\n" : "\n")
+@END
+@EACH($router.rip.offset-list[], $osl)
+ offset-list $osl->acl $osl->direction $osl->metric@IF($osl->interface ? " $osl->interface\n" : "\n")
+@END
+@EACH($router.rip.network.prefix[], $pfx, " network \$pdx->prefix\n")
+@EACH($router.rip.network.interface[], $rif)
+@EACH($rif.unit[], $if, " network \$if->interface\n")
+@END
+@EACH($router.rip.neighbor[], $neigh, " neighbor \$neigh->neighbor\n")
+@EACH($router.rip.passive-interface[], $pif)
+@EACH($pif.unit[], $if, " passive-interface \$pif->interface\n")
+@END
+@IF($router.rip.default-metric->metric ? " default-metric $router.rip.default-metric->metric\n")
+@EACH($router.rip.distribute-list[], $dl)
+ distribute-list $dl->acl $dl->direction@IF($dl->interface ? " $dl->interface\n" : "\n")
+@END
+@EACH($router.rip.distribute-list.prefix[], $pfx)
+ distribute-list prefix $pfx->prefix $pfx->direction@IF($pfx->interface ? " $pfx->interface\n" : "\n")
+@END
+@EACH($router.rip.route-map[], $rm, " route-map \$rm->route_map \$rm->direction \$rm->interface\n")
+@IF($router.rip.distance->distance ? " distance $router.rip.distance->distance\n")
+@EACH($router.rip.distance.prefix[], $pfx)
+ distance $pfx->distance $pfx->prefix@IF($pfx->acl ? " $pfx->acl\n" : "\n")
+@END
+!

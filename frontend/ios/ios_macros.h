@@ -1,0 +1,62 @@
+/*
+ * CVS Version: $Id: ios_macros.h,v 1.2 2011/10/30 06:31:34 benny Exp $
+ *
+ * Copyright 2009 Really Nice Routers AB
+ *
+ */
+#ifndef _IOS_MACROS_H_
+#define _IOS_MACROS_H_
+
+/* CPP Stringify */
+#define STRINGIFY(s) __str(s)
+#define __str(s) #s
+
+
+/*
+ * IOS CLI modes
+ */
+#define IOS_MODE_NONE       0
+#define IOS_MODE_BASE       1
+#define IOS_MODE_ENABLE     2
+#define IOS_MODE_CONFIG     3
+#define IOS_MODE_INTERFACE  4
+#define IOS_MODE_RIP        5
+#define IOS_MODE_RIPNG      6
+#define IOS_MODE_OSPF       7
+#define IOS_MODE_OSPF6      8
+#define IOS_MODE_BGP        9
+#define IOS_MODE_ISIS      10
+#define IOS_MODE_ROUTE_MAP 11
+#define IOS_MODE_MAX       12
+
+#define IOS_BASE	base
+#define IOS_ENABLE	enable
+#define IOS_CONFIG	config
+#define IOS_INTERFACE	interface
+#define IOS_RIP		rip
+#define IOS_RIPNG	ripng
+#define IOS_OSPF	ospf
+#define IOS_OSPF6	ospf6
+#define IOS_BGP		bgp
+#define IOS_ISIS	isis
+#define IOS_ROUTEMAP	route-map
+
+#define IOS_ALL		IOS_BASE:IOS_ENABLE:IOS_CONFIG:IOS_INTERFACE:IOS_RIP:IOS_RIPNG:IOS_OSPF:IOS_OSPF6:IOS_BGP:IOS_ISIS:IOS_ROUTEMAP
+#define IOS_ALL_CONFIG	IOS_CONFIG:IOS_INTERFACE:IOS_RIP:IOS_RIPNG:IOS_OSPF:IOS_OSPF6:IOS_BGP:IOS_ISIS:IOS_ROUTEMAP
+
+#define MODE_BASE	STRINGIFY(IOS_BASE)
+#define MODE_ENABLE	STRINGIFY(IOS_ENABLE)
+#define MODE_CONFIG	STRINGIFY(IOS_CONFIG)
+#define MODE_INTERFACE	STRINGIFY(IOS_INTERFACE)
+#define MODE_RIP	STRINGIFY(IOS_RIP)
+#define MODE_RIPNG	STRINGIFY(IOS_RIPNG)
+#define MODE_OSPF	STRINGIFY(IOS_OSPF)
+#define MODE_OSPF6	STRINGIFY(IOS_OSPF6)
+#define MODE_BGP	STRINGIFY(IOS_BGP)
+#define MODE_ISIS	STRINGIFY(IOS_ISIS)
+#define MODE_ROUTEMAP	STRINGIFY(IOS_ROUTEMAP)
+
+#define MODE_ALL	STRINGIFY(IOS_ALL)
+#define MODE_ALL_CONFIG	STRINGIFY(IOS_ALL_CONFIG)
+
+#endif /* _IOS_MACROS_H_ */

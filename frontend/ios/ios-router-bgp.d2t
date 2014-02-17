@@ -1,0 +1,101 @@
+#
+#  CVS Version: $Id: ios-router-bgp.d2t,v 1.1 2014/01/10 02:23:57 benny Exp $
+#
+# Copyright (C) 2009-2014 Olof Hagsand and Benny Holmgren
+#
+# This file is part of ROST.
+#
+# ROST is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+#  ROST is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along wth ROST; see the file COPYING.  If not, see
+# <http://www.gnu.org/licenses/>.
+# 
+router bgp $router.bgp->as
+@IF($router.bgp.router-id ? " bgp router-id $router.bgp.router-id->routerid\n")
+@IF($router.bgp.log-neighbor-changes ? " bgp log-neighbor-changes\n")
+@IF($router.bgp.always-compare-med ? " bgp always-compare-med\n")
+@IF($router.bgp.default.local-preference ? " bgp default local-preference $router.bgp.default.local-preference->local_preference\n")
+@IF($router.bgp.enforce-first-as ? " bgp enforce-first-as\n")
+@IF($router.bgp.deterministic-med ? " bgp deterministic-med\n")
+@IF($router.bgp.graceful-restart)
+ bgp graceful-restart@IF($router.bgp.graceful-restart->stalepath_time ? " stalepath-time $router.bgp.graceful-restart->stalepath_time")\n
+@END
+@IF($router.bgp.network.import-check ? " bgp network import-check\n")
+@IF($router.bgp.dampening)
+ bgp dampening@IF($router.bgp.dampening->half_life ? " $router.bgp.dampening->half_life")@IF($router.bgp.dampening->reuse ? " $router.bgp.dampening->reuse")@IF($router.bgp.dampening->suppress ? " $router.bgp.dampening->suppress")@IF($router.bgp.dampening->max_suppress ? " $router.bgp.dampening->max_suppress")\n
+@END
+@EACH($router.bgp.network[], $net)
+ network $net->prefix@IF($net->route_map ? " route-map $net->route_map")\n
+@END
+@EACH($router.bgp.aggregate-address[], $aggaddr)
+ aggregate-address $aggaddr->prefix@IF($aggaddr->as_set ? " $aggaddr->as_set")@IF($aggaddr->summary_only ? " $aggaddr->summary_only")\n
+@END
+@IF($router.bgp.redistribute.connected)
+ redistribute connected@IF($router.bgp.redistribute.connected->metric ? " metric $router.bgp.redistribute.connected->metric")@IF($router.bgp.redistribute.connected->route_map ? " route-map $router.bgp.redistribute.connected->route_map")\n
+@END
+@IF($OSR_ISIS_SUPPORT)
+@IF($router.bgp.redistribute.isis)
+ redistribute isis@IF($router.bgp.redistribute.isis->metric ? " metric $router.bgp.redistribute.isis->metric")@IF($router.bgp.redistribute.isis->route_map ? " route-map $router.bgp.redistribute.isis->route_map")\n
+@END
+@END#OSR_ISIS_SUPPORT
+@IF($router.bgp.redistribute.kernel)
+ redistribute kernel@IF($router.bgp.redistribute.kernel->metric ? " metric $router.bgp.redistribute.kernel->metric")@IF($router.bgp.redistribute.kernel->route_map ? " route-map $router.bgp.redistribute.kernel->route_map")\n
+@END
+@IF($router.bgp.redistribute.ospf)
+ redistribute ospf@IF($router.bgp.redistribute.ospf->metric ? " metric $router.bgp.redistribute.ospf->metric")@IF($router.bgp.redistribute.ospf->route_map ? " route-map $router.bgp.redistribute.ospf->route_map")\n
+@END
+@IF($router.bgp.redistribute.rip)
+ redistribute rip@IF($router.bgp.redistribute.rip->metric ? " metric $router.bgp.redistribute.rip->metric")@IF($router.bgp.redistribute.rip->route_map ? " route-map $router.bgp.redistribute.rip->route_map")\n
+@END
+@IF($router.bgp.redistribute.static)
+ redistribute static@IF($router.bgp.redistribute.static->metric ? " metric $router.bgp.redistribute.static->metric")@IF($router.bgp.redistribute.static->route_map ? " route-map $router.bgp.redistribute.static->route_map")\n
+@END
+@EACH($router.bgp.neighbor[], $neigh)
+@IF($neigh.remote-as ? " neighbor $neigh->neighbor remote-as $neigh.remote-ad->remote_as\n")
+@IF($neigh.local-as)
+ neighbor $neigh->neighbor local-as $neigh.local-as->localas@IF($neigh.local-as->no_prepend ? " $neigh.local-as->no_prepend")\n"
+@END
+@IF($neigh.description ? " neighbor $neigh->neighbor description $neigh.description->description\n")
+@IF($neigh.shutdown ? " neighbor $neigh->neighbor shutdown\n")
+@IF($neigh.password ? " neighbor $neigh->neighbor password $neigh.password->password\n")
+@IF($neigh.passive ? " neighbor $neigh->neighbor passive\n")
+@IF($neigh.ebgp-multihop)
+ neighbor $neigh->neighbor ebgp-multihop@IF($neigh.ebgp-multihop->maxhops ? " $neigh.ebgp-multihop->maxhops")\n"
+@END
+@IF($neigh.update-source ? " neighbor $neigh->neighbor update-source $neigh.update-source->source\n")
+@IF($neigh.advertisement-interval ? " neighbor $neigh->neighbor advertisement-interval $neigh.advertisement-interval->interval\n")
+@IF($neigh.timers ? " neighbor $neigh->neighbor timers $neigh.timers->keepalive $neigh.timers->holdtime\n")
+@IF($neigh.timers.connect ? " neighbor $neigh->neighbor timers connect $neigh.timers.connect->connect\n")
+@IF($neigh.weight ? " neighbor $neigh->neighbor weight $neigh.weight->weight\n")
+@IF($neigh.next-hop-self ? " neighbor $neigh->neighbor next-hop-self\n")
+
+@IF($neigh.remote-private-as ? " neighbor $neigh->neighbor remote-private-as\n")
+@IF($neigh.defasult-originate)
+ neighbor $neigh->neighbor default-originate@IF($neigh.default-originate->route_map ? " route-map $neigh.default-originate->route_map")\n
+@END
+@IF($neigh.soft-reconfiguration.inbound ? " neighbor $neigh->neighbor soft-reconfiguration inbound\n")
+@IF($neigh.prefix-list.in ? " neighbor $neigh->neighbor prefix-list $neigh.prefix-list.in->prefix_list in\n")
+@IF($neigh.prefix-list.out ? " neighbor $neigh->neighbor prefix-list $neigh.prefix-list.out->prefix_list out\n")
+@IF($neigh.route-map.in ? " neighbor $neigh->neighbor route-map $neigh.route-map.in->route_map in\n")
+@IF($neigh.route-map.out ? " neighbor $neigh->neighbor route-map $neigh.route-map.out->route_map out\n")
+@IF($neigh.distribute-list.in ? " neighbor $neigh->neighbor distribute-list $neigh.distribute-list.in->acl in\n")
+@IF($neigh.distribute-list.out ? " neighbor $neigh->neighbor distribute-list $neigh.distribute-list.out->acl out\n")
+@IF($neigh.filter-list.in ? " neighbor $neigh->neighbor filter-list $neigh.filter-list.in->acl in\n")
+@IF($neigh.filter-list.out ? " neighbor $neigh->neighbor filter-list $neigh.filter-list.out->acl out\n")
+@IF($neigh.activate ? " neighbor $neigh->neighbor activate\n")
+@END#NEIGHBOR
+@IF($router.bgp.distance.bgp ? " distance bgp $router.bgp.distance.bgp->external $router.bgp.distance.bgp->internal $router.bgp.distance.bgp->local\n")
+@EACH($router.bgp.distance[], $dist)
+ distance $dist->distance $dist->prefix@IF($dist->acl ? " $dist->acl")\n
+@END
+!
+

@@ -1,0 +1,100 @@
+#
+#  CVS Version: $Id: ios-router-ospf.d2t,v 1.1 2014/01/10 02:23:57 benny Exp $
+#
+# Copyright (C) 2009-2014 Olof Hagsand and Benny Holmgren
+#
+# This file is part of ROST.
+#
+# ROST is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+#  ROST is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along wth ROST; see the file COPYING.  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+router ospf
+@IF($router.ospf.router-id ? " router-id $router.ospf.routerid")
+@IF($router.ospf.abr-type ? " ospf abr-type $router.ospf->abr_type")
+@IF($router.ospf.log-adjacency-changes)
+ log-adjacency-changes@IF($router.ospf.log-adjacency-changes->detail ? " detail")\n
+@END
+@IF($router.ospf.compatible ? " compatible rfc1583\n")
+@IF($router.ospf.auto-cost.reference-bandwidth ? " auto-cost reference-bandwidth $router.ospf.auto-cost.reference-bandwidth->bandwidth\n")
+@IF($router.ospf.timers.throttle.spf ? " timers throttle spf $router.ospf.timers.throttle.spf->delay $router.ospf.timers.throttle.spf->initial_hold $router.ospf.timers.throttle.spf->max_hold\n")
+@IF($router.ospf.max-metric.router-lsa.on-startup ? " max-metric router-lsa on-startup $router.ospf.max-metric.router-lsa.on-startup->on_startup\n")
+@IF($router.ospf.max-metric.router-lsa.on-shutdown ? " max-metric router-lsa on-shutdown $router.ospf.max-metric.router-lsa.on-shutdown->on_shutdown")
+@IF($router.ospf.max-metric.router-lsa.administrative ? " max-metric router-lsa administrative\n")
+@IF($router.ospf.refresh-timer ? " refresh timer $router.ospf.refresh-timer->timer\n")
+@IF($router.ospf.redistribute.bgp)
+ redistribute bgp@IF($router.ospf.redistribute.bgp->metric ? " metric $router.ospf.redistribute.bgp->metric")@IF($router.ospf.redistribute.bgp->metric_type ? " metric-type $router.ospf.redistribute.bgp->metric_type")@IF($router.ospf.redistribute.bgp->route_map ? " route-map $router.ospf.redistribute.bgp->route_map")\n
+@END
+@IF($router.ospf.redistribute.connected)
+ redistribute connected@IF($router.ospf.redistribute.connected->metric ? " metric $router.ospf.redistribute.connected->metric")@IF($router.ospf.redistribute.connected->metric_type ? " metric-type $router.ospf.redistribute.connected->metric_type")@(IF$ROUTER.ospf.redistribute.connected->route_map ? " route-map $router.ospf.redistribute.connected->route_map")\n
+@END
+@IF($OSR_ISIS_SUPPORT)
+@IF($router.ospf.redistribute.isis)
+ redistribute isis@IF($router.ospf.redistribute.isis->metric ? " metric $router.ospf.redistribute.isis->metric")@IF($router.ospf.redistribute.isis->metric_type ? " metric-type $router.ospf.redistribute.isis->metric_type")@(IF$ROUTER.ospf.redistribute.isis->route_map ? " route-map $router.ospf.redistribute.isis->route_map")\n
+@END
+@END#OSR_ISIS_SUPPORT
+@IF($router.ospf.redistribute.kernel)
+ redistribute kernel@IF($router.ospf.redistribute.kernel->metric ? " metric $router.ospf.redistribute.kernel->metric")@IF($router.ospf.redistribute.kernel->metric_type ? " metric-type $router.ospf.redistribute.kernel->metric_type")@(IF$ROUTER.ospf.redistribute.kernel->route_map ? " route-map $router.ospf.redistribute.kernel->route_map")\n
+@END
+@IF($router.ospf.redistribute.rip)
+ redistribute rip@IF($router.ospf.redistribute.rip->metric ? " metric $router.ospf.redistribute.rip->metric")@IF($router.ospf.redistribute.rip->metric_type ? " metric-type $router.ospf.redistribute.rip->metric_type")@(IF$ROUTER.ospf.redistribute.rip->route_map ? " route-map $router.ospf.redistribute.rip->route_map")\n
+@END
+@IF($router.ospf.redistribute.static)
+ redistribute static@IF($router.ospf.redistribute.static->metric ? " metric $router.ospf.redistribute.static->metric")@IF($router.ospf.redistribute.static->metric_type ? " metric-type $router.ospf.redistribute.static->metric_type")@(IF$ROUTER.ospf.redistribute.static->route_map ? " route-map $router.ospf.redistribute.static->route_map")\n
+@END
+@EACH($router.ospf.passive-interface[], $iface, " passive-interface $iface->interface\n")
+@EACH($router.ospf.network[], $net, " network $net->prefix area $net->area\n")
+# OSPF area config
+@EACH($router.ospf.area[], $area)
+# AUTH
+@IF($area.auth)
+ area $area->area authentication@IF($area.auth->auth ? " $area.auth->auth")\n
+@END#AUTH
+# SHORTCUT
+@IF($area.shortcut ? " area $area->area shortcut $area.shortcut->mode\n")
+# STUB
+@IF($area.stub)
+ area $area->area stub@IF($area.stub->no_summary ? " $area.stub->no_summary")\n
+@END#STUB
+# DEFAULT-COST
+@IF($area.default-cost ? " area $area->area default-cost $area.default-cost->cost\n")
+# EXPORT-LIST
+@IF($area.export-list ? " area $area->area export-list $area.export-list->export_list\n")
+# IMPORT-LIST
+@IF($area.import-list ? " area $area->area import-list $area.import-list->import_list\n")
+# NSSA
+@IF($area.nssa)
+ area $area->area nssa@IF($area.nssa->translate ? " translate-$area.nssa->translate")@IF($area.nssa->no_summary ? " $area.nssa->no_summary")\n
+@END#NSSA
+# AREA RANGE
+@EACH($area.range[], $range)
+ area $area->area range $range->range@IF($range->substitute ? " substitute $range->range")@IF($range->not_advertise ? " $range->not_adertise")@IF($range->cost ? " cost $range->cost")\n
+@END#AREA RANGE
+@END#AREA
+# NEIGHBOR
+@EACH($router.ospf.neighbor[], $neigh)
+ neighbor $neigh->neighbor@IF($neigh->priority ? " priority $neigh->priority")@IF($neigh->poll_interval ? " poll-interval $neigh->poll_interval")\n
+@END#NEIGHBOR
+# DEFAULT-METRIC
+@IF($router.ospf.default-metric ? " default-metric $router.ospf.default-metric->metric\n")
+# DISTRIBUTE-LIST
+@EACH($router.ospf.distribute-list[], $dlist, " distribute-list $dlist->acl $dlist->direction $dlist->protocol\n")
+# DISTANCE
+@IF($router.ospf.distance ? " distance $router.ospf.distance->distance\n")
+# DEFAULT-INFO ORIGINATE
+@IF($router.ospf.default-information.originate)
+ default-information originate@IF($router.ospf.default-information.originate->always ? " $router.ospf.default-information.originate->always")@IF($router.ospf.default-information.originate->metric ? " metric $router.ospf.default-information.originate->metric")@IF($router.ospf.default-information.originate->metric_type ? " metric-type $router.ospf.default-information.originate->metric_type")@IF($router.ospf.default-information.originate->route_map ? " route-map $router.ospf.default-information.originate->route_map")\n"
+@END#DEFAULT-INFO ORIGINATE
+# CAPABILITY
+@IF($router.ospf.capability ? " capability opaque")
+!

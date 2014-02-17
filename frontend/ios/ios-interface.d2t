@@ -1,0 +1,55 @@
+#
+#  CVS Version: $Id: ios-interface.d2t,v 1.1 2014/01/10 02:23:57 benny Exp $
+#
+# Copyright (C) 2009-2014 Olof Hagsand and Benny Holmgren
+#
+# This file is part of ROST.
+#
+# ROST is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+#  ROST is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along wth ROST; see the file COPYING.  If not, see
+# <http://www.gnu.org/licenses/>.
+# 
+interface $iface->name
+@if($iface.description->description ? " description $iface.description->description\n")
+@if($iface.dot1q->vlan ? " encapsulation dot1Q $iface.dot1q->vlan\n")
+#/*    {".tunnel.mode", " tunnel mode $mode", NULL, LVPRINT_CMD, NULL},*/
+@if($iface.tunnel.source->source ? " tunnel source $iface.tunnel.source->source\n")
+@if($iface.tunnel.destination->destination ? " tunnel destination $iface.tunnel.destination->destination\n")
+@if($iface.tunnel.tos->tos ? " tunnel tos $iface.tunnel.tos->tos\n")
+@if($iface.tunnel.key->key ? " tunnel key $iface.tunnel.key->key\n")
+@if($iface.tunnel.nopmtu->noptmu ? " no tunnel path-mtu-discovery\n")
+@if($iface.tunnel.ttl->ttl ? " tunnel ttl $iface.tunnel.ttl->ttl\n")
+@if($iface.tunnel.csum->csum ? " tunnel csum $iface.tunnel.csum->csum\n")
+@if($iface.inet.dhcp_client->enabled ? " ip address dhcp\n")
+@each($iface.inet.address[], $addr)
+ ip address $addr->prefix
+@end
+# IPv6
+#@each($iface.ipv6.address[], $v6addr)
+# ipv6 address $v6addr->prefix
+#@end
+#@if($face.ipv6.nd.adv-interval-option->status" ?" ipv6 nd adv-interval-option")
+# /IPv6
+@if($iface.tunnel.bandwidth->bandwidth ? " bandwidth $iface.tunnel.bandwidth->bandwidth\n")
+@if($iface.link-detect->link_detect ? " link-detect\n")
+@if($iface.shutdown->shutdown ? " shutdown\n")
+@if($iface.ipv4.rp_filter->status == (int)1 ? " ip verify unicast source reachable-via rx\n")
+@if($iface.ipv4.send_redirects->status == (int)0 ? " no ip redirects\n")
+@if($iface.ipv4.proxy_arp->status == (int)0 ? " no ip proxy-arp\n")
+@if($iface.ospf.cost->cost != nil ? " ip ospf cost $iface.ospf.cost->cost\n")
+@if($iface.ospf.network-type->network_type ? " ip ospf network-type $iface.ospf.network-type->network_type\n")
+@if($iface.ospf.priority->priority != nil ? " ip ospf priority $iface.ospf.priority->priority\n")
+@if($iface.rip.receive->version ? " ip rip receive version $iface.rip.receive->version\n")
+@if($iface.rip.send->version ? " ip rip send version $iface.rip.send->version\n")
+### XXXX FIX ME ###@if($iface.rip.split-horizon ? "$no{ no ip rip split-horizon}$poisoned_reverse{ ip rip split-horizon $$}", NULL, LVPRINT_CMD, NULL},
+!

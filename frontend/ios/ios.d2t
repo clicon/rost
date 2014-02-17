@@ -1,0 +1,91 @@
+#
+#  CVS Version: $Id: ios.d2t,v 1.2 2014/01/23 21:19:34 benny Exp $
+#
+# Copyright (C) 2009-2014 Olof Hagsand and Benny Holmgren
+#
+# This file is part of ROST.
+#
+# ROST is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+#  ROST is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along wth ROST; see the file COPYING.  If not, see
+# <http://www.gnu.org/licenses/>.
+# 
+#@SET($OSR_PLUGIN_DIR, "${CLICON_APPDIR}/frontend/ios")
+@SET($OSR_PLUGIN_DIR, "/home/benny/anogo/osr/frontend/ios")
+@IF($system.hostname->hostname ? "hostname $system.hostname->hostname\n!\n")
+###@IF($system.boot->dummie ? "boot system flash $title\n!\n")
+@EACH($system.login.user[], $user)
+@IF($user.uid ? "username $user->user uid $user->uid\n")
+@IF($user.authentcation.password->password ? "username $user->user password $user.authentication.password->password\n")
+@IF($user.class->class ? "username $user->user class $user.class->class\n")
+@END
+@IF($ipv4.domain->domain ? "ip domain name $ipv4.domain->domain\n")
+@EACH($ipv4.name-server[], $ns, "ip name-server $ns->address\n")
+!
+@IF($ipv4.forwarding->status ? "ip routing" : "no ip routing\n!\n")
+@EACH($interface[], $if)
+@EACH($if.unit[], $iface, "@INCLUDE(\"${OSR_PLUGIN_DIR}/ios-interface.d2t\")")
+@END
+@IF($router.router-id->routerid ? "router-id $route.router-id->ruterid\n!\n")
+@IF($router.rip->instance != nil)
+@INCLUDE("${OSR_PLUGIN_DIR}/ios-router-rip.d2t")
+@END
+@IF($router.ospf->instance)
+@INCLUDE("${OSR_PLUGIN_DIR}/ios-router-ospf.d2t")
+@END
+@IF($router.bgp->as)
+@INCLUDE("${OSR_PLUGIN_DIR}/ios-router-bgp.d2t")
+@END
+@EACH($ipv4.route.static[], $rt, "ip route $rt->prefix route->nexthop $rt->distance")
+@EACH($ipv4.route.static.null[], $rt)
+ip route $rt->prefix @IF($rt->reject ? "reject" : "blackhole") $rt->distance
+@END
+!
+@EACH($ipv4.arp[], $arp, "arp $arp->address $arp->mac")
+!
+@EACH($access-list[], $acl)
+@IF($acl->remark)
+access-list $acl->id remark $acl->remark
+@ELSE
+access-list $acl->id $acl->action $acl->proto $acl->srcaddr $acl->srcmask@IF($acl->dstaddr ? " $acl->dstaddr $acl->dstmask") 
+@END
+@END
+!
+@EACH($ipv4.prefix-list[], $pfx)
+@IF($pfx->description ? "ip prefix-list $pfx->name description $pfx->description\n")
+@EACH($pfx.line[], $pfxl)
+ip prefix-list $pfx->name@IF($pfxl->seq ? " seq $pfxl->seq") $pfxl->action $pfxl->prefix@IF($pfxl->ge ? " ge $pfxl->ge")@IF($pfxl->le ? " le $pfxl->le") 
+@END
+!
+@END
+@EACH($ipv4.as-path.access-list[], $asp, "ip as-path access-list \$asp->name \$asp->action \$asp->regexp")
+!
+@EACH($route-map[], $rm)
+@EACH($rm.line[], $rml)
+route-map $rml->name $rml->action $rml->line
+@INCLUDE("${OSR_PLUGIN_DIR}/ios-route-map.d2t")
+!
+@END
+@END
+@IF($logging.buffered->rows ? "logging buffered $logging.buffered->rows $logging.buffered->level\n")
+@IF($logging.trap->level ? "logging trap $logging.trap->level")
+@EACH($logging.host[], $lh, "logging host \$lh->host transport \$lh->protocol port \$lh->port\n")
+!
+@EACH($snmp.community.ro[], $ro, "snmp-server community \$ro->community ro")
+@EACH($snmp.community.rw[], $rw, "snmp-server community \$rw->community rw")
+@IF($snmp.contact->contact ? "snmp-server contact $snmp.contact->contact")
+@IF($snmp.location->location ? "snmp-server location $snmp.location->location")
+!
+@IF($ntp.logging->dummy ? "ntp logging\n")
+@EACH($ntp.server[], $serv, "ntp server \$serv->address\n")
+#@END
+!

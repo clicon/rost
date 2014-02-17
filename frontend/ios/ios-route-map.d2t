@@ -1,0 +1,55 @@
+#
+#  CVS Version: $Id: ios-route-map.d2t,v 1.1 2014/01/10 02:23:57 benny Exp $
+#
+# Copyright (C) 2009-2014 Olof Hagsand and Benny Holmgren
+#
+# This file is part of ROST.
+#
+# ROST is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+#  ROST is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along wth ROST; see the file COPYING.  If not, see
+# <http://www.gnu.org/licenses/>.
+# 
+@EACH($route-map[], $rtmap)
+@EACH($rtmap.line[], $line)
+route-map $line->name $line->action $line->line
+@IF($line.call ? " call $line.call->route_map\n")
+@IF($line.description ? " description $line.description->description\n")
+@IF($line.match.as-path ? " match as-path $line.match.as-path->as_path\n")
+@IF($line.match.interface ? " match interface $line.match.interface->interface\n")
+@IF($line.match.ip.address ? " match ip address $line.match.ip.address->acl\n")
+@IF($line.match.ip.address.prefix-list ? " match ip address prefix-list $line.match.ip.address.prefix-list->prefix_list\n")
+@IF($line.match.ip.next-hop ? " match ip next-hop $line.match.ip.next-hop->acl\n")
+@IF($line.match.ip.next-hop.prefix-list ? " match ip next-hop prefix-list $line.match.ip.next-hop.prefix-list->prefix_list\n")
+@IF($line.match.ip.route-source ? " match ip route-source $line.match.ip.route-source->acl\n")
+@IF($line.match.ip.route-source.prefix-list ? " match ip route-source prefix-list $line.match.ip.route-source.prefix-list->prefix_list\n")
+@IF($line.match.metric ? " match metric $line.match.metric->metric\n")
+@IF($line.on-match)
+ on-match $line.on-match->op@IF($line.on-match->goto ? " $line.on-match->goto")\n
+@END
+@IF($line.set.as-path.exclude ? " set as-path exclude $line.set.as-path.exclude->as_path\n")
+@IF($line.set.as-path.prepend ? " set as-path prepend $line.set.as-path.prepend->as_path\n")
+@IF($line.set.ip.next-hop ? " set ip next-hop $line.set.ip.next-hop->nexthop\n")
+@IF($line.set.local-preference ? " set local-preference $line.set.local-preference->localpref\n")
+@IF($line.set.metric)
+ set metric @IF($line.set.metric->op ? "$line.set.metric->op")$line.set.metric->metric
+@END
+@IF($line.set.metric-type ? " set metric-type $line.set.metric-type->metric_type\n")
+@IF($line.set.origin ? " set origino $line.set.origin->rigin\n")
+@IF($line.set.originator-id ? " set originator-id $line.set.originator-id->originator_id\n")
+@IF($line.set.pathlimit.ttl ? " set pathlimit ttl $line.set.pathlimit.ttl->ttl\n")
+@IF($line.set.tag ? " set tag $line.set.tag->route_tag\n")
+@IF($line.set.weight ? " set weight $line.set.weight->weight\n")
+@IF($line.continue ? " continue $line.continue->goto\n")
+!
+@END#LINE
+@END#ROUTE-MAP

@@ -1,0 +1,24 @@
+Welcome to the ROST application.
+
+Configure and make the application, and then install the application directory.
+
+The application required that CLICON base and CLICON devel are
+installed. If they are not installed in a standard location, the
+non-standard location needs to be specified with the --with-clicon=<dir> option.
+
+Example:
+# unpack the osr application
+> cd osr
+> ./configure --with-clicon=/sdk
+> make
+> ./install.sh
+Welcome to OSR application install script.
+Enter top application directory: [/usr/local/rost]: /osr
+...
+
+Start applications with APPDIR set to application directory (default
+is /usr/local/share/clicon).
+
+For example:
+> clicon_config -a /usr/local/rost
+> clicon_cli -a /osr/local/rost
