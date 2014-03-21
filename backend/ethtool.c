@@ -81,10 +81,7 @@ ethtool_gset(clicon_handle h, uint16_t op, uint16_t len, void *arg,
     ret->maxtxpkt = htonl(cmd.maxtxpkt);
     ret->maxrxpkt = htonl(cmd.maxrxpkt);
     ret->speed_hi = htons(cmd.speed_hi);
-    ret->reserved2 = htons(cmd.reserved2);
-    ret->reserved[0] = htonl(cmd.reserved[0]);
-    ret->reserved[1] = htonl(cmd.reserved[1]);
-//    ret->reserved[2] = htonl(cmd.reserved[2]);
+    ret->eth_tp_mdix = htons(cmd.eth_tp_mdix);
 
     *reply_data = (void *)ret;
     *reply_data_len = sizeof(*ret);
