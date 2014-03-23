@@ -108,7 +108,7 @@ struct quaggapi_hdr {
 #define QUAGGA_COMPLETE_MATCH       8
 #define QUAGGA_COMPLETE_LIST_MATCH  9
 #define QUAGGA_SUCCESS_DAEMON      10
-#define QUAGGA_NO_CONTACT          11 /* OSR added errcode */
+#define QUAGGA_NO_CONTACT          11 /* ROST added errcode */
 
 /*
  * Quagga route protocol types

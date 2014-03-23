@@ -1,5 +1,5 @@
 /*
- *  CVS Version: $Id: osr_syslog.h,v 1.2 2011/08/20 14:12:35 olof Exp $
+ *  CVS Version: $Id: rost_syslog.h,v 1.2 2011/08/20 14:12:35 olof Exp $
  *
  *  Copyright (C) 2009-2014 Olof Hagsand and Benny Holmgren
  *
@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef __OSR_SYSLOG_H__
-#define __OSR_SYSLOG_H__
+#ifndef __ROST_SYSLOG_H__
+#define __ROST_SYSLOG_H__
  
 #define SYSLOG_DBDIR     "/tmp/"
 #define SYSLOG_DBFILE    "syslog.db"
@@ -34,4 +34,4 @@ int syslog_sqlite3_exec(char *filename,
 			int (*cb)(void *, int, char **, char **),
 			void *cbarg);
 
-#endif /* __OSR_SYSLOG_H__ */
+#endif /* __ROST_SYSLOG_H__ */

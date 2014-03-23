@@ -669,7 +669,7 @@ enable_option_checking
 with_clicon
 with_ipv6
 with_quagga_dir
-with_osr_dir
+with_rost_dir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1296,7 +1296,7 @@ Optional Packages:
   --with-clicon=PATH	  set clicon sdk installation PATH
   --with-ipv6             with IPv6 support
   --with-quagga_dir       set quagga's confapi directory (/var/lib/quagga)
-  --with-osr_dir          set osr configure directory
+  --with-rost_dir          set rost configure directory
 
 Some influential environment variables:
   CC          C compiler command
@@ -2020,7 +2020,7 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-ac_config_headers="$ac_config_headers include/osr_config.h"
+ac_config_headers="$ac_config_headers include/rost_config.h"
 
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
@@ -3097,7 +3097,7 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-CPPFLAGS="-DHAVE_OSR_CONFIG_H"
+CPPFLAGS="-DHAVE_ROST_CONFIG_H"
 CFLAGS="-g -Wall -Werror -x c" # -g/-O2 # -Werror
 LDFLAGS="-g"
 
@@ -3541,7 +3541,7 @@ fi
 # Check whether --with-ipv6 was given.
 if test "${with_ipv6+set}" = set; then :
   withval=$with_ipv6; cat >>confdefs.h <<_ACEOF
-#define OSR_IPV6_SUPPORT 1
+#define ROST_IPV6_SUPPORT 1
 _ACEOF
 
 
@@ -3567,47 +3567,47 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-# For rnr router, set OSR_DIR to /osr
-# OSR_DIR="/osr"
+# For rnr router, set ROST_DIR to /rost
+# ROST_DIR="/rost"
 # (moved from clicon/configure)
 if test "$prefix" = "NONE"; then
-   OSR_DIR="/usr/local"
+   ROST_DIR="/usr/local"
 else
-   OSR_DIR="$prefix"
+   ROST_DIR="$prefix"
 fi
 
-# Check whether --with-osr_dir was given.
-if test "${with_osr_dir+set}" = set; then :
-  withval=$with_osr_dir; if test ! "$withval" = "no"; then
+# Check whether --with-rost_dir was given.
+if test "${with_rost_dir+set}" = set; then :
+  withval=$with_rost_dir; if test ! "$withval" = "no"; then
     if test ! "$withval" = "yes"; then
-      OSR_DIR="$withval"
+      ROST_DIR="$withval"
     fi
   fi
 
 fi
 
 cat >>confdefs.h <<_ACEOF
-#define OSR_DIR "${OSR_DIR}"
+#define ROST_DIR "${ROST_DIR}"
 _ACEOF
 
 cat >>confdefs.h <<_ACEOF
-#define OSR_BIN_DIR "${OSR_DIR}/bin"
+#define ROST_BIN_DIR "${ROST_DIR}/bin"
 _ACEOF
 
 cat >>confdefs.h <<_ACEOF
-#define OSR_FLASH_DIR "${OSR_DIR}/flash"
+#define ROST_FLASH_DIR "${ROST_DIR}/flash"
 _ACEOF
 
 cat >>confdefs.h <<_ACEOF
-#define OSR_USERS_DIR "${OSR_DIR}/flash/users"
+#define ROST_USERS_DIR "${ROST_DIR}/flash/users"
 _ACEOF
 
 cat >>confdefs.h <<_ACEOF
-#define OSR_IMAGE_DIR "${OSR_DIR}/flash/boot/OSR"
+#define ROST_IMAGE_DIR "${ROST_DIR}/flash/boot/ROST"
 _ACEOF
 
 cat >>confdefs.h <<_ACEOF
-#define OSR_CONFIG_DIR "${OSR_DIR}/flash/config"
+#define ROST_CONFIG_DIR "${ROST_DIR}/flash/config"
 _ACEOF
 
 
@@ -4314,7 +4314,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
-    "include/osr_config.h") CONFIG_HEADERS="$CONFIG_HEADERS include/osr_config.h" ;;
+    "include/rost_config.h") CONFIG_HEADERS="$CONFIG_HEADERS include/rost_config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "frontend/Makefile") CONFIG_FILES="$CONFIG_FILES frontend/Makefile" ;;

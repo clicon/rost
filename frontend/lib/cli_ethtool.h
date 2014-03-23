@@ -26,7 +26,7 @@
 
 struct ethtool_cmd *ethtool_client_gset(clicon_handle h, char *ifname, const char *label);
 int ethtool_client_getlink(clicon_handle h, char *ifname, uint8_t *link);
-struct osr_etstats *ethtool_client_gstats(clicon_handle h, char *ifname, const char *label);
+struct rost_etstats *ethtool_client_gstats(clicon_handle h, char *ifname, const char *label);
 
 
 #endif	/* _CLI_ETHTOOL_H_ */

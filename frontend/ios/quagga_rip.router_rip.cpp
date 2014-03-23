@@ -223,7 +223,7 @@ no("Negate a command or set its defaults") redistribute("Redistribute informatio
 
 
 
-#ifdef OSR_ISIS_SUPPORT
+#ifdef ROST_ISIS_SUPPORT
     /* REDISTRIBUTE ISIS */
 redistribute("Redistribute information from another routing protocol") isis("Intermediate System to Intermediate System (IS-IS)"), cli_set("router.rip.redistribute.isis $dummy=(int)1"), ADMIN;
 redistribute("Redistribute information from another routing protocol") isis("Intermediate System to Intermediate System (IS-IS)") metric("Metric for redistributed routes") <number range[0:16]>("Metric value"), cli_set("router.rip.redistribute.isis $metric"), ADMIN;
@@ -249,7 +249,7 @@ no("Negate a command or set its defaults") redistribute("Redistribute informatio
 no("Negate a command or set its defaults") redistribute("Redistribute information from another routing protocol") isis("Intermediate System to Intermediate System (IS-IS)") route-map("Route map reference") <string expand_routemap()>("Route map name") metric("Metric for redistributed routes") <number range[0:16]>("Metric value"), cli_del("router.rip.redistribute.isis $dummy=(int)1"), ADMIN;
 
 
-#endif /* OSR_ISIS_SUPPORT */
+#endif /* ROST_ISIS_SUPPORT */
 
     /* REDISTRIBUTE KERNEL */
 redistribute("Redistribute information from another routing protocol") kernel("Kernel routes (not installed via the zebra RIB)"), cli_set("router.rip.redistribute.kernel $dummy=(int)1"), ADMIN;

@@ -24,7 +24,7 @@
 #ifndef _GRUB_H_
 #define _GRUB_H_
 
-#define GRUB_DIR	"/osr/flash/boot/grub"
+#define GRUB_DIR	"/rost/flash/boot/grub"
 #define GRUB_MENU	GRUB_DIR "/menu.lst"
 
 struct grub_conf {

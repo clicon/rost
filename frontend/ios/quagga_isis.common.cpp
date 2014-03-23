@@ -24,6 +24,6 @@
 #include "ios_macros.h"
 CLICON_MODE=STRINGIFY(IOS_BASE:IOS_ENABLE);
 
-#ifdef OSR_ISIS_SUPPORT
+#ifdef ROST_ISIS_SUPPORT
 show("Show running system information") debugging("State of each debugging option") isis("IS-IS information"), cli_isis_exec("show debugging isis"), ADMIN;
-#endif /* OSR_ISIS_SUPPORT */
+#endif /* ROST_ISIS_SUPPORT */

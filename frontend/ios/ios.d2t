@@ -19,8 +19,7 @@
 # along wth ROST; see the file COPYING.  If not, see
 # <http://www.gnu.org/licenses/>.
 # 
-#@SET($OSR_PLUGIN_DIR, "${CLICON_APPDIR}/frontend/ios")
-@SET($OSR_PLUGIN_DIR, "/home/benny/anogo/osr/frontend/ios")
+@SET($ROST_PLUGIN_DIR, "${CLICON_APPDIR}/frontend/ios")
 @IF($system.hostname->hostname ? "hostname $system.hostname->hostname\n!\n")
 ###@IF($system.boot->dummie ? "boot system flash $title\n!\n")
 @EACH($system.login.user[], $user)
@@ -33,17 +32,17 @@
 !
 @IF($ipv4.forwarding->status ? "ip routing" : "no ip routing\n!\n")
 @EACH($interface[], $if)
-@EACH($if.unit[], $iface, "@INCLUDE(\"${OSR_PLUGIN_DIR}/ios-interface.d2t\")")
+@EACH($if.unit[], $iface, "@INCLUDE(\"${ROST_PLUGIN_DIR}/ios-interface.d2t\")")
 @END
 @IF($router.router-id->routerid ? "router-id $route.router-id->ruterid\n!\n")
 @IF($router.rip->instance != nil)
-@INCLUDE("${OSR_PLUGIN_DIR}/ios-router-rip.d2t")
+@INCLUDE("${ROST_PLUGIN_DIR}/ios-router-rip.d2t")
 @END
 @IF($router.ospf->instance)
-@INCLUDE("${OSR_PLUGIN_DIR}/ios-router-ospf.d2t")
+@INCLUDE("${ROST_PLUGIN_DIR}/ios-router-ospf.d2t")
 @END
 @IF($router.bgp->as)
-@INCLUDE("${OSR_PLUGIN_DIR}/ios-router-bgp.d2t")
+@INCLUDE("${ROST_PLUGIN_DIR}/ios-router-bgp.d2t")
 @END
 @EACH($ipv4.route.static[], $rt, "ip route $rt->prefix route->nexthop $rt->distance")
 @EACH($ipv4.route.static.null[], $rt)
@@ -72,7 +71,7 @@ ip prefix-list $pfx->name@IF($pfxl->seq ? " seq $pfxl->seq") $pfxl->action $pfxl
 @EACH($route-map[], $rm)
 @EACH($rm.line[], $rml)
 route-map $rml->name $rml->action $rml->line
-@INCLUDE("${OSR_PLUGIN_DIR}/ios-route-map.d2t")
+@INCLUDE("${ROST_PLUGIN_DIR}/ios-route-map.d2t")
 !
 @END
 @END

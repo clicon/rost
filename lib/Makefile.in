@@ -33,21 +33,21 @@ SHELL		= /bin/sh
 
 SRC     =  quaggapi.c syslog.c grub.c ethtool.c system.c interface.c 
 OBJS    = $(SRC:.c=.o)
-OSRLIB   = libosr.a
+ROSTLIB   = librost.a
 
-all:	$(OSRLIB)
+all:	$(ROSTLIB)
 
 .c.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $<
 
-$(OSRLIB) : $(OBJS)
+$(ROSTLIB) : $(OBJS)
 	$(AR) -r $@ $(OBJS) $(YACCOBJS)
-	ranlib $(OSRLIB)
+	ranlib $(ROSTLIB)
 
 install:
 
 clean:
-	rm -f $(OBJS) $(OSRLIB) *.core 
+	rm -f $(OBJS) $(ROSTLIB) *.core 
 
 distclean: clean
 

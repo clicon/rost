@@ -21,12 +21,12 @@
  *
  */
 
-#include <osr_config.h>
+#include <rost_config.h>
 #include "ios_macros.h"
 CLICON_MODE=STRINGIFY(IOS_ENABLE);
 
 
-/* OSR */
+/* ROST */
 start("Start shell") shell("Start local BASH shell"), cli_start_shell((int)0), ADMIN;
 start("Start shell") shell("Start local BASH shell") <rest>("Command line"), cli_start_shell((int)0), ADMIN;
 
@@ -59,7 +59,7 @@ copy("Copy from one file to another") running-config("Copy current system config
 copy("Copy from one file to another") startup-config("Copy startup configuration") running-config("Update (merge with) current system configuration"), cli_copy_startup_running((int)0), ADMIN;
 
 delete("Delete file") file:("Home directory") <file:string expand_home()>, cli_file_del("~/"), ADMIN;
-delete("Delete file") flash:("Boot image directory") <file:string expand_flash()>, cli_file_del(OSR_IMAGE_DIR), ADMIN;
+delete("Delete file") flash:("Boot image directory") <file:string expand_flash()>, cli_file_del(ROST_IMAGE_DIR), ADMIN;
 /* DIR */
 dir("List files on a filesystem"), cli_dir("FLASH"), ADMIN;
 dir("List files on a filesystem") flash:("Boot image directory"), cli_dir("FLASH"), ADMIN;

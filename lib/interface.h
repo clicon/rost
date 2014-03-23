@@ -29,12 +29,12 @@
 /*
  * Macros
  */
-#define OSR_ETH_PFX "eth"
-#define OSR_LO_PFX "lo"
-#define OSR_TUN_PFX "tunnel"
+#define ROST_ETH_PFX "eth"
+#define ROST_LO_PFX "lo"
+#define ROST_TUN_PFX "tunnel"
 
-#define OSR_IFTYPES	{OSR_ETH_PFX, OSR_LO_PFX, OSR_TUN_PFX, NULL}
-#define isether(ifname) (strncmp((ifname), OSR_ETH_PFX, strlen(OSR_ETH_PFX)) == 0)
+#define ROST_IFTYPES	{ROST_ETH_PFX, ROST_LO_PFX, ROST_TUN_PFX, NULL}
+#define isether(ifname) (strncmp((ifname), ROST_ETH_PFX, strlen(ROST_ETH_PFX)) == 0)
 
 /*
  * Types

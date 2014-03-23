@@ -28,7 +28,7 @@
  * Constants
  */
 /* Group ids: _Dont_ need to be same as in /etc/groups! */
-enum osr_gid{
+enum rost_gid{
     SHOW_GID = 111,  /* View system status */
     PING_GID,	     /* Allowed to do ping, traceroute */
     ADMIN_GID,	     /* Full rights: configure, reload, etc */

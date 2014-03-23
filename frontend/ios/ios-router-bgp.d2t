@@ -42,11 +42,11 @@ router bgp $router.bgp->as
 @IF($router.bgp.redistribute.connected)
  redistribute connected@IF($router.bgp.redistribute.connected->metric ? " metric $router.bgp.redistribute.connected->metric")@IF($router.bgp.redistribute.connected->route_map ? " route-map $router.bgp.redistribute.connected->route_map")\n
 @END
-@IF($OSR_ISIS_SUPPORT)
+@IF($ROST_ISIS_SUPPORT)
 @IF($router.bgp.redistribute.isis)
  redistribute isis@IF($router.bgp.redistribute.isis->metric ? " metric $router.bgp.redistribute.isis->metric")@IF($router.bgp.redistribute.isis->route_map ? " route-map $router.bgp.redistribute.isis->route_map")\n
 @END
-@END#OSR_ISIS_SUPPORT
+@END#ROST_ISIS_SUPPORT
 @IF($router.bgp.redistribute.kernel)
  redistribute kernel@IF($router.bgp.redistribute.kernel->metric ? " metric $router.bgp.redistribute.kernel->metric")@IF($router.bgp.redistribute.kernel->route_map ? " route-map $router.bgp.redistribute.kernel->route_map")\n
 @END

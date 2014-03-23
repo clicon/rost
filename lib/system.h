@@ -24,12 +24,12 @@
 #ifndef _SYSTEM_H_
 #define _SYSTEM_H_
 
-int osr_uptime(int *sec);
+int rost_uptime(int *sec);
 
-int osr_get_serialno(char *serialnr, int len);
+int rost_get_serialno(char *serialnr, int len);
 
-int osr_get_product(char *product, int len);
+int rost_get_product(char *product, int len);
 
-int osr_proc_killbyname (const char *name, int sig);
+int rost_proc_killbyname (const char *name, int sig);
 
 #endif /* _SYSTEM_H_ */

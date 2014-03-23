@@ -30,7 +30,7 @@ struct lvmap db_ios_if_fmts[] = {
 #else
     {".inet.address[]", " ip address $prefix", " no ip address", LVPRINT_CMD, NULL},
 #endif
-#ifdef OSR_IPV6_SUPPORT
+#ifdef ROST_IPV6_SUPPORT
     {".ipv6.address[]", " ipv6 address $prefix", NULL, LVPRINT_CMD, NULL},
     {".ipv6.nd.adv-interval-option", " ipv6 nd adv-interval-option", NULL, LVPRINT_CMD, NULL},
 #endif
@@ -85,7 +85,7 @@ struct lvmap db_ios_ospf_fmts[] = {
     {".refresh-timer", " refresh timer $timer", NULL, LVPRINT_CMD, NULL},
     {".redistribute.bgp", " redistribute bgp$metric{ metric $$}$metric_type{ metric-type $$}$route_map{ route-map $$}", NULL, LVPRINT_CMD, NULL},
     {".redistribute.connected", " redistribute connected$metric{ metric $$}$metric_type{ metric-type $$}$route_map{ route-map $$}", NULL, LVPRINT_CMD, NULL},
-#ifdef OSR_ISIS_SUPPORT
+#ifdef ROST_ISIS_SUPPORT
     {".redistribute.isis", " redistribute isis$metric{ metric $$}$metric_type{ metric-type $$}$route_map{ route-map $$}", NULL, LVPRINT_CMD, NULL},
 #endif
     {".redistribute.kernel", " redistribute kernel$metric{ metric $$}$metric_type{ metric-type $$}$route_map{ route-map $$}", NULL, LVPRINT_CMD, NULL},

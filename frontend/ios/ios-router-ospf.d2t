@@ -38,11 +38,11 @@ router ospf
 @IF($router.ospf.redistribute.connected)
  redistribute connected@IF($router.ospf.redistribute.connected->metric ? " metric $router.ospf.redistribute.connected->metric")@IF($router.ospf.redistribute.connected->metric_type ? " metric-type $router.ospf.redistribute.connected->metric_type")@(IF$ROUTER.ospf.redistribute.connected->route_map ? " route-map $router.ospf.redistribute.connected->route_map")\n
 @END
-@IF($OSR_ISIS_SUPPORT)
+@IF($ROST_ISIS_SUPPORT)
 @IF($router.ospf.redistribute.isis)
  redistribute isis@IF($router.ospf.redistribute.isis->metric ? " metric $router.ospf.redistribute.isis->metric")@IF($router.ospf.redistribute.isis->metric_type ? " metric-type $router.ospf.redistribute.isis->metric_type")@(IF$ROUTER.ospf.redistribute.isis->route_map ? " route-map $router.ospf.redistribute.isis->route_map")\n
 @END
-@END#OSR_ISIS_SUPPORT
+@END#ROST_ISIS_SUPPORT
 @IF($router.ospf.redistribute.kernel)
  redistribute kernel@IF($router.ospf.redistribute.kernel->metric ? " metric $router.ospf.redistribute.kernel->metric")@IF($router.ospf.redistribute.kernel->metric_type ? " metric-type $router.ospf.redistribute.kernel->metric_type")@(IF$ROUTER.ospf.redistribute.kernel->route_map ? " route-map $router.ospf.redistribute.kernel->route_map")\n
 @END

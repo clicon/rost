@@ -20,7 +20,7 @@
 #
 
 AC_INIT(lib/quaggapi.h)
-AC_CONFIG_HEADER(include/osr_config.h)
+AC_CONFIG_HEADER(include/rost_config.h)
 AC_CANONICAL_TARGET
 AC_DEFINE(AUTOCONF)
 AC_SUBST(CC)
@@ -32,7 +32,7 @@ AC_SUBST(LIBS)
 #
 AC_PROG_CC()
 AC_PROG_CPP
-CPPFLAGS="-DHAVE_OSR_CONFIG_H"
+CPPFLAGS="-DHAVE_ROST_CONFIG_H"
 CFLAGS="-g -Wall -Werror -x c" # -g/-O2 # -Werror
 LDFLAGS="-g"
 
@@ -57,7 +57,7 @@ AC_ARG_WITH(clicon,
 
 AC_ARG_WITH(ipv6, 
 [  --with-ipv6             with IPv6 support],
-   AC_DEFINE_UNQUOTED(OSR_IPV6_SUPPORT, 1)
+   AC_DEFINE_UNQUOTED(ROST_IPV6_SUPPORT, 1)
 )
 
 # Where is quagga installed?
@@ -73,28 +73,28 @@ AC_ARG_WITH(quagga_dir,
 )
 AC_DEFINE_UNQUOTED(QUAGGA_DIR, "$QUAGGA_DIR")
 
-# For rnr router, set OSR_DIR to /osr
-# OSR_DIR="/osr"
+# For rnr router, set ROST_DIR to /rost
+# ROST_DIR="/rost"
 # (moved from clicon/configure)
 if test "$prefix" = "NONE"; then
-   OSR_DIR="/usr/local"
+   ROST_DIR="/usr/local"
 else
-   OSR_DIR="$prefix"
+   ROST_DIR="$prefix"
 fi
-AC_ARG_WITH(osr_dir, 
-[  --with-osr_dir          set osr configure directory],
+AC_ARG_WITH(rost_dir, 
+[  --with-rost_dir          set rost configure directory],
   if test ! "$withval" = "no"; then
     if test ! "$withval" = "yes"; then
-      OSR_DIR="$withval"
+      ROST_DIR="$withval"
     fi
   fi
 )
-AC_DEFINE_UNQUOTED(OSR_DIR, "${OSR_DIR}")
-AC_DEFINE_UNQUOTED(OSR_BIN_DIR, "${OSR_DIR}/bin")
-AC_DEFINE_UNQUOTED(OSR_FLASH_DIR, "${OSR_DIR}/flash")
-AC_DEFINE_UNQUOTED(OSR_USERS_DIR, "${OSR_DIR}/flash/users")
-AC_DEFINE_UNQUOTED(OSR_IMAGE_DIR, "${OSR_DIR}/flash/boot/OSR")
-AC_DEFINE_UNQUOTED(OSR_CONFIG_DIR, "${OSR_DIR}/flash/config")
+AC_DEFINE_UNQUOTED(ROST_DIR, "${ROST_DIR}")
+AC_DEFINE_UNQUOTED(ROST_BIN_DIR, "${ROST_DIR}/bin")
+AC_DEFINE_UNQUOTED(ROST_FLASH_DIR, "${ROST_DIR}/flash")
+AC_DEFINE_UNQUOTED(ROST_USERS_DIR, "${ROST_DIR}/flash/users")
+AC_DEFINE_UNQUOTED(ROST_IMAGE_DIR, "${ROST_DIR}/flash/boot/ROST")
+AC_DEFINE_UNQUOTED(ROST_CONFIG_DIR, "${ROST_DIR}/flash/config")
 
 AC_OUTPUT(Makefile
 	  lib/Makefile 

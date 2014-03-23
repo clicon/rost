@@ -44,7 +44,7 @@ no("Negate a command or set its defaults") link-detect("Enable link detection on
 shutdown("Shutdown the selected interface"), cli_set("interface[].unit[].shutdown $!name=ios_interface_cb() $!unit=ios_interface_cb() $shutdown=(int)1"), ADMIN;
 no("Negate a command or set its defaults") shutdown("Shutdown the selected interface"), cli_del("interface[].unit[].shutdown $!name=ios_interface_cb() $!unit=ios_interface_cb()"), ADMIN;
 
-#ifdef OSR_IPV6_SUPPORT
+#ifdef ROST_IPV6_SUPPORT
 /* IPv6 ADDRESS */
 ipv6("IPv6 interface subcommands") address("Configure IPv6 address on interface  address") <ipv6prefix>("IPv6 prefix"), cli_set("interface[].unit[].ipv6.address[] $!name=ios_interface_cb() $!unit=ios_interface_cb() $!prefix"), ADMIN;
 no("Negate a command or set its defaults") ipv6("IPv6 interface subcommands") address("Configure IPv6 address on interface  address") <ipv6prefix>("IPv6 prefix"), cli_del("interface[].unit[].ipv6.address[] $!name=ios_interface_cb() $!unit=ios_interface_cb() $!prefix"), ADMIN;
@@ -78,4 +78,4 @@ no("Negate a command or set its defaults") ipv6("IPv6 interface subcommands") nd
 ipv6("IPv6 interface subcommands") nd("Neighbor discovery") other-config-flag("Other stateful configuration flag"), cli_set("interface[].unit[].ipv6.other-config-flag $!name=ios_interface_cb() $!unit=ios_interface_cb() other_config_flag"), ADMIN;
 no("Negate a command or set its defaults") ipv6("IPv6 interface subcommands") nd("Neighbor discovery") other-config-flag("Other stateful configuration flag"), cli_del("interface[].unit[].ipv6.nd.other-config-flag $!name=ios_interface_cb() $!unit=ios_interface_cb() $other_config_flag"), ADMIN;
   
-#endif /* OSR_IPV6_SUPPORT */
+#endif /* ROST_IPV6_SUPPORT */

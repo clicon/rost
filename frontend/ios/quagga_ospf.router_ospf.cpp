@@ -311,7 +311,7 @@ no("Negate a command or set its defaults") distance("Define an administrative di
    /* DITRIBUTE LIST*/
 distribute-list("Filter networks in routing updates") <string>("Access-list name") out("Filter outgoing routing updates") bgp("Border Gateway Protocol (BGP)"), cli_set("router.ospf.distribute-list[] $acl $!direction=(string)\"out\" $!protocol=(string)\"bgp\""), ADMIN;
 distribute-list("Filter networks in routing updates") <string>("Access-list name") out("Filter outgoing routing updates") connected("Connected routes (directly attached subnet or host)"), cli_set("router.ospf.distribute-list[] $acl $!direction=(string)\"out\" $!protocol=(string)\"connected\""), ADMIN;
-#ifdef OSR_ISIS_SUPPORT
+#ifdef ROST_ISIS_SUPPORT
 distribute-list("Filter networks in routing updates") <string>("Access-list name") out("Filter outgoing routing updates") isis("Intermediate System to Intermediate System (IS-IS)"), cli_set("router.ospf.distribute-list[] $acl $!direction=(string)\"out\" $!protocol=(string)\"isis\""), ADMIN;
 #endif    
 distribute-list("Filter networks in routing updates") <string>("Access-list name") out("Filter outgoing routing updates") kernel("Kernel routes (not installed via the zebra RIB)"), cli_set("router.ospf.distribute-list[] $acl $!direction=(string)\"out\" $!protocol=(string)\"kernel\""), ADMIN;
@@ -320,7 +320,7 @@ distribute-list("Filter networks in routing updates") <string>("Access-list name
 
 no("Negate a command or set its defaults") distribute-list("Filter networks in routing updates") <string>("Access-list name") out("Filter outgoing routing updates") bgp("Border Gateway Protocol (BGP)"), cli_del("router.ospf.distribute-list[] $acl $!direction=(string)\"out\" $!protocol=(string)\"bgp\""), ADMIN;
 no("Negate a command or set its defaults") distribute-list("Filter networks in routing updates") <string>("Access-list name") out("Filter outgoing routing updates") connected("Connected routes (directly attached subnet or host)"), cli_del("router.ospf.distribute-list[] $acl $!direction=(string)\"out\" $!protocol=(string)\"connected\""), ADMIN;
-#ifdef OSR_ISIS_SUPPORT
+#ifdef ROST_ISIS_SUPPORT
 no("Negate a command or set its defaults") distribute-list("Filter networks in routing updates") <string>("Access-list name") out("Filter outgoing routing updates") isis("Intermediate System to Intermediate System (IS-IS)"), cli_del("router.ospf.distribute-list[] $acl $!direction=(string)\"out\" $!protocol=(string)\"isis\""), ADMIN;
 #endif    
 no("Negate a command or set its defaults") distribute-list("Filter networks in routing updates") <string>("Access-list name") out("Filter outgoing routing updates") kernel("Kernel routes (not installed via the zebra RIB)"), cli_del("router.ospf.distribute-list[] $acl $!direction=(string)\"out\" $!protocol=(string)\"kernel\""), ADMIN;
@@ -480,7 +480,7 @@ no("Negate a command or set its defaults") redistribute("Redistribute informatio
 no("Negate a command or set its defaults") redistribute("Redistribute information from another routing protocol") connected("Connected routes (directly attached subnet or host)") metric-type("OSPF exterior metric type for redistributed routes") <number range[1:2]>("OSPF External metric type") metric("Metric for redistributed routes") <number range[0:16777214]>("OSPF default metric") route-map("Route map reference") <string>("Route map name"), cli_del("router.ospf.redistribute.connected $dummy=(int)1"), ADMIN;
 
 
-#ifdef OSR_ISIS_SUPPORT
+#ifdef ROST_ISIS_SUPPORT
     /* REDISTRIBUTE ISIS */
 redistribute("Redistribute information from another routing protocol") isis("Intermediate System to Intermediate System (IS-IS)"), cli_set("router.ospf.redistribute.isis $dummy=(int)1"), ADMIN;
 redistribute("Redistribute information from another routing protocol") isis("Intermediate System to Intermediate System (IS-IS)") metric("Metric for redistributed routes") <number range[0:16777214]>("OSPF default metric"), cli_set("router.ospf.redistribute.isis $metric"), ADMIN;
@@ -522,7 +522,7 @@ no("Negate a command or set its defaults") redistribute("Redistribute informatio
 no("Negate a command or set its defaults") redistribute("Redistribute information from another routing protocol") isis("Intermediate System to Intermediate System (IS-IS)") metric-type("OSPF exterior metric type for redistributed routes") <number range[1:2]>("OSPF External metric type") metric("Metric for redistributed routes") <number range[0:16777214]>("OSPF default metric"), cli_del("router.ospf.redistribute.isis $dummy=(int)1"), ADMIN;
 no("Negate a command or set its defaults") redistribute("Redistribute information from another routing protocol") isis("Intermediate System to Intermediate System (IS-IS)") metric-type("OSPF exterior metric type for redistributed routes") <number range[1:2]>("OSPF External metric type") metric("Metric for redistributed routes") <number range[0:16777214]>("OSPF default metric") route-map("Route map reference") <string>("Route map name"), cli_del("router.ospf.redistribute.isis $dummy=(int)1"), ADMIN;
 
-#endif /* OSR_ISIS_SUPPORT */
+#endif /* ROST_ISIS_SUPPORT */
 
     /* REDISTRIBUTE KERNEL */
 redistribute("Redistribute information from another routing protocol") kernel("Kernel routes (not installed via the zebra RIB)"), cli_set("router.ospf.redistribute.kernel $dummy=(int)1"), ADMIN;

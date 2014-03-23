@@ -29,7 +29,7 @@ CC		= @CC@
 CPP		= @CPP@
 CFLAGS  	= @CFLAGS@
 CPPFLAGS  	= @CPPFLAGS@ 
-LIBS    	= -L../lib -L../../lib -Wl,--whole-archive -lfront -losr -lblkid -Wl,--no-whole-archive -lsqlite3 -lcurl @LIBS@
+LIBS    	= -L../lib -L../../lib -Wl,--whole-archive -lfront -lrost -lblkid -Wl,--no-whole-archive -lsqlite3 -lcurl @LIBS@
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/frontend/lib -I$(top_srcdir)/lib
 SHELL		= /bin/sh
 

@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef _OSR_ETHTOOL_H_
-#define _OSR_ETHTOOL_H_
+#ifndef _ROST_ETHTOOL_H_
+#define _ROST_ETHTOOL_H_
 
 #include <sys/param.h>
 #ifdef HAVE_ENDIAN_H
@@ -36,42 +36,42 @@
 #define htonll(x)  (x)
 #endif
 
-enum osr_ethtool_type {
-  OSR_ETHTOOL_GET,		/* Get settings */
-  OSR_ETHTOOL_SET,		/* Change generic options */
-  OSR_ETHTOOL_STATS,		/* Get device statistics */
-  OSR_ETHTOOL_LINK,		/* Get link status */
-  OSR_ETHTOOL_DRVINFO,		/* Get device info */
+enum rost_ethtool_type {
+  ROST_ETHTOOL_GET,		/* Get settings */
+  ROST_ETHTOOL_SET,		/* Change generic options */
+  ROST_ETHTOOL_STATS,		/* Get device statistics */
+  ROST_ETHTOOL_LINK,		/* Get link status */
+  ROST_ETHTOOL_DRVINFO,		/* Get device info */
 };
 
-struct osr_etstatent {
+struct rost_etstatent {
     char	etse_name[ETH_GSTRING_LEN+1];
     uint64_t	etse_value;
 };
 
-struct osr_etstats {
+struct rost_etstats {
     uint32_t		 ets_nstats;	/* number of u64's being returned */
-    struct osr_etstatent ets_stat[0];
+    struct rost_etstatent ets_stat[0];
 };
 
-struct osr_ethtool_req {
+struct rost_ethtool_req {
   uint32_t er_cmd;
   char 	   er_name[IFNAMSIZ+1];
   uint16_t er_len;	/* Length of data */
   uint8_t  er_data[0];  /* Request/response data */
 };
   
-int osr_ethtool_gset(char *, struct ethtool_cmd *);
-struct osr_etstats *osr_ethtool_gstats(char *, const char *);
-int osr_ethtool_stat(struct osr_etstats *, char *);
-int osr_ethtool_getlink(const char *ifname, int *link);
-int osr_ethtool_drvinfo(const char *ifname, struct ethtool_drvinfo *drvinfo);
+int rost_ethtool_gset(char *, struct ethtool_cmd *);
+struct rost_etstats *rost_ethtool_gstats(char *, const char *);
+int rost_ethtool_stat(struct rost_etstats *, char *);
+int rost_ethtool_getlink(const char *ifname, int *link);
+int rost_ethtool_drvinfo(const char *ifname, struct ethtool_drvinfo *drvinfo);
 struct clicon_msg *
-clicon_msg_ethtool_encode(struct osr_ethtool_req *req, const char *label);
+clicon_msg_ethtool_encode(struct rost_ethtool_req *req, const char *label);
 int
 clicon_msg_ethtool_decode(struct clicon_msg *msg, 
-			 struct osr_ethtool_req **req, const char *label);
-int osr_ifspeed(char *ifname, uint32_t *speed);
+			 struct rost_ethtool_req **req, const char *label);
+int rost_ifspeed(char *ifname, uint32_t *speed);
 
 
-#endif	/* _OSR_ETHTOOL_H_ */
+#endif	/* _ROST_ETHTOOL_H_ */

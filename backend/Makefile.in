@@ -28,7 +28,7 @@ top_srcdir  	= @top_srcdir@
 CC		= @CC@
 CFLAGS  	= @CFLAGS@
 CPPFLAGS  	= @CPPFLAGS@ 
-LIBS    	= @LIBS@ -L../lib -losr -lsqlite3
+LIBS    	= @LIBS@ -L../lib -lrost -lsqlite3
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib
 
 SHELL	= /bin/sh
