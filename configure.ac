@@ -33,7 +33,7 @@ AC_SUBST(LIBS)
 AC_PROG_CC()
 AC_PROG_CPP
 CPPFLAGS="-DHAVE_ROST_CONFIG_H"
-CFLAGS="-g -Wall -Werror -x c" # -g/-O2 # -Werror
+CFLAGS="-Wall -x c ${CFLAGS}"
 LDFLAGS="-g"
 
 AC_CHECK_HEADERS(sys/statfs.h)
