@@ -38,7 +38,7 @@ LDFLAGS="-g"
 
 AC_CHECK_HEADERS(sys/statfs.h)
 AC_CHECK_HEADERS(sys/inotify.h)
-AC_CHECK_HEADERS(sqlite3.h,,AC_ERROR("SQLite is required. Install and rerun configure."))
+AC_CHECK_HEADERS(sqlite3.h,AC_CHECK_LIB(sqlite3,sqlite3_open),AC_ERROR("SQLite is required. Install and rerun configure."))
 AC_CHECK_HEADERS(linux/ethtool.h,,AC_ERROR("ethtool is required. Install and rerun configure."))
 AC_CHECK_HEADERS(endian.h)
 AC_CHECK_HEADERS(crypt.h)
@@ -47,6 +47,8 @@ AC_CHECK_HEADERS(cligen/cligen.h,,AC_MSG_ERROR("cligen headers are required. Ins
 AC_CHECK_LIB(cligen,cligen_init,,AC_MSG_ERROR("cligen libs are required. Install and rerrun configre."))
 AC_CHECK_HEADERS(clicon/clicon.h,,AC_MSG_ERROR("clicon headers are required. Install and rerun configure."), [[#include <cligen/cligen.h>]])
 AC_CHECK_LIB(clicon,clicon_handle_init,,AC_MSG_ERROR("clicon libs are required. Install and rerrun configre."), -lcligen)
+AC_CHECK_HEADERS(blkid/blkid.h,AC_CHECK_LIB(blkid,blkid_get_cache),AC_MSG_ERROR("blkid missing. Install and rerun configure."))
+AC_CHECK_HEADERS(curl/curl.h,AC_CHECK_LIB(curl,curl_version),AC_MSG_ERROR("curl missing. Install and rerun configure."))
 
 # Check lspci program used to map PCI bus
 AC_PATH_PROG(LSPCI, lspci, /usr/sbin/lspci)
