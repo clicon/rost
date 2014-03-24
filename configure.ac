@@ -38,8 +38,8 @@ LDFLAGS="-g"
 
 AC_CHECK_HEADERS(sys/statfs.h)
 AC_CHECK_HEADERS(sys/inotify.h)
-AC_CHECK_HEADERS(sqlite3.h,AC_CHECK_LIB(sqlite3,sqlite3_open),AC_ERROR("SQLite is required. Install and rerun configure."))
-AC_CHECK_HEADERS(linux/ethtool.h,,AC_ERROR("ethtool is required. Install and rerun configure."))
+AC_CHECK_HEADERS(sqlite3.h,AC_CHECK_LIB(sqlite3,sqlite3_open),AC_MSG_ERROR("SQLite is required. Install and rerun configure."))
+AC_CHECK_HEADERS(linux/ethtool.h,,AC_MSG_ERROR("ethtool is required. Install and rerun configure."))
 AC_CHECK_HEADERS(endian.h)
 AC_CHECK_HEADERS(crypt.h)
 AC_CHECK_LIB(crypt, crypt)
