@@ -50,6 +50,7 @@ clean:
 	rm -f $(OBJS) $(ROSTLIB) *.core 
 
 distclean: clean
+	rm -f Makefile
 
 
 

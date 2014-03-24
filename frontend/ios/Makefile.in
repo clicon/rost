@@ -68,6 +68,6 @@ clean:
 	rm -f $(OBJS) $(SHOBJS) *.core *.so *.o  *.cli  # last to clean old unknown binaries
 
 distclean: clean
-	rm -f *~
+	rm -f *~ Makefile
 
 

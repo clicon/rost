@@ -51,6 +51,7 @@ clean:
 	rm -f $(OBJS) $(FRONTLIB) *.core 
 
 distclean: clean
+	rm -f Makefile
 
 
 

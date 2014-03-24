@@ -56,5 +56,6 @@ clean:
 distclean: 
 	for i in $(SUBDIRS); \
 	do (cd $$i; $(MAKE) $(MFLAGS) $@); done
+	rm -r Makefile
 
 
