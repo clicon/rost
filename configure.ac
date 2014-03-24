@@ -46,7 +46,7 @@ AC_CHECK_LIB(crypt, crypt)
 AC_CHECK_HEADERS(cligen/cligen.h,,AC_MSG_ERROR("cligen headers are required. Install and rerun configure."))
 AC_CHECK_LIB(cligen,cligen_init,,AC_MSG_ERROR("cligen libs are required. Install and rerrun configre."))
 AC_CHECK_HEADERS(clicon/clicon.h,,AC_MSG_ERROR("clicon headers are required. Install and rerun configure."), [[#include <cligen/cligen.h>]])
-AC_CHECK_LIB(clicon_handle_init,clicon,,AC_MSG_ERROR("clicon libs are required. Install and rerrun configre."), -lcligen)
+AC_CHECK_LIB(clicon,clicon_handle_init,,AC_MSG_ERROR("clicon libs are required. Install and rerrun configre."), -lcligen)
 
 # Check lspci program used to map PCI bus
 AC_PATH_PROG(LSPCI, lspci, /usr/sbin/lspci)
