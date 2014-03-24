@@ -74,11 +74,8 @@ ethtool_client_gset(clicon_handle h, char *ifname, const char *label)
     ec->maxtxpkt = ntohl(tmp->maxtxpkt);
     ec->maxrxpkt = ntohl(tmp->maxrxpkt);
     ec->speed_hi = ntohs(tmp->speed_hi);
-    ec->reserved2 = ntohs(tmp->reserved2);
-    ec->reserved[0] = ntohl(tmp->reserved[0]);
-    ec->reserved[1] = ntohl(tmp->reserved[1]);
-//    ec->reserved[2] = ntohl(tmp->reserved[2]);
-    
+    ec->eth_tp_mdix = ntohs(tmp->eth_tp_mdix);
+   
 done:
     unchunk_group(__FUNCTION__);
     return ec;
