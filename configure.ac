@@ -33,13 +33,13 @@ AC_SUBST(LIBS)
 AC_PROG_CC()
 AC_PROG_CPP
 CPPFLAGS="-DHAVE_ROST_CONFIG_H"
-CFLAGS="-g -Wall -Werror -x c" # -g/-O2 # -Werror
+CFLAGS="-Wall -x c ${CFLAGS}"
 LDFLAGS="-g"
 
 AC_CHECK_HEADERS(sys/statfs.h)
 AC_CHECK_HEADERS(sys/inotify.h)
-AC_CHECK_HEADERS(sqlite3.h)
-AC_CHECK_HEADERS(linux/ethtool.h)
+AC_CHECK_HEADERS(sqlite3.h,,AC_ERROR("SQLite is required. Install and rerun configure."))
+AC_CHECK_HEADERS(linux/ethtool.h,,AC_ERROR("ethtool is required. Install and rerun configure."))
 AC_CHECK_HEADERS(endian.h)
 AC_CHECK_HEADERS(crypt.h)
 AC_CHECK_LIB(crypt, crypt)
