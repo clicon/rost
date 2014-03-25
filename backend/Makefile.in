@@ -26,10 +26,11 @@ plugindir	= $(DESTDIR)$(prefix)/backend
 srcdir  	= @srcdir@
 top_srcdir  	= @top_srcdir@
 CC		= @CC@
-CFLAGS  	= @CFLAGS@
-CPPFLAGS  	= @CPPFLAGS@ 
-LIBS    	= @LIBS@ -L../lib -lrost -lsqlite3
+CFLAGS  	= @CFLAGS@ -rdynamic -fPIC
+CPPFLAGS  	= @CPPFLAGS@ $(INCLUDES)
+LIBS    	= @LIBS@ 
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib
+LDFLAGS		+= -L../lib 
 
 SHELL	= /bin/sh
 
@@ -40,9 +41,6 @@ OBJS    = $(SRC:.c=.o)
 SHOBJS	= $(OBJS:.o=.so)
 
 all:	 $(SHOBJS) 
-
-.c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c -rdynamic -fPIC $<
 
 .o.so: 
 	$(CC) $(LDFLAGS) -shared -o $@ -lc $< $(LIBS)

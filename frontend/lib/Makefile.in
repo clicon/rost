@@ -25,10 +25,10 @@ prefix		= @prefix@
 srcdir  	= @srcdir@
 top_srcdir  	= @top_srcdir@
 CC		= @CC@
-CFLAGS  	= @CFLAGS@
+CFLAGS  	= @CFLAGS@ -fPIC
 LIBS    	= @LIBS@
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib 
-CPPFLAGS  	= @CPPFLAGS@ -fPIC
+CPPFLAGS  	= @CPPFLAGS@ $(INCLUDES)
 SHELL		= /bin/sh
 
 SRC     =  cli_quaggapi.c cli_expand.c cli_system.c cli_interface.c cli_file.c cli_auth.c \
@@ -38,12 +38,7 @@ FRONTLIB   = libfront.a
 
 all:	$(FRONTLIB)
 
-.c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $<
-
-$(FRONTLIB) : $(OBJS)
-	$(AR) -r $@ $(OBJS) $(YACCOBJS)
-	ranlib $(FRONTLIB)
+$(FRONTLIB):      $(patsubst %,$(FRONTLIB)(%),$(OBJS))
 
 install:
 
