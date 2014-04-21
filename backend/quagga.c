@@ -39,6 +39,7 @@
 
 /* lib */
 #include "quaggapi.h"
+#include "system.h"
 
 
 struct qaction {
@@ -1068,7 +1069,7 @@ lv_quagga_exec(char *cmd, char *sockpath)
 	goto catch;
     if (batch->numexec < 0){ /* e.g socket error - no contact w quagga */
 	if (!clicon_errno)
-	    clicon_err(OE_ROUTING, 0, "No contact with quagga");
+	    rost_err(0, "No contact with quagga");
 	goto catch;
     }
     output = batch->cmds[batch->numexec-1].output;
@@ -1078,7 +1079,7 @@ lv_quagga_exec(char *cmd, char *sockpath)
     if (retcode == QUAGGA_SUCCESS) 
 	; /* do nothing for now */
     else{ 
-	clicon_err(OE_ROUTING, retcode, "Quagga error: %s", output);
+	rost_err(retcode, "Quagga error: %s", output);
 	goto catch;
     }
     retval = 0;

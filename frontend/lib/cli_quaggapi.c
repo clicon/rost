@@ -46,6 +46,7 @@
 /* lib */
 #include "cli_quaggapi.h"
 #include "quaggapi.h"
+#include "system.h"
 
 /*
  *
@@ -75,12 +76,12 @@ cli_quagga_exec(clicon_handle h, void *arg, cvec *vr, char *sockpath)
   
     batch = quaggapi_strexec(path, 0, cmd);
     if (batch == NULL) {
-	clicon_err(OE_ROUTING, errno, "strexec");
+	rost_err(errno, "strexec");
 	goto catch;
     }
     
     if (batch->numexec < 0) {
-	clicon_err(OE_ROUTING, 0, "numexec <0");
+	rost_err(0, "numexec <0");
 	goto catch;
     }
 

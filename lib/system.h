@@ -32,4 +32,6 @@ int rost_get_product(char *product, int len);
 
 int rost_proc_killbyname (const char *name, int sig);
 
+int rost_err(int suberr, char *reason, ...);
+
 #endif /* _SYSTEM_H_ */
