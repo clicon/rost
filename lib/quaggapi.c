@@ -96,7 +96,7 @@ quaggapi_connect (const char *sockpath)
 
   sock = socket (AF_UNIX, SOCK_STREAM, 0);
   if (sock < 0){
-      clicon_err(OE_ROUTING, errno, "Connecting to quagga");
+      clicon_err(OE_UNIX, errno, "Connecting to quagga");
       return -1;
   }
   
@@ -106,7 +106,7 @@ quaggapi_connect (const char *sockpath)
 
   ret = connect (sock, (struct sockaddr *) &addr, SUN_LEN(&addr));
   if (ret < 0) {
-      clicon_err(OE_ROUTING, errno, "Connecting to quagga");
+      clicon_err(OE_UNIX, errno, "Connecting to quagga");
     close (sock);
     return -1;
   }
@@ -315,7 +315,7 @@ quaggapi_exec (const char *sockpath, struct quaggapi_batch *batch, int ignerr)
       cp = batch->cmds[idx].cmd;
       clicon_log(LOG_DEBUG, "%s: write %s",  __FUNCTION__, cp);
     if (write (sock, cp, strlen (cp)) != strlen (cp)) {
-	clicon_err(OE_ROUTING, errno, "Connecting to quagga: write");
+	clicon_err(OE_UNIX, errno, "Connecting to quagga: write");
 	batch->numexec = -1;
 	goto done;
     }
@@ -323,7 +323,7 @@ quaggapi_exec (const char *sockpath, struct quaggapi_batch *batch, int ignerr)
     /* First read header */
     n = read ( sock, hdr, QUAGGAPI_HDR_SIZ);
     if (n != QUAGGAPI_HDR_SIZ) {
-	clicon_err(OE_ROUTING, errno, "Connecting to quagga: read");
+	clicon_err(OE_UNIX, errno, "Connecting to quagga: read");
       batch->numexec = -1;
       goto done;
     }

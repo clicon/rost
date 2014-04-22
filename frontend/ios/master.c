@@ -725,10 +725,12 @@ cli_test_log(clicon_handle h, cvec *vars, cg_var *arg)
     /* Not seen */
     clicon_err(OE_UNIX, EBADF, "%d: Error unix EBADF", ++i);
 
+#ifdef notused
     /* Seen on stderr */
     char str[64];
     sprintf(str, "%d: Error print", ++i);
     clicon_err_print(stderr, str);
+#endif
     return 0;
 }
 

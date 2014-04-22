@@ -218,3 +218,70 @@ rost_proc_killbyname (const char *name, int sig)
 	return -1;
 }
 #endif /* BSD */
+
+struct errvec{
+    char *ev_str;
+    int   ev_err;
+};
+
+/* Hardcoded to QUAGGA, move to app-layer */
+static struct errvec QV[] = {
+    {"QUAGGA_SUCCESS",              0},
+    {"QUAGGA_WARNING",              1},
+    {"QUAGGA_ERR_NO_MATCH",         2},
+    {"QUAGGA_ERR_AMBIGUOUS",        3},
+    {"QUAGGA_ERR_INCOMPLETE",       4},
+    {"QUAGGA_ERR_EXEED_ARGC_MAX",   5},
+    {"QUAGGA_ERR_NOTHING_TODO",     6},
+    {"QUAGGA_COMPLETE_FULL_MATCH",  7},
+    {"QUAGGA_COMPLETE_MATCH",       8},
+    {"QUAGGA_COMPLETE_LIST_MATCH",  9},
+    {"QUAGGA_SUCCESS_DAEMON",      10},
+    {"QUAGGA_NO_CONTACT",          11},
+    {NULL,            -1}
+};
+
+
+/*!
+ * \brief Special error message for quagga routing, using clicon_err as backend
+ *
+ * This is a kludge to replace clicon_err(OE_ROUTING..) calls with 
+ * application-specific code inside clicon. We have now moved it outside 
+ * of clicon and placed it here instead.
+ */
+int
+rost_err(int suberr, char *reason, ...)
+{
+    va_list        args;
+    struct errvec *ev;
+    char          *errstr;
+    int            len;
+    char          *msg = NULL;
+    int            retval = -1;
+
+    for (ev=QV; ev->ev_err != -1; ev++)
+	if (ev->ev_err == suberr)
+	    break;
+    errstr = ev?(ev->ev_str?ev->ev_str:"unknown"):"ROST unknown error";
+
+    /* first round: compute length of error message */
+    va_start(args, reason);
+    len = vsnprintf(NULL, 0, reason, args);
+    va_end(args);
+    
+    /* second round: compute write message from reason and args */
+    va_start(args, reason);
+    if (vsnprintf(msg, len+1, reason, args) < 0){
+	va_end(args);
+	fprintf(stderr, "vsnprintf: %s\n", strerror(errno)); /* dont use clicon_err here due to recursion */
+	goto done;
+    }
+    va_end(args);
+    retval = clicon_err(OE_ROUTING, 0, "%s: %s", 
+		      msg,
+		      errstr);
+  done:
+    if (msg)
+	free(msg);
+    return retval;
+}
