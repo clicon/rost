@@ -22,7 +22,7 @@
 #
 
 prefix		= @prefix@
-plugindir	= $(prefix)/frontend/ios
+plugindir	= $(DESTDIR)$(prefix)/frontend/ios
 srcdir  	= @srcdir@
 top_srcdir  	= @top_srcdir@
 CC		= @CC@
@@ -68,6 +68,6 @@ clean:
 	rm -f $(OBJS) $(SHOBJS) *.core *.so *.o  *.cli  # last to clean old unknown binaries
 
 distclean: clean
-	rm -f *~
+	rm -f *~ Makefile
 
 

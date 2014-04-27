@@ -55,6 +55,7 @@ clean:
 distclean:
 	for i in $(SUBDIRS); \
 	do (cd $$i; $(MAKE) $(MFLAGS) $@); done
+	rm -f Makefile config.log config.status include/rost_config.h
 
 tags:
 	find $(srcdir) -name '*.[chyl]' -print | etags -
