@@ -30,8 +30,8 @@ CPP		= @CPP@
 CFLAGS  	= @CFLAGS@ -rdynamic -fPIC
 CPPFLAGS  	= @CPPFLAGS@ $(INCLUDES)
 LDFLAGS		+= -L../lib -L../../lib
-LIBS    	= -Wl,--whole-archive -lfront -lrost -lblkid -Wl,--no-whole-archive @LIBS@
-INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/frontend/lib -I$(top_srcdir)/lib
+LIBS    	= -Wl,--whole-archive -lfront -lrost @blkid_LIBS@  -Wl,--no-whole-archive @LIBS@ @sqlite_LIBS@ @curl_LIBS@
+INCLUDES 	= @INCLUDES@ @blkid_CFLAGS@ @sqlite_CFLAGS@ @curl_CFLAGS@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/frontend/lib -I$(top_srcdir)/lib
 SHELL		= /bin/sh
 
 SUBDIRS = 
