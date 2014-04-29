@@ -31,6 +31,7 @@ CPPFLAGS  	= @CPPFLAGS@ $(INCLUDES)
 LIBS    	= @LIBS@ 
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib
 LDFLAGS		+= -L../lib 
+INSTALL		= @INSTALL@
 
 SHELL	= /bin/sh
 
@@ -50,8 +51,8 @@ all:	 $(SHOBJS)
 
 
 install: $(SHOBJS)
-	install -d $(plugindir)
-	install $^ $(plugindir)
+	$(INSTALL) -d $(plugindir)
+	$(INSTALL) $^ $(plugindir)
 
 uninstall:
 	for i in $(SHOBJS); do \

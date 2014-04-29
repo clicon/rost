@@ -33,6 +33,7 @@ LDFLAGS		+= -L../lib -L../../lib
 LIBS    	= -Wl,--whole-archive -lfront -lrost -lblkid -Wl,--no-whole-archive @LIBS@
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/frontend/lib -I$(top_srcdir)/lib
 SHELL		= /bin/sh
+INSTALL		= @INSTALL@
 
 SUBDIRS = 
 
@@ -55,8 +56,8 @@ all:	 $(SHOBJS) $(STXCLI)
 .SUFFIXES: .c .o .so .cpp .cli
 
 install: $(SHOBJS) $(STXCLI)
-	install -d $(plugindir)
-	install $^ $(plugindir)
+	$(INSTALL) -d $(plugindir)
+	$(INSTALL) $^ $(plugindir)
 
 uninstall:
 	for i in $(SHOBJS); do \
