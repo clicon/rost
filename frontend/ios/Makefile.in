@@ -45,10 +45,10 @@ SHOBJS	= $(OBJS:.o=.so)
 STXCPP  = $(wildcard *.cpp)
 STXCLI	= $(STXCPP:.cpp=.cli)
 
--include $(datadir)/clicon/clicon.mk
 
 all:	 $(SHOBJS) $(STXCLI)
 
+-include $(datadir)/clicon/clicon.mk
 .o.so: 
 	$(CC) $(LDFLAGS) -shared -o $@ -lc $< $(LIBS)
 

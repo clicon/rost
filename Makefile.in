@@ -38,10 +38,10 @@ SUBDIRS = lib frontend backend
 
 .PHONY:	all $(SUBDIRS) install uninstall clean distclean tags
 
--include $(datadir)/clicon/clicon.mk
 
 all:	$(SUBDIRS)
 
+-include $(datadir)/clicon/clicon.mk
 $(SUBDIRS):
 		(cd $@; $(MAKE) $(MFLAGS) all)
 

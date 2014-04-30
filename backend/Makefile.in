@@ -43,10 +43,10 @@ SRC     =  auth.c quagga.c syslog.c linux-vlan.c linux-tunnel.c \
 OBJS    = $(SRC:.c=.o)
 SHOBJS	= $(OBJS:.o=.so)
 
--include $(datadir)/clicon/clicon.mk
 
 all:	 $(SHOBJS) 
 
+-include $(datadir)/clicon/clicon.mk
 .o.so: 
 	$(CC) $(LDFLAGS) -shared -o $@ -lc $< $(LIBS)
 
