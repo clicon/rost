@@ -22,7 +22,7 @@
 #
 
 prefix		= @prefix@
-plugindir	= $(DESTDIR)$(clicon_PLUGINDIR)/backend
+plugindir	= $(DESTDIR)$(clicon_LIBDIR)/backend
 srcdir  	= @srcdir@
 datadir		= @datadir@
 top_srcdir  	= @top_srcdir@
