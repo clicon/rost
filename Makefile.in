@@ -23,9 +23,12 @@
 
 prefix	= @prefix@
 srcdir	= @srcdir@
+datadir = @datadir@
 CC	= @CC@
 CFLAGS 	= @CFLAGS@
 LIBS   	= @LIBS@
+INSTALL = @INSTALL@
+APPNAME = @APPNAME@
 
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include 
 
@@ -35,12 +38,20 @@ SUBDIRS = lib frontend backend
 
 .PHONY:	all $(SUBDIRS) install uninstall clean distclean tags
 
+-include $(datadir)/clicon/clicon.mk
+
 all:	$(SUBDIRS)
 
 $(SUBDIRS):
 		(cd $@; $(MAKE) $(MFLAGS) all)
 
-install:
+install:	$(APPNAME).conf	
+	$(INSTALL) -d $(DESTDIR)$(clicon_DBSPECDIR)
+	$(INSTALL) -d $(DESTDIR)$(clicon_SYSCONFDIR)
+	$(INSTALL) -d $(DESTDIR)$(clicon_LOCALSTATEDIR)
+	$(INSTALL) -d $(DESTDIR)$(clicon_LIBDIR)
+	$(INSTALL) $(APPNAME).conf $(DESTDIR)$(clicon_SYSCONFDIR)
+	$(INSTALL) datamodel.spec $(DESTDIR)$(clicon_DBSPECDIR)
 	for i in $(SUBDIRS); \
 	do (cd $$i; $(MAKE) $(MFLAGS) $@); done
 
