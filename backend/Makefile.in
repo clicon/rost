@@ -22,14 +22,18 @@
 #
 
 prefix		= @prefix@
-plugindir	= $(DESTDIR)$(prefix)/backend
+plugindir	= $(DESTDIR)$(clicon_LIBDIR)/backend
 srcdir  	= @srcdir@
+datadir		= @datadir@
 top_srcdir  	= @top_srcdir@
 CC		= @CC@
-CFLAGS  	= @CFLAGS@
-CPPFLAGS  	= @CPPFLAGS@ 
-LIBS    	= @LIBS@ -L../lib -lrost -lsqlite3
+CFLAGS  	= @CFLAGS@ -rdynamic -fPIC
+CPPFLAGS  	= @CPPFLAGS@ $(INCLUDES)
+LIBS    	= @LIBS@ 
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib
+LDFLAGS		+= -L../lib 
+INSTALL		= @INSTALL@
+APPNAME		= @APPNAME@
 
 SHELL	= /bin/sh
 
@@ -39,11 +43,10 @@ SRC     =  auth.c quagga.c syslog.c linux-vlan.c linux-tunnel.c \
 OBJS    = $(SRC:.c=.o)
 SHOBJS	= $(OBJS:.o=.so)
 
+
 all:	 $(SHOBJS) 
 
-.c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c -rdynamic -fPIC $<
-
+-include $(datadir)/clicon/clicon.mk
 .o.so: 
 	$(CC) $(LDFLAGS) -shared -o $@ -lc $< $(LIBS)
 
@@ -52,8 +55,8 @@ all:	 $(SHOBJS)
 
 
 install: $(SHOBJS)
-	install -d $(plugindir)
-	install $^ $(plugindir)
+	$(INSTALL) -d $(plugindir)
+	$(INSTALL) $^ $(plugindir)
 
 uninstall:
 	for i in $(SHOBJS); do \

@@ -22,17 +22,20 @@
 #
 
 prefix		= @prefix@
-plugindir	= $(DESTDIR)$(prefix)/frontend/ios
+plugindir	= $(DESTDIR)$(clicon_LIBDIR)/frontend/ios
 srcdir  	= @srcdir@
+datadir		= @datadir@
 top_srcdir  	= @top_srcdir@
 CC		= @CC@
 CPP		= @CPP@
-CFLAGS  	= @CFLAGS@
-CPPFLAGS  	= @CPPFLAGS@ 
-LIBS    	= -L../lib -L../../lib -Wl,--whole-archive -lfront -lrost -lblkid -Wl,--no-whole-archive -lsqlite3 -lcurl @LIBS@
+CFLAGS  	= @CFLAGS@ -rdynamic -fPIC
+CPPFLAGS  	= @CPPFLAGS@ $(INCLUDES)
+LDFLAGS		+= -L../lib -L../../lib
+LIBS    	= -Wl,--whole-archive -lfront -lrost -lblkid -Wl,--no-whole-archive @LIBS@
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/frontend/lib -I$(top_srcdir)/lib
 SHELL		= /bin/sh
-
+INSTALL		= @INSTALL@
+APPNAME		= @APPNAME@
 SUBDIRS = 
 
 SRC     =  master.c ios-config.c system.c quagga.c syslog.c grub.c \
@@ -42,11 +45,10 @@ SHOBJS	= $(OBJS:.o=.so)
 STXCPP  = $(wildcard *.cpp)
 STXCLI	= $(STXCPP:.cpp=.cli)
 
+
 all:	 $(SHOBJS) $(STXCLI)
 
-.c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c -rdynamic -fPIC $<
-
+-include $(datadir)/clicon/clicon.mk
 .o.so: 
 	$(CC) $(LDFLAGS) -shared -o $@ -lc $< $(LIBS)
 
@@ -57,8 +59,8 @@ all:	 $(SHOBJS) $(STXCLI)
 .SUFFIXES: .c .o .so .cpp .cli
 
 install: $(SHOBJS) $(STXCLI)
-	install -d $(plugindir)
-	install $^ $(plugindir)
+	$(INSTALL) -d $(plugindir)
+	$(INSTALL) $^ $(plugindir)
 
 uninstall:
 	for i in $(SHOBJS); do \
