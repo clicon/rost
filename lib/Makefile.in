@@ -25,10 +25,10 @@ prefix		= @prefix@
 srcdir  	= @srcdir@
 top_srcdir  	= @top_srcdir@
 CC		= @CC@
-CFLAGS  	= @CFLAGS@
+CFLAGS  	= @CFLAGS@ -fPIC
 LIBS    	= @LIBS@
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include 
-CPPFLAGS  	= @CPPFLAGS@ -fPIC
+CPPFLAGS  	= @CPPFLAGS@ $(INCLUDES)
 SHELL		= /bin/sh
 
 SRC     =  quaggapi.c syslog.c grub.c ethtool.c system.c interface.c 
@@ -37,12 +37,7 @@ ROSTLIB   = librost.a
 
 all:	$(ROSTLIB)
 
-.c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $<
-
-$(ROSTLIB) : $(OBJS)
-	$(AR) -r $@ $(OBJS) $(YACCOBJS)
-	ranlib $(ROSTLIB)
+$(ROSTLIB):	$(patsubst %,$(ROSTLIB)(%),$(OBJS))
 
 install:
 
