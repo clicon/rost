@@ -612,6 +612,7 @@ OBJEXT
 EXEEXT
 ac_ct_CC
 LDFLAGS
+APPNAME
 CFLAGS
 CPPFLAGS
 INCLUDES
@@ -2126,6 +2127,7 @@ $as_echo "@%:@define AUTOCONF 1" >>confdefs.h
 
 
 
+
 #
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -3150,6 +3152,7 @@ test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 CPPFLAGS="-DHAVE_ROST_CONFIG_H"
 CFLAGS="-Wall ${CFLAGS}"
 LDFLAGS="-g ${LDFLAGS}"
+APPNAME="rost"
 
 
 
