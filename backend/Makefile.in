@@ -22,8 +22,9 @@
 #
 
 prefix		= @prefix@
-plugindir	= $(DESTDIR)$(prefix)/backend
+plugindir	= $(DESTDIR)$(clicon_LIBDIR)/backend
 srcdir  	= @srcdir@
+datadir		= @datadir@
 top_srcdir  	= @top_srcdir@
 CC		= @CC@
 CFLAGS  	= @CFLAGS@ -rdynamic -fPIC
@@ -32,6 +33,7 @@ LIBS    	= @LIBS@
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/lib
 LDFLAGS		+= -L../lib 
 INSTALL		= @INSTALL@
+APPNAME		= @APPNAME@
 
 SHELL	= /bin/sh
 
@@ -41,8 +43,10 @@ SRC     =  auth.c quagga.c syslog.c linux-vlan.c linux-tunnel.c \
 OBJS    = $(SRC:.c=.o)
 SHOBJS	= $(OBJS:.o=.so)
 
+
 all:	 $(SHOBJS) 
 
+-include $(datadir)/clicon/clicon.mk
 .o.so: 
 	$(CC) $(LDFLAGS) -shared -o $@ -lc $< $(LIBS)
 

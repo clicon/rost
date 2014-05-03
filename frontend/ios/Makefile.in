@@ -22,8 +22,9 @@
 #
 
 prefix		= @prefix@
-plugindir	= $(DESTDIR)$(prefix)/frontend/ios
+plugindir	= $(DESTDIR)$(clicon_LIBDIR)/frontend/ios
 srcdir  	= @srcdir@
+datadir		= @datadir@
 top_srcdir  	= @top_srcdir@
 CC		= @CC@
 CPP		= @CPP@
@@ -34,7 +35,7 @@ LIBS    	= -Wl,--whole-archive -lfront -lrost -lblkid -Wl,--no-whole-archive @LI
 INCLUDES 	= @INCLUDES@ -I. -I$(top_srcdir)/include -I$(top_srcdir)/frontend/lib -I$(top_srcdir)/lib
 SHELL		= /bin/sh
 INSTALL		= @INSTALL@
-
+APPNAME		= @APPNAME@
 SUBDIRS = 
 
 SRC     =  master.c ios-config.c system.c quagga.c syslog.c grub.c \
@@ -44,8 +45,10 @@ SHOBJS	= $(OBJS:.o=.so)
 STXCPP  = $(wildcard *.cpp)
 STXCLI	= $(STXCPP:.cpp=.cli)
 
+
 all:	 $(SHOBJS) $(STXCLI)
 
+-include $(datadir)/clicon/clicon.mk
 .o.so: 
 	$(CC) $(LDFLAGS) -shared -o $@ -lc $< $(LIBS)
 
