@@ -23,7 +23,7 @@
 
 prefix	= @prefix@
 srcdir	= @srcdir@
-datadir = @datadir@
+datarootdir = @datarootdir@
 CC	= @CC@
 CFLAGS 	= @CFLAGS@
 LIBS   	= @LIBS@
@@ -41,7 +41,7 @@ SUBDIRS = lib frontend backend
 
 all:	$(SUBDIRS)
 
--include $(datadir)/clicon/clicon.mk
+-include $(datarootdir)/clicon/clicon.mk
 $(SUBDIRS):
 		(cd $@; $(MAKE) $(MFLAGS) all)
 

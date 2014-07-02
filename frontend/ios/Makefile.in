@@ -24,7 +24,7 @@
 prefix		= @prefix@
 plugindir	= $(DESTDIR)$(clicon_LIBDIR)/frontend/ios
 srcdir  	= @srcdir@
-datadir		= @datadir@
+datarootdir	= @datarootdir@
 top_srcdir  	= @top_srcdir@
 CC		= @CC@
 CPP		= @CPP@
@@ -48,7 +48,7 @@ STXCLI	= $(STXCPP:.cpp=.cli)
 
 all:	 $(SHOBJS) $(STXCLI)
 
--include $(datadir)/clicon/clicon.mk
+-include $(datarootdir)/clicon/clicon.mk
 .o.so: 
 	$(CC) $(LDFLAGS) -shared -o $@ -lc $< $(LIBS)
 
