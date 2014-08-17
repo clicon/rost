@@ -450,7 +450,7 @@ cli_ios_show_running(clicon_handle h, struct lvmap *lmap)
     int fd = -1;
     FILE *f = NULL;
     char db[] = "/tmp/curdbXXXXXX";
-    struct db_spec *dbspec;
+    dbspec_key *dbspec;
     /*
      * XXX Hack. Copy db, add system.boot key and print it. 
      */
