@@ -70,11 +70,11 @@ tunnel_add_interface(clicon_handle h, cvec *vars, cg_var *arg)
     }
 
     /* Build cgv for cli_ios_mode() */
-    if ((cv1 = cv_new(CGV_INT)) == NULL){
+    if ((cv1 = cv_new(CGV_INT32)) == NULL){
 	fprintf(stderr, "%s: cv_new: %s\n", __FUNCTION__, strerror(errno));
 	goto catch;
     }
-    cv_int_set(cv1, IOS_MODE_INTERFACE);
+    cv_int32_set(cv1, IOS_MODE_INTERFACE);
     if (cli_ios_mode(h, vars, cv1)) {
 	
 	/* cli_ios_mode() was successful,not add tunnel mode key */

@@ -72,7 +72,7 @@ grub_parsemenu()
   char   *cmd;
   char   *args;
   char    line[512];
-  cg_var *cv;
+  cg_var *cv = NULL;
   cvec   **tmp;
   int initems = 0; /* Done with grub menu commands */
   struct grub_conf *g;

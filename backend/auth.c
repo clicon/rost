@@ -105,7 +105,7 @@ plugin_reset(clicon_handle h)
 #if 1
     int retval = -1;
     char *db = clicon_running_db(h);
-    struct db_spec *dbspec = clicon_dbspec_key(h);
+    dbspec_key *dbspec = clicon_dbspec_key(h);
 
 #if 0 /* Keep until we know admin works, then remove */
     if (db_lv_op(dbspec, db, LV_SET, "system.login.user[].class $!user=(string)\"root\" $class=(string)\"superuser\"", 0, NULL) < 0)

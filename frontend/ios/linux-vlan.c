@@ -45,10 +45,10 @@
 int 
 vlan_add_interface(void *handle, cvec *vars, cg_var *arg)
 {
-    char *dot;
-    cg_var *cv;
+    char   *dot;
+    cg_var *cv = NULL;
     cg_var *ifname;
-    char *str;
+    char   *str;
 
     if ((ifname = cvec_find_var(vars, "name")) == NULL) {
 	clicon_err(OE_CFG, ENOENT, "Could not find 'name' in variable vector");

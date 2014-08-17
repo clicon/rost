@@ -111,10 +111,10 @@ interface_ipv4flg_commit(clicon_handle h,
 			 char *key,
 			 void *arg)
 {
-    int retval = -1;
-    char *path = NULL;
+    int     retval = -1;
+    char   *path = NULL;
     cg_var *status = NULL;
-    FILE *f;
+    FILE   *f = NULL;
 
     if ((path = lvmap_fmt(db, (char *)arg, key)) == NULL)
 	goto catch;
@@ -235,7 +235,7 @@ load_if_prefix(clicon_handle h, char *ifname)
     int retval = -1;
     char *cmd;
     char *db = clicon_running_db(h);
-    struct db_spec *dbspec = clicon_dbspec_key(h);
+    dbspec_key *dbspec = clicon_dbspec_key(h);
 
     if ((cmd = chunk_sprintf(__FUNCTION__, 
 			     "interface[].unit[] $!name=(string)\"%s\" $!unit=(int)0", 
@@ -270,7 +270,7 @@ set_if_ipv4defaults(clicon_handle h, char *ifname)
     int i;
     FILE *f;
     char *db = clicon_running_db(h);
-    struct db_spec *dbspec = clicon_dbspec_key(h);
+    dbspec_key *dbspec = clicon_dbspec_key(h);
     struct {
 	char *key;
 	int value;
