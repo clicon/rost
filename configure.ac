@@ -108,7 +108,6 @@ AC_DEFINE_UNQUOTED(ROST_IMAGE_DIR, "${ROST_DIR}/flash/boot/ROST")
 AC_DEFINE_UNQUOTED(ROST_CONFIG_DIR, "${ROST_DIR}/flash/config")
 
 AC_OUTPUT(Makefile
-	  rost.conf 
 	  lib/Makefile 
 	  frontend/Makefile 
 	  frontend/lib/Makefile 
