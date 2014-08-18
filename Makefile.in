@@ -23,7 +23,8 @@
 
 prefix	= @prefix@
 srcdir	= @srcdir@
-datarootdir = @datarootdir@  # eg /usr/local/share
+# eg /usr/local/share
+datarootdir = @datarootdir@
 CC	= @CC@
 CFLAGS 	= @CFLAGS@
 LIBS   	= @LIBS@
