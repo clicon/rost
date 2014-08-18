@@ -4248,7 +4248,7 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-ac_config_files="$ac_config_files Makefile rost.conf lib/Makefile frontend/Makefile frontend/lib/Makefile frontend/ios/Makefile backend/Makefile"
+ac_config_files="$ac_config_files Makefile lib/Makefile frontend/Makefile frontend/lib/Makefile frontend/ios/Makefile backend/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -4954,7 +4954,6 @@ do
   case $ac_config_target in
     "include/rost_config.h") CONFIG_HEADERS="$CONFIG_HEADERS include/rost_config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "rost.conf") CONFIG_FILES="$CONFIG_FILES rost.conf" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "frontend/Makefile") CONFIG_FILES="$CONFIG_FILES frontend/Makefile" ;;
     "frontend/lib/Makefile") CONFIG_FILES="$CONFIG_FILES frontend/lib/Makefile" ;;
