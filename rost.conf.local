@@ -1,4 +1,7 @@
+# Do not generate CLI from datamodel
 CLICON_CLI_GENMODEL     0
+
+# CLICON_DBSPEC_FILE (datamodel.spec) uses KEY syntax (not YANG)
 CLICON_DBSPEC_TYPE      KEY
 QUAGGA_DIR              /var/lib/quagga
 
