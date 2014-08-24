@@ -66,7 +66,7 @@ show("Show running system information") {
 	    <string>("Name of a prefix list") <ipv4prefix>("IP prefix <network>/<length>,  e.g.,  35.0.0.0/8"), cli_zebra_exec("show ip prefix-list %s %p"), SHOW;
 	    <string>("Name of a prefix list") <ipv4prefix>("IP prefix <network>/<length>,  e.g.,  35.0.0.0/8") first-match("First matched prefix"), cli_zebra_exec("show ip prefix-list %s %p first-match"), SHOW; 
 	    <string>("Name of a prefix list") <ipv4prefix>("IP prefix <network>/<length>,  e.g.,  35.0.0.0/8") longer("Lookup longer prefix"), cli_zebra_exec("show ip prefix-list %s %p longer"), SHOW;
-            seq("sequence number of an entry") <number range[1:4294967295]>("Sequence number"), cli_zebra_exec("show ip prefix-list %s seq %n"), SHOW;
+            seq("sequence number of an entry") <uint32 range[1:4294967295]>("Sequence number"), cli_zebra_exec("show ip prefix-list %s seq %n"), SHOW;
         } /* SHOW IP PREFIX-LIST */
         
         /* SHOW IP ACCESS-LIST */

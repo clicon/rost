@@ -116,11 +116,11 @@ no("Negate a command or set its defaults") match("Match values from routing tabl
 
 
     /* MATCH METRIC */
-match("Match values from routing table") metric("Match metric of route") <number range[0:4294967295]>("Metric value"), cli_set("route-map[].line[].match.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $metric"), ADMIN;
+match("Match values from routing table") metric("Match metric of route") <uint32 range[0:4294967295]>("Metric value"), cli_set("route-map[].line[].match.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $metric"), ADMIN;
 
 
 no("Negate a command or set its defaults") match("Match values from routing table") metric("Match metric of route"), cli_del("route-map[].line[].match.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb()"), ADMIN;
-no("Negate a command or set its defaults") match("Match values from routing table") metric("Match metric of route") <number range[0:4294967295]>("Metric value"), cli_del("route-map[].line[].match.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb()"), ADMIN;
+no("Negate a command or set its defaults") match("Match values from routing table") metric("Match metric of route") <uint32 range[0:4294967295]>("Metric value"), cli_del("route-map[].line[].match.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb()"), ADMIN;
 
     /* ON-MATCH */
 on-match("Exit policy on matches") goto("Goto Clause number") <number range[1:65535]>("Number"), cli_set("route-map[].line[].on-match $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $op=(string)\"goto\" $goto"), ADMIN;
@@ -185,19 +185,19 @@ no("Negate a command or set its defaults") set("Set values in destination routin
 #endif /* notyet */
 
     /* SET LOCAL-PREFERENCE */
-set("Set values in destination routing protocol") local-preference("BGP local preference path attribute") <number range[0:4294967295]>("Preference value"), cli_set("route-map[].line[].set.local-preference $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $localpref"), ADMIN;
+set("Set values in destination routing protocol") local-preference("BGP local preference path attribute") <uint32 range[0:4294967295]>("Preference value"), cli_set("route-map[].line[].set.local-preference $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $localpref"), ADMIN;
 
 no("Negate a command or set its defaults") set("Set values in destination routing protocol") local-preference("BGP local preference path attribute"), cli_del("route-map[].line[].set.local-preference $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb()"), ADMIN;
-no("Negate a command or set its defaults") set("Set values in destination routing protocol") local-preference("BGP local preference path attribute") <number range[0:4294967295]>("Preference value"),  cli_del("route-map[].line[].set.local-preference $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $localpref"), ADMIN;
+no("Negate a command or set its defaults") set("Set values in destination routing protocol") local-preference("BGP local preference path attribute") <uint32 range[0:4294967295]>("Preference value"),  cli_del("route-map[].line[].set.local-preference $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $localpref"), ADMIN;
 
     /* SET METRIC */
-set("Set values in destination routing protocol") metric("Metric value for destination routing protocol") <number range[0:4294967295]>("Metric value"), cli_set("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $metric"), ADMIN;
-set("Set values in destination routing protocol") metric("Metric value for destination routing protocol") +("Add metric") <number range[0:4294967295]>("Metric value"), cli_set("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $op=(string)\"+\" $metric"), ADMIN;
-set("Set values in destination routing protocol") metric("Metric value for destination routing protocol") -("Subtract metric") <number range[0:4294967295]>("Metric value"), cli_set("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $op=(string)\"-\" $metric"), ADMIN;
+set("Set values in destination routing protocol") metric("Metric value for destination routing protocol") <uint32 range[0:4294967295]>("Metric value"), cli_set("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $metric"), ADMIN;
+set("Set values in destination routing protocol") metric("Metric value for destination routing protocol") +("Add metric") <uint32 range[0:4294967295]>("Metric value"), cli_set("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $op=(string)\"+\" $metric"), ADMIN;
+set("Set values in destination routing protocol") metric("Metric value for destination routing protocol") -("Subtract metric") <uint32 range[0:4294967295]>("Metric value"), cli_set("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $op=(string)\"-\" $metric"), ADMIN;
 
 no("Negate a command or set its defaults") set("Set values in destination routing protocol") metric("Metric value for destination routing protocol"), cli_del("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb()"), ADMIN;
-no("Negate a command or set its defaults") set("Set values in destination routing protocol") metric("Metric value for destination routing protocol") +("Add metric") <number range[0:4294967295]>("Metric value"), cli_del("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb()"), ADMIN;
-no("Negate a command or set its defaults") set("Set values in destination routing protocol") metric("Metric value for destination routing protocol") -("Subtract metric") <number range[0:4294967295]>("Metric value"), cli_del("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb()"), ADMIN;
+no("Negate a command or set its defaults") set("Set values in destination routing protocol") metric("Metric value for destination routing protocol") +("Add metric") <uint32 range[0:4294967295]>("Metric value"), cli_del("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb()"), ADMIN;
+no("Negate a command or set its defaults") set("Set values in destination routing protocol") metric("Metric value for destination routing protocol") -("Subtract metric") <uint32 range[0:4294967295]>("Metric value"), cli_del("route-map[].line[].set.metric $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb()"), ADMIN;
     
     /* SET METRIC-TYPE */
 set("Set values in destination routing protocol") metric-type("Type of metric") type-1("OSPF external type 1 metric"), cli_set("route-map[].line[].set.metric-type $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $metric_type=(string)\"type-1\""), ADMIN;
@@ -238,8 +238,8 @@ no("Negate a command or set its defaults") set("Set values in destination routin
 
 
     /* SET WEIGHT */
-set("Set values in destination routing protocol") weight("BGP weight for routing table") <number range[0:4294967295]>("Weight value"), cli_set("route-map[].line[].set.weight $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $weight"), ADMIN;
+set("Set values in destination routing protocol") weight("BGP weight for routing table") <uint32 range[0:4294967295]>("Weight value"), cli_set("route-map[].line[].set.weight $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $weight"), ADMIN;
 
 no("Negate a command or set its defaults") set("Set values in destination routing protocol") weight("BGP weight for routing table"), cli_del("route-map[].line[].set.weight $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb()"), ADMIN;
-no("Negate a command or set its defaults") set("Set values in destination routing protocol") weight("BGP weight for routing table") <number range[0:4294967295]>("Weight value"), cli_del("route-map[].line[].set.weight $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $weight"), ADMIN;
+no("Negate a command or set its defaults") set("Set values in destination routing protocol") weight("BGP weight for routing table") <uint32 range[0:4294967295]>("Weight value"), cli_del("route-map[].line[].set.weight $!name=ios_routemap_cb() $!line=ios_routemap_cb() $action=ios_routemap_cb() $weight"), ADMIN;
 
