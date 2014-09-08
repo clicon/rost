@@ -22,7 +22,7 @@
 #
 
 prefix		= @prefix@
-plugindir	= $(DESTDIR)$(clicon_LIBDIR)/frontend/ios
+plugindir	= $(DESTDIR)$(clicon_LIBDIR)/frontend
 srcdir  	= @srcdir@
 datarootdir	= @datarootdir@
 top_srcdir  	= @top_srcdir@
