@@ -1,3 +1,6 @@
+# Set if you do not want rost to add users etc
+ROST_EMULATOR     0
+
 # Do not generate CLI from datamodel
 CLICON_CLI_GENMODEL     0
 

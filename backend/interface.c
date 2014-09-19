@@ -43,8 +43,8 @@
 /*
  * Prototypes
  */
-static int load_if_prefix(clicon_handle h, char *ifname);
-static int set_if_ipv4defaults(clicon_handle h, char *ifname);
+static int load_if_prefix(clicon_handle h, char *dbname, char *ifname);
+static int set_if_ipv4defaults(clicon_handle h, char *dbname, char *ifname);
 
 /*
  * Global variables
@@ -192,7 +192,7 @@ int
 transaction_end(clicon_handle h)
 {
     if (newif) {
-	set_if_ipv4defaults(h, newif);
+	set_if_ipv4defaults(h, clicon_running_db(h), newif);
 	free(newif);
 	newif = NULL;
     }
@@ -205,7 +205,7 @@ transaction_end(clicon_handle h)
  * The system 'state' should be the same as the contents of running_db
  */
 int
-plugin_reset(clicon_handle h)
+plugin_reset(clicon_handle h, char *dbname)
 {
     int j, i, len;
     struct clicon_if *iflist;
@@ -215,9 +215,9 @@ plugin_reset(clicon_handle h)
 	if (clicon_iflist_get(pfx[j], __FUNCTION__, &iflist, &len) < 0)
 	    return -1;
 	for (i=0; i<len; i++){
-	    if (load_if_prefix(h, iflist[i].ci_name) < 0)
+	    if (load_if_prefix(h, dbname, iflist[i].ci_name) < 0)
 		return -1;
-	    if (set_if_ipv4defaults(h, iflist[i].ci_name) < 0)
+	    if (set_if_ipv4defaults(h, dbname, iflist[i].ci_name) < 0)
 		return -1;
 	}
     }
@@ -230,11 +230,10 @@ plugin_reset(clicon_handle h)
  * Add keys in running db for known interfaces
  */
 static int
-load_if_prefix(clicon_handle h, char *ifname)
+load_if_prefix(clicon_handle h, char *db, char *ifname)
 {
     int retval = -1;
     char *cmd;
-    char *db = clicon_running_db(h);
     dbspec_key *dbspec = clicon_dbspec_key(h);
 
     if ((cmd = chunk_sprintf(__FUNCTION__, 
@@ -263,13 +262,12 @@ err:
 }
 
 static int
-set_if_ipv4defaults(clicon_handle h, char *ifname)
+set_if_ipv4defaults(clicon_handle h, char *db, char *ifname)
 {
     int retval = -1;
     char *procpath, *dbkey;
     int i;
     FILE *f;
-    char *db = clicon_running_db(h);
     dbspec_key *dbspec = clicon_dbspec_key(h);
     struct {
 	char *key;

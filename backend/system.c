@@ -87,11 +87,10 @@ plugin_start(clicon_handle h, int argc, char **argv)
  * Reset system state
  */
 int
-plugin_reset(clicon_handle h)
+plugin_reset(clicon_handle h, char *db)
 {
     char hostname[HOST_NAME_MAX];
     char *fmt;
-    char *db = clicon_running_db(h);
     int retval = -1;
 
     if (gethostname(hostname, HOST_NAME_MAX) < 0)

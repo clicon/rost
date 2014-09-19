@@ -49,7 +49,7 @@ static int auth_login_user_auth_passwd(clicon_handle, char *,trans_cb_type, lv_o
 static int auth_login_user_class(clicon_handle, char *, trans_cb_type, lv_op_t, char *, void *);
 
 /* emulator variable */
-static const int rost_emulator = 0;
+static int rost_emulator = 0;
 
 /* Map of key-callback pairs for system */
 struct {
@@ -82,6 +82,8 @@ plugin_init(clicon_handle h)
 	}
 	clicon_debug(1, "Created dependency '%s'", key);
     }	
+    if (clicon_option_exists(h, "ROST_EMULATOR"))
+	rost_emulator = clicon_option_int(h, "ROST_EMULATOR");
     retval = 0;
   done:
     return retval;
@@ -100,11 +102,10 @@ plugin_start(clicon_handle h, int argc, char **argv)
  * Reset system state
  */
 int
-plugin_reset(clicon_handle h)
+plugin_reset(clicon_handle h, char *db)
 {
 #if 1
     int retval = -1;
-    char *db = clicon_running_db(h);
     dbspec_key *dbspec = clicon_dbspec_key(h);
 
 #if 0 /* Keep until we know admin works, then remove */
