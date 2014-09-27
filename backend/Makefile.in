@@ -22,7 +22,6 @@
 #
 
 prefix		= @prefix@
-plugindir	= $(DESTDIR)$(clicon_LIBDIR)/backend
 srcdir  	= @srcdir@
 datarootdir	= @datarootdir@
 top_srcdir  	= @top_srcdir@
@@ -47,6 +46,8 @@ SHOBJS	= $(OBJS:.o=.so)
 all:	 $(SHOBJS) 
 
 -include $(datarootdir)/clicon/clicon.mk
+plugindir	= $(DESTDIR)$(clicon_LIBDIR)/backend
+
 .o.so: 
 	$(CC) $(LDFLAGS) -shared -o $@ -lc $< $(LIBS)
 

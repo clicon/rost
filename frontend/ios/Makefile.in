@@ -22,7 +22,8 @@
 #
 
 prefix		= @prefix@
-plugindir	= $(DESTDIR)$(clicon_LIBDIR)/frontend
+plugindir	= $(DESTDIR)$(clicon_LIBDIR)/cli
+clispecdir	= $(DESTDIR)$(clicon_LIBDIR)/clispec
 srcdir  	= @srcdir@
 datarootdir	= @datarootdir@
 top_srcdir  	= @top_srcdir@
@@ -60,11 +61,15 @@ all:	 $(SHOBJS) $(STXCLI)
 
 install: $(SHOBJS) $(STXCLI)
 	$(INSTALL) -d $(plugindir)
-	$(INSTALL) $^ $(plugindir)
+	$(INSTALL) -d $(clispecdir)
+	$(INSTALL) $(SHOBJS) $(plugindir)
+	$(INSTALL) $(STXCLI) $(clispecdir)
 
 uninstall:
 	for i in $(SHOBJS); do \
 	rm -f $(plugindir)/$$i; done
+	for i in $(STXCLI); do \
+	rm -f $(clispecdir)/$$i; done
 
 clean:
 	rm -f $(OBJS) $(SHOBJS) *.core *.so *.o  *.cli  # last to clean old unknown binaries
