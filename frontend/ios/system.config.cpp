@@ -25,8 +25,6 @@
 CLICON_MODE=STRINGIFY(IOS_CONFIG);
 CLICON_PLUGIN="system";
 
-set("Set a value") @C, cli_merge(), ADMIN;
-
 no("Negate a command or set its defaults") username("Establish User Name Authentication") <user:string expand_user()>("User name"), cli_del_tree("system.login.user[] $!user"), ADMIN;
 
 username("Establish User Name Authentication") <user:string>("User name") password("Specify the password for the user") cleartext("Specify cleartext password"), cli_passwd_cleartext("system.login.user[].authentication.password $!user $password"),ADMIN;
