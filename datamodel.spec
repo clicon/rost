@@ -44,7 +44,7 @@ ipv4.forwarding                                      $status:number
 ipv4.route.static[]                                  $!prefix:ipv4prefix $!nexthop:ipv4addr $distance:number
 ipv4.route.static.null[]                             $!prefix:ipv4prefix $reject $blackhole $distance:number
 ipv4.arp[]                                           $!address:ipv4addr $!mac:macaddr
-ipv4.as-path.access-list[]                           $!name $!action $!regexp
+ipv4.as-path.access-list[]                           $!name $!action $!regexp:rest
 ipv4.prefix-list[]                                   $!name
 ipv4.prefix-list[].line[]                            $!name $!action $!prefix:ipv4prefix $le:number $ge:number $_SEQ:number
 ipv4.prefix-list[].description                       $!name $description
