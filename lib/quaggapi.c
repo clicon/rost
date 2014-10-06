@@ -30,6 +30,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <ctype.h>
 #include <syslog.h>
 #include <stdarg.h>
 #include <sys/types.h>
@@ -300,9 +301,9 @@ quaggapi_exec (const char *sockpath, struct quaggapi_batch *batch, int ignerr)
 {
   int idx, n, msglen;
   int sock = -1;
-  char hdr[QUAGGAPI_HDR_SIZ+1], *hdrp;
-  char retp[QUAGGAPI_HDR_RETSIZ+1];
-  char msgp[QUAGGAPI_HDR_MSGSIZ+1];
+  char b[2];
+  char *ptr;
+  char hbuf[256];
   char *cp;
 
   sock = quaggapi_connect (sockpath);
@@ -313,7 +314,7 @@ quaggapi_exec (const char *sockpath, struct quaggapi_batch *batch, int ignerr)
 
   for (idx = 0; idx < batch->numcmd; idx++) {
       cp = batch->cmds[idx].cmd;
-      clicon_log(LOG_DEBUG, "%s: write %s",  __FUNCTION__, cp);
+      clicon_debug(1, "%s: write %s",  __FUNCTION__, cp);
     if (write (sock, cp, strlen (cp)) != strlen (cp)) {
 	clicon_err(OE_UNIX, errno, "Connecting to quagga: write");
 	batch->numexec = -1;
@@ -321,28 +322,34 @@ quaggapi_exec (const char *sockpath, struct quaggapi_batch *batch, int ignerr)
     }
 
     /* First read header */
-    n = read ( sock, hdr, QUAGGAPI_HDR_SIZ);
-    if (n != QUAGGAPI_HDR_SIZ) {
+    memset(hbuf, '\0', sizeof(hbuf));
+    ptr = hbuf;
+    while (strlen(hbuf) < sizeof(hbuf) &&
+	   (n = read ( sock, b, 1)) > 0 &&
+	   !isspace(b[0]))
+	*ptr++ = b[0];
+    if (n < 0) {
 	clicon_err(OE_UNIX, errno, "Connecting to quagga: read");
-      batch->numexec = -1;
-      goto done;
+	batch->numexec = -1;
+	goto done;
     }
+    batch->cmds[idx].retcode = atoi(hbuf);
 
-    hdr[n] = '\0';
-    hdrp = hdr;
-
-    /* Copy return code */
-    memset (retp, '\0', sizeof (retp));
-    memcpy (retp, hdrp, QUAGGAPI_HDR_RETSIZ);
-    batch->cmds[idx].retcode = atoi (retp);
-    hdrp += QUAGGAPI_HDR_RETSIZ;
-
-    /* Copy msg length */
-    memset (msgp, '\0', sizeof (msgp));
-    memcpy (msgp, hdrp, QUAGGAPI_HDR_MSGSIZ);
+    /* read msg length */
+    memset(hbuf, '\0', sizeof(hbuf));
+    ptr = hbuf;
+    while (strlen(hbuf) < sizeof(hbuf) &&
+	   (n = read ( sock, b, 1)) > 0 &&
+	   !isspace(b[0]))
+	*ptr++ = b[0];
+    if (n < 0) {
+	clicon_err(OE_UNIX, errno, "Connecting to quagga: read");
+	batch->numexec = -1;
+	goto done;
+    }
+    msglen = atoi (hbuf);
 
     /* If we expect an output message, read it now */
-    msglen = atoi (msgp);
     if (msglen > 0) {
 
       /* Allocate space */

@@ -48,7 +48,7 @@ struct quaggapi_cmd {
  * Quagga API header info
  */
 #define QUAGGAPI_HDR_RETSIZ	3	/* Return code size = 3 characters */
-#define QUAGGAPI_HDR_MSGSIZ	6	/* Output mesg size = 6 characters */
+#define QUAGGAPI_HDR_MSGSIZ	12	/* Output mesg size = 6 characters */
 #define QUAGGAPI_HDR_SIZ	(QUAGGAPI_HDR_RETSIZ + QUAGGAPI_HDR_MSGSIZ)
 struct quaggapi_hdr {
   char retcode[QUAGGAPI_HDR_RETSIZ];
