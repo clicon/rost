@@ -50,6 +50,7 @@ install:	$(APPNAME).conf
 	$(INSTALL) -d $(DESTDIR)$(clicon_DBSPECDIR)
 	$(INSTALL) -d $(DESTDIR)$(clicon_SYSCONFDIR)
 	$(INSTALL) -d $(DESTDIR)$(clicon_LOCALSTATEDIR)
+	$(INSTALL) -d $(DESTDIR)$(clicon_LOCALSTATEDIR)/archive
 	$(INSTALL) -d $(DESTDIR)$(clicon_LIBDIR)
 	$(INSTALL) $(APPNAME).conf $(DESTDIR)$(clicon_SYSCONFDIR)
 	$(INSTALL) datamodel.spec $(DESTDIR)$(clicon_DBSPECDIR)
