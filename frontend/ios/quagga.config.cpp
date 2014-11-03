@@ -319,13 +319,13 @@ no("Negate a command or set its defaults") ip("Global IP configuration") {
     /* NO IP ROUTE */
     route("Set static routes") {
 	<destination:ipv4prefix>("Destination prefix") <nexthop:ipv4addr>("Gateway IP address"), cli_del("ipv4.route.static[] $!prefix $!nexthop"), ADMIN;
-	<ipv4prefix>("Destination prefix") <nexthop:ipv4addr>("Gateway IP address") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
-	<ipv4prefix>("Destination prefix") blackhole("Silently discard pkts when matched"), cli_del("ipv4.route.static.null[] $!prefix $blackhole=(string)\"blackhole\""), ADMIN;
-	<ipv4prefix>("Destination prefix") blackhole("Silently discard pkts when matched") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static.null[] $!prefix $distance $blackhole=(string)\"blackhole\""), ADMIN;
-	<ipv4prefix>("Destination prefix") reject("Send ICMP unreachable when matched"), cli_del("ipv4.route.static.null[] $!prefix $reject=(string)\"reject\""), ADMIN;
-	<ipv4prefix>("Destination prefix") reject("Send ICMP unreachable when matched") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $distance $reject=(string)\"reject\""), ADMIN;
-	<ipv4prefix>("Destination prefix") <interface>("IP gateway interface name"),  cli_del("ipv4.route.static[] $!prefix $!nexthop"), ADMIN;
-	<ipv4prefix>("Destination prefix") <interface>("IP gateway interface name") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") <nexthop:ipv4addr>("Gateway IP address") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") blackhole("Silently discard pkts when matched"), cli_del("ipv4.route.static.null[] $!prefix $blackhole=(string)\"blackhole\""), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") blackhole("Silently discard pkts when matched") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static.null[] $!prefix $distance $blackhole=(string)\"blackhole\""), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") reject("Send ICMP unreachable when matched"), cli_del("ipv4.route.static.null[] $!prefix $reject=(string)\"reject\""), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") reject("Send ICMP unreachable when matched") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $distance $reject=(string)\"reject\""), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") <interface>("IP gateway interface name"),  cli_del("ipv4.route.static[] $!prefix $!nexthop"), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") <interface>("IP gateway interface name") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
     } /* NO IP ROUTE */
 
 } /* NO IP */
