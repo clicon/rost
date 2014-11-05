@@ -708,7 +708,7 @@ cli_dir (clicon_handle h, cvec *vars, cg_var *arg)
       goto catch;
   }
   if (cmd)
-    clicon_proc_run(cmd, cli_output_cb, 1);
+    clicon_proc_run(cmd, cli_output_formatted, 1);
 
  catch:
   unchunk_group(__FUNCTION__);
@@ -752,7 +752,7 @@ cli_more_url (clicon_handle h, cvec *vars, cg_var *arg)
 	fprintf(stderr, "chunk_sprintf: failed to allocate");
 	goto catch;
     }
-    clicon_proc_run(cmd, cli_output_cb, 1);
+    clicon_proc_run(cmd, cli_output_formatted, 1);
     unlink(tmp);
     
 catch:
@@ -786,7 +786,7 @@ cli_more (clicon_handle h, cvec *vars, cg_var *arg)
   else
     cmd = chunk_sprintf(__FUNCTION__, "cat %s", file);
   if (cmd)
-    clicon_proc_run(cmd, cli_output_cb, 1);
+    clicon_proc_run(cmd, cli_output_formatted, 1);
 
   unchunk_group(__FUNCTION__);
   return 0;
@@ -850,7 +850,7 @@ cli_diff (clicon_handle h, cvec *vars, cg_var *arg)
 	goto catch;
     }
     
-    clicon_proc_run(cmd, cli_output_cb, 1);
+    clicon_proc_run(cmd, cli_output_formatted, 1);
 
 catch:
     if(istmp1 && file1)
