@@ -95,7 +95,7 @@ undebug("Disable debugging functions (see also 'debug')") {
 access-list("Add an access list entry") {
 
     /* ACCESS-LIST 1-99, 1300-1999 */
-    (<number range[1:99]>("IP standard access list") |<number range[1300:1999]>  ("IP standard access list (expanded range)")) {
+    (<1-99:int32 range[1:99]>("IP standard access list") |<1300-1999:int32 range[1300:1999]>  ("IP standard access list (expanded range)")) {
 
         /* ACCESS-LIST 1-99, 1300-1999 DENY|PERMIT */
 	(<action:string  keyword:deny>("Specify packets to reject")|<action:string  keyword:permit>("Specify packets to forward")) {
@@ -117,7 +117,7 @@ access-list("Add an access list entry") {
     }  /* ACCESS-LIST 1-99, 1300-1999 */
 
     /* ACCESS-LIST 100-199, 2000-2699  */
-    (<number range[100:199]>("IP extended access list")|<number range[2000:2699]>("IP extended access list (expanded range)")) {
+    (<100-199:int32 range[100:199]>("IP extended access list")|<2000-2699:int32 range[2000:2699]>("IP extended access list (expanded range)")) {
 
 	/* ACCESS-LIST 100-199, 2000-2699 DENY|PERMIT IP */
 	(<action:string  keyword:deny>("Specify packets to reject")|<action:string  keyword:permit>("Specify packets to forward")) ip("Any Internet Protocol") {
@@ -150,7 +150,7 @@ no("Negate a command or set its defaults") {
     access-list("Add an access list entry") {
 	
 	/* NO ACCESS-LIST 1-99, 1300-1999 */
-	(<number range[1:99]>("IP standard access list") |<number range[1300:1999]>  ("IP standard access list (expanded range)")), cli_del("access-list[] $!id $!action=* $!srcaddr=* $!srcmask=*"), ADMIN; {
+        (<1-99:int32 range[1:99]>("IP standard access list") |<1300-1999:int32 range[1300:1999]>  ("IP standard access list (expanded range)")), cli_del("access-list[] $!id $!action=* $!srcaddr=* $!srcmask=*"), ADMIN; {
 	    
 	    /* NO ACCESS-LIST 1-99, 1300-1999 DENY|PERMIT */
 	    (<action:string  keyword:deny>("Specify packets to reject")|<action:string  keyword:permit>("Specify packets to forward")) {
@@ -168,7 +168,7 @@ no("Negate a command or set its defaults") {
 
 
 	/* NO ACCESS-LIST 100-199, 2000-2699 */
-	(<number range[100:199]>("IP extended access list")|<number range[2000:2699]>("IP extended access list (expanded range)")), cli_del("access-list[] $!id $!action=* $!remark=* $!proto=* $!srcaddr=* $!srcmask=* $!dstaddr=* $!dstmask=*"), ADMIN; {
+	(<100-199:int32 range[100:199]>("IP extended access list")|<200-2699:int32 range[2000:2699]>("IP extended access list (expanded range)")), cli_del("access-list[] $!id $!action=* $!remark=* $!proto=* $!srcaddr=* $!srcmask=* $!dstaddr=* $!dstmask=*"), ADMIN; {
 	    
 	    /* NO ACCESS-LIST 100-199, 2000-2699 DENY|PERMIT IP */
 	    (<action:string  keyword:deny>("Specify packets to reject")|<action:string  keyword:permit>("Specify packets to forward")) ip("Any Internet Protocol") {
@@ -257,10 +257,10 @@ ip("Global IP configuration") {
 	(<action:string  keyword:deny>("Specify packets to reject")|<action:string  keyword:permit>("Specify packets to forward")) {
 	    any("Any prefix match"), cli_set("ipv4.prefix-list[].line[] $!name $_SEQ=(sequence)10 $!action $!prefix=(ipv4prefix)0.0.0.0/0"), ADMIN;
 	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8"), cli_set("ipv4.prefix-list[].line[] $!name $_SEQ=(sequence)10 $!action $!prefix"), ADMIN;
-	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") ge("Minimum prefix length to be matched") <number range[1:32]>("Minimum prefix length"), cli_set("ipv4.prefix-list[].line[] $!name $_SEQ=(sequence)10 $!action $!prefix $ge"), ADMIN;
-	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") ge("Minimum prefix length to be matched") <number range[1:32]>("Minimum prefix length") le("Maximum prefix length to be matched") <number range[1:32]>("Maximum prefix length"), cli_set("ipv4.prefix-list[].line[] $!name $_SEQ=(sequence)10 $!action $!prefix $ge $le"), ADMIN;
-	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") le("Maximum prefix length to be matched") <number range[1:32]>("Maximum prefix length"), cli_set("ipv4.prefix-list[].line[] $!name $_SEQ=(sequence)10 $!action $!prefix $le"), ADMIN;
-	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") le("Maximum prefix length to be matched") <number range[1:32]>("Maximum prefix length") ge("Minimum prefix length to be matched") <number range[1:32]>("Minimum prefix length"), cli_set("ipv4.prefix-list[].line[] $!name $_SEQ=(sequence)10 $!action $!prefix $le $ge"), ADMIN;
+	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") ge("Minimum prefix length to be matched") <1-32:int32 range[1:32]>("Minimum prefix length"), cli_set("ipv4.prefix-list[].line[] $!name $_SEQ=(sequence)10 $!action $!prefix $ge"), ADMIN;
+	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") ge("Minimum prefix length to be matched") <1-32:int32 range[1:32]>("Minimum prefix length") le("Maximum prefix length to be matched") <1-32:int32 range[1:32]>("Maximum prefix length"), cli_set("ipv4.prefix-list[].line[] $!name $_SEQ=(sequence)10 $!action $!prefix $ge $le"), ADMIN;
+	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") le("Maximum prefix length to be matched") <1-32:int32 range[1:32]>("Maximum prefix length"), cli_set("ipv4.prefix-list[].line[] $!name $_SEQ=(sequence)10 $!action $!prefix $le"), ADMIN;
+	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") le("Maximum prefix length to be matched") <1-32:int32 range[1:32]>("Maximum prefix length") ge("Minimum prefix length to be matched") <1-32:int32 range[1:32]>("Minimum prefix length"), cli_set("ipv4.prefix-list[].line[] $!name $_SEQ=(sequence)10 $!action $!prefix $le $ge"), ADMIN;
 	}  /* IP PREFIX-LIST <string> DENY|PERMIT */
 
 	/* IP PREFIX-LIST <string> DESCRIPTION */
@@ -273,13 +273,13 @@ ip("Global IP configuration") {
     route("Set static routes") {
 	
 	<destination:ipv4prefix>("Destination prefix") <nexthop:ipv4addr>("Gateway IP address"), cli_set("ipv4.route.static[] $!prefix $!nexthop"), ADMIN;
-	<destination:ipv4prefix>("Destination prefix") <nexthop:ipv4addr>("Gateway IP address") <number range[1:255]>("Distance value for this route"), cli_set("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") <nexthop:ipv4addr>("Gateway IP address") <1-255:int32 range[1:255]>("Distance value for this route"), cli_set("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
 	<destination:ipv4prefix>("Destination prefix") blackhole("Silently discard pkts when matched"), cli_set("ipv4.route.static.null[] $!prefix $blackhole=(string)\"blackhole\""), ADMIN;
-	<destination:ipv4prefix>("Destination prefix") blackhole("Silently discard pkts when matched") <number range[1:255]>("Distance value for this route"), cli_set("ipv4.route.static.null[] $!prefix $distance $blackhole=(string)\"blackhole\""), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") blackhole("Silently discard pkts when matched") <1-255:int32 range[1:255]>("Distance value for this route"), cli_set("ipv4.route.static.null[] $!prefix $distance $blackhole=(string)\"blackhole\""), ADMIN;
 	<destination:ipv4prefix>("Destination prefix") reject("Send ICMP unreachable when matched"), cli_set("ipv4.route.static.null[] $!prefix $reject=(string)\"reject\""), ADMIN;
-	<destination:ipv4prefix>("Destination prefix") reject("Send ICMP unreachable when matched") <number range[1:255]>("Distance value for this route"), cli_set("ipv4.route.static[] $!prefix $distance $reject=(string)\"reject\""), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") reject("Send ICMP unreachable when matched") <1-255:int32 range[1:255]>("Distance value for this route"), cli_set("ipv4.route.static[] $!prefix $distance $reject=(string)\"reject\""), ADMIN;
 	<destination:ipv4prefix>("Destination prefix") <interface>("IP gateway interface name"),  cli_set("ipv4.route.static[] $!prefix $!nexthop"), ADMIN;
-	<destination:ipv4prefix>("Destination prefix") <interface>("IP gateway interface name") <number range[1:255]>("Distance value for this route"), cli_set("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") <interface>("IP gateway interface name") <1-255:int32 range[1:255]>("Distance value for this route"), cli_set("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
     } /* IP ROUTE */
 	
 	
@@ -305,10 +305,10 @@ no("Negate a command or set its defaults") ip("Global IP configuration") {
 	    
 	    any("Any prefix match"), cli_del("ipv4.prefix-list[].line[] $!name $!action $!prefix=(ipv4prefix)0.0.0.0/0"), ADMIN;
 	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8"), cli_del("ipv4.prefix-list[].line[] $!name $!action $!prefix"), ADMIN;
-	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") ge("Minimum prefix length to be matched") <number range[1:32]>("Minimum prefix length"), cli_del("ipv4.prefix-list[].line[] $!name $!action $!prefix $ge"), ADMIN;
-	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") ge("Minimum prefix length to be matched") <number range[1:32]>("Minimum prefix length") le("Maximum prefix length to be matched") <number range[1:32]>("Maximum prefix length"), cli_del("ipv4.prefix-list[].line[] $!name $!action $!prefix $ge $le"), ADMIN;
-	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") le("Maximum prefix length to be matched") <number range[1:32]>("Maximum prefix length"), cli_del("ipv4.prefix-list[].line[] $!name $!action $!prefix $le"), ADMIN;
-	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") le("Maximum prefix length to be matched") <number range[1:32]>("Maximum prefix length") ge("Minimum prefix length to be matched") <number range[1:32]>("Minimum prefix length"), cli_del("ipv4.prefix-list[].line[] $!name $!action $!prefix $le $ge"), ADMIN;
+	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") ge("Minimum prefix length to be matched") <1-32:int32 range[1:32]>("Minimum prefix length"), cli_del("ipv4.prefix-list[].line[] $!name $!action $!prefix $ge"), ADMIN;
+	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") ge("Minimum prefix length to be matched") <1-32:int32 range[1:32]>("Minimum prefix length") le("Maximum prefix length to be matched") <1-32:int32 range[1:32]>("Maximum prefix length"), cli_del("ipv4.prefix-list[].line[] $!name $!action $!prefix $ge $le"), ADMIN;
+	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") le("Maximum prefix length to be matched") <1-32:int32 range[1:32]>("Maximum prefix length"), cli_del("ipv4.prefix-list[].line[] $!name $!action $!prefix $le"), ADMIN;
+	    <ipv4prefix>("IP prefix <network>/<length>, e.g., 35.0.0.0/8") le("Maximum prefix length to be matched") <1-32:int32 range[1:32]>("Maximum prefix length") ge("Minimum prefix length to be matched") <1-32:int32 range[1:32]>("Minimum prefix length"), cli_del("ipv4.prefix-list[].line[] $!name $!action $!prefix $le $ge"), ADMIN;
 	} /* NO IP PREFIX-LIST <string> DENY|PERMOT */
 	
 	/* NO IP PREFIX-LIST <string> DESCRIPTION */
@@ -319,13 +319,13 @@ no("Negate a command or set its defaults") ip("Global IP configuration") {
     /* NO IP ROUTE */
     route("Set static routes") {
 	<destination:ipv4prefix>("Destination prefix") <nexthop:ipv4addr>("Gateway IP address"), cli_del("ipv4.route.static[] $!prefix $!nexthop"), ADMIN;
-	<destination:ipv4prefix>("Destination prefix") <nexthop:ipv4addr>("Gateway IP address") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") <nexthop:ipv4addr>("Gateway IP address") <1-255:int32 range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
 	<destination:ipv4prefix>("Destination prefix") blackhole("Silently discard pkts when matched"), cli_del("ipv4.route.static.null[] $!prefix $blackhole=(string)\"blackhole\""), ADMIN;
-	<destination:ipv4prefix>("Destination prefix") blackhole("Silently discard pkts when matched") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static.null[] $!prefix $distance $blackhole=(string)\"blackhole\""), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") blackhole("Silently discard pkts when matched") <1-255:int32 range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static.null[] $!prefix $distance $blackhole=(string)\"blackhole\""), ADMIN;
 	<destination:ipv4prefix>("Destination prefix") reject("Send ICMP unreachable when matched"), cli_del("ipv4.route.static.null[] $!prefix $reject=(string)\"reject\""), ADMIN;
-	<destination:ipv4prefix>("Destination prefix") reject("Send ICMP unreachable when matched") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $distance $reject=(string)\"reject\""), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") reject("Send ICMP unreachable when matched") <1-255:int32 range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $distance $reject=(string)\"reject\""), ADMIN;
 	<destination:ipv4prefix>("Destination prefix") <interface>("IP gateway interface name"),  cli_del("ipv4.route.static[] $!prefix $!nexthop"), ADMIN;
-	<destination:ipv4prefix>("Destination prefix") <interface>("IP gateway interface name") <number range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
+	<destination:ipv4prefix>("Destination prefix") <interface>("IP gateway interface name") <1-255:int32 range[1:255]>("Distance value for this route"), cli_del("ipv4.route.static[] $!prefix $!nexthop $distance"), ADMIN;
     } /* NO IP ROUTE */
 
 } /* NO IP */
