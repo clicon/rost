@@ -269,6 +269,12 @@ rost_err(int suberr, char *reason, ...)
     len = vsnprintf(NULL, 0, reason, args);
     va_end(args);
     
+    /* Allocate message buffer */
+    if ((msg = malloc(len+1)) == NULL) {
+	clicon_err(OE_UNIX, errno, "malloc");
+	goto done;
+    }
+
     /* second round: compute write message from reason and args */
     va_start(args, reason);
     if (vsnprintf(msg, len+1, reason, args) < 0){
