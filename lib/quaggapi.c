@@ -134,10 +134,10 @@ quaggapi_disconnect(int sock)
  *
  * Returns: The new structure.
  *
- * Arguments: None.
+ * Arguments: cb  - a quaggapi_cb callback function for successful calls.
  */
 struct quaggapi_batch *
-quaggapi_batchinit()
+quaggapi_batchinit(quaggapi_cb *cb)
 {
   int idx;
   struct quaggapi_batch *batch;
@@ -159,6 +159,8 @@ quaggapi_batchinit()
   for (idx = 0; idx < batch->maxcmd; idx++)
     batch->cmds[idx].retcode = -1;
   
+  batch->cb = cb;
+
   return batch;
 }
 
@@ -299,12 +301,17 @@ quaggapi_free (struct quaggapi_batch *batch)
 static int
 quaggapi_exec (const char *sockpath, struct quaggapi_batch *batch, int ignerr)
 {
-  int idx, n, msglen;
+  int idx, n, ntot, msglen;
   int sock = -1;
   char b[2];
   char *ptr;
   char hbuf[256];
+  char buf[16384];
+  char *bufp;
+  size_t buflen;
   char *cp;
+  char **vec;
+  int nvec;
 
   sock = quaggapi_connect (sockpath);
   if (sock < 0) {
@@ -321,56 +328,67 @@ quaggapi_exec (const char *sockpath, struct quaggapi_batch *batch, int ignerr)
 	goto done;
     }
 
-    /* First read header */
+    /* First read header line */
     memset(hbuf, '\0', sizeof(hbuf));
     ptr = hbuf;
-    while (strlen(hbuf) < sizeof(hbuf) &&
-	   (n = read ( sock, b, 1)) > 0 &&
-	   !isspace(b[0]))
+    while (strlen(hbuf) < sizeof(hbuf) && 
+	   (n = read(sock, b, 1)) > 0 &&
+	   b[0] != '\n')
 	*ptr++ = b[0];
     if (n < 0) {
 	clicon_err(OE_UNIX, errno, "Connecting to quagga: read");
 	batch->numexec = -1;
 	goto done;
     }
-    batch->cmds[idx].retcode = atoi(hbuf);
 
-    /* read msg length */
-    memset(hbuf, '\0', sizeof(hbuf));
-    ptr = hbuf;
-    while (strlen(hbuf) < sizeof(hbuf) &&
-	   (n = read ( sock, b, 1)) > 0 &&
-	   !isspace(b[0]))
-	*ptr++ = b[0];
-    if (n < 0) {
-	clicon_err(OE_UNIX, errno, "Connecting to quagga: read");
+    vec = clicon_strsplit(hbuf, "#", &nvec, __FUNCTION__);
+    if (vec == NULL || nvec != 3) {
+	clicon_err(OE_PLUGIN, 0, "Unexpected Quagga API format");
 	batch->numexec = -1;
 	goto done;
     }
-    msglen = atoi (hbuf);
+
+    batch->cmds[idx].retcode = atoi(vec[1]);
+    msglen = atoi (vec[2]);
 
     /* If we expect an output message, read it now */
     if (msglen > 0) {
 
-      /* Allocate space */
-      batch->cmds[idx].output = (char *) calloc (msglen+1, sizeof (char));
-      if (batch->cmds[idx].output == NULL) {
-	  clicon_err(OE_UNIX, errno, "calloc");
-	batch->numexec = -1;	
-	goto done;
+      if(batch->cb) {
+	bufp = buf;
+	buflen = sizeof(buf);
+      } 
+      else {
+	/* Allocate space */
+	batch->cmds[idx].output = (char *) calloc (msglen+1, sizeof (char));
+	if (batch->cmds[idx].output == NULL) {
+	    clicon_err(OE_UNIX, errno, "calloc");
+	    batch->numexec = -1;	
+	    goto done;
+	}
+	bufp = batch->cmds[idx].output;
+	buflen = msglen+1;
       }
 
       /* Read output from quagga */
-      n = 0;
-      while (n < msglen && (n != -1 || errno == EINTR))
-	n += read ( sock, batch->cmds[idx].output + n, msglen);
-      if (n  != msglen) {
-	  clicon_err(OE_UNIX, errno, "read");
-	batch->numexec = idx;
-	goto done;
+      ntot = 0;
+      while (ntot < msglen && (n != -1 || errno == EINTR)) {
+	n = read ( sock, bufp, buflen-1);
+	if (batch->cb) {
+	    buf[n]='\0';
+	    batch->cb(buf);
+	}
+	else 
+	    bufp += n;
+	ntot += n;
       }
-      batch->cmds[idx].output[n] = '\0';
-    
+      if (ntot  != msglen) {
+	  clicon_err(OE_UNIX, errno, "read");
+	  batch->numexec = idx;
+	  goto done;
+      }
+      if (batch->cb == NULL)
+	  batch->cmds[idx].output[n] = '\0';
     }
 
     /* Update number of executed commands */
@@ -384,6 +402,7 @@ quaggapi_exec (const char *sockpath, struct quaggapi_batch *batch, int ignerr)
   
  done:
   quaggapi_disconnect(sock);
+  unchunk_group(__FUNCTION__);
   return batch->numexec;
 }
 
@@ -403,13 +422,13 @@ quaggapi_exec (const char *sockpath, struct quaggapi_batch *batch, int ignerr)
  * NULL in case of system failure.
  */
 struct quaggapi_batch *
-quaggapi_listexec (const char *sockpath, int ignerr, char **cmds, int ncmd) 
+quaggapi_listexec (const char *sockpath, quaggapi_cb *cb, int ignerr, char **cmds, int ncmd) 
 {
   int i;
   char *ptr;
   struct quaggapi_batch *batch;
 
-  batch = quaggapi_batchinit ();
+  batch = quaggapi_batchinit (cb);
   if (batch == NULL)
     return NULL;
   
@@ -448,7 +467,7 @@ quaggapi_listexec (const char *sockpath, int ignerr, char **cmds, int ncmd)
  * NULL in case ot system failure.
  */
 struct quaggapi_batch *
-quaggapi_strexec (const char *sockpath, int ignerr, char *fmt, ...)
+quaggapi_strexec (const char *sockpath, quaggapi_cb *cb, int ignerr, char *fmt, ...)
 {
   int len;
   int nvec;
@@ -474,7 +493,7 @@ quaggapi_strexec (const char *sockpath, int ignerr, char *fmt, ...)
       goto catch;
   }
   
-  if ((batch = quaggapi_listexec (sockpath, ignerr, vec, nvec)) == NULL)
+  if ((batch = quaggapi_listexec (sockpath, cb, ignerr, vec, nvec)) == NULL)
       goto catch;
 
   /* Fall through to 'catch' to clean-up and return batch */
@@ -523,7 +542,7 @@ static struct  {
  * or NULL in case of system failure.
  */
 struct quaggapi_batch *
-quaggapi_modeexec (const char *sockpath, struct qa_mode *modep, char *fmt, ...)
+quaggapi_modeexec (const char *sockpath, quaggapi_cb *cb, struct qa_mode *modep, char *fmt, ...)
 { 
   va_list args;
   char **modecmdp;
@@ -532,7 +551,7 @@ quaggapi_modeexec (const char *sockpath, struct qa_mode *modep, char *fmt, ...)
   if ( !modep || modep->mode < QA_MODE_BASE || modep->mode >= QA_MODE_MAX)
     goto catch;
     
-  batch = quaggapi_batchinit ();
+  batch = quaggapi_batchinit (cb);
   if (batch == NULL)
     goto catch;
 

@@ -24,6 +24,7 @@
 #ifndef _QUAGGAPI_H_
 #define _QUAGGAPI_H_
 
+typedef void (quaggapi_cb)(char *str);
 
 /*
  * API batch structure.
@@ -33,6 +34,7 @@ struct quaggapi_batch {
   int maxcmd;	/* Number of allocated command structs */
   int numexec;
   struct quaggapi_cmd *cmds;	/* Array of commands in batch */
+  quaggapi_cb *cb;		/* Output CB on success if specified */
 };
 
 /*
@@ -191,13 +193,13 @@ enum {
   QA_MODE_MAX,
 };
 
-struct quaggapi_batch *quaggapi_batchinit();
+struct quaggapi_batch *quaggapi_batchinit(quaggapi_cb *);
 int quaggapi_cmdadd (struct quaggapi_batch *, char *, ...);
 void quaggapi_free (struct quaggapi_batch *);
-struct quaggapi_batch *quaggapi_listexec (const char *, int, char **, int);
-struct quaggapi_batch *quaggapi_strexec (const char *, int, char *, ...);
+struct quaggapi_batch *quaggapi_listexec (const char *, quaggapi_cb *, int, char **, int);
+struct quaggapi_batch *quaggapi_strexec (const char *, quaggapi_cb *, int, char *, ...);
 
-struct quaggapi_batch *quaggapi_modeexec (const char *, struct qa_mode *, char *, ...);
+struct quaggapi_batch *quaggapi_modeexec (const char *, quaggapi_cb *, struct qa_mode *, char *, ...);
 
 struct quaggapi_batch *quaggapi_lv_exec(char *sockpath, char *cmd);
 

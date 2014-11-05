@@ -1064,7 +1064,7 @@ lv_quagga_exec(char *cmd, char *sockpath)
     char *output = NULL;
     struct quaggapi_batch *batch = NULL;
 
-    batch = quaggapi_strexec(sockpath, 0, "configure terminal\n%s", cmd);
+    batch = quaggapi_strexec(sockpath, NULL, 0, "configure terminal\n%s", cmd);
     if (batch == NULL)
 	goto catch;
     if (batch->numexec < 0){ /* e.g socket error - no contact w quagga */

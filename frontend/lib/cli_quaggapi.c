@@ -74,7 +74,7 @@ cli_quagga_exec(clicon_handle h, void *arg, cvec *vr, char *sockpath)
     if (cmd == NULL)
 	return 0;
   
-    batch = quaggapi_strexec(path, 0, cmd);
+    batch = quaggapi_strexec(path, cli_output_formatted, 0, cmd);
     if (batch == NULL) {
 	rost_err(errno, "strexec");
 	goto catch;
@@ -95,7 +95,7 @@ cli_quagga_exec(clicon_handle h, void *arg, cvec *vr, char *sockpath)
     }
     else 
 	if (output)
-	    cli_output (stdout, output);
+	    cli_output_formatted (output);
     
     free (cmd);
     quaggapi_free (batch);
