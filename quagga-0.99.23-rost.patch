@@ -160,7 +160,7 @@ diff -Naur quagga-0.99.23/configure.ac quagga-0.99.23-rost/configure.ac
  dnl Quagga sources should always be 
 diff -Naur quagga-0.99.23/lib/confapi.c quagga-0.99.23-rost/lib/confapi.c
 --- quagga-0.99.23/lib/confapi.c	1970-01-01 10:00:00.000000000 +1000
-+++ quagga-0.99.23-rost/lib/confapi.c	2014-10-06 17:31:16.000000000 +1100
++++ quagga-0.99.23-rost/lib/confapi.c	2014-11-04 22:44:52.000000000 +1100
 @@ -0,0 +1,426 @@
 +/* 
 + * Copyright (C) 2009 Olof Hagsand and Benny Holmgren
@@ -437,8 +437,8 @@ diff -Naur quagga-0.99.23/lib/confapi.c quagga-0.99.23-rost/lib/confapi.c
 +  buffer_putstr (tmpbuf, savebuf);
 +
 +  /* Now, insert return code and length before output */
-+  snprintf (tmpstr, sizeof(tmpstr)-1, "%d %d ", 
-+	    ret, strlen(output) - strlen(savebuf));
++  snprintf (tmpstr, sizeof(tmpstr)-1, "%d#%d#%d\n", 
++	    CONFAPI_VERSION, ret, strlen(output) - strlen(savebuf));
 +  buffer_putstr (tmpbuf, tmpstr);
 +
 +  /* Append new output */
@@ -590,8 +590,8 @@ diff -Naur quagga-0.99.23/lib/confapi.c quagga-0.99.23-rost/lib/confapi.c
 +#endif /* SUPPORT_CONFIG_API */
 diff -Naur quagga-0.99.23/lib/confapi.h quagga-0.99.23-rost/lib/confapi.h
 --- quagga-0.99.23/lib/confapi.h	1970-01-01 10:00:00.000000000 +1000
-+++ quagga-0.99.23-rost/lib/confapi.h	2014-10-06 18:13:12.000000000 +1100
-@@ -0,0 +1,32 @@
++++ quagga-0.99.23-rost/lib/confapi.h	2014-11-04 22:44:39.000000000 +1100
+@@ -0,0 +1,35 @@
 +/* Zebra config API header.
 + * Copyright (C) 2009 Olof Hagsand and Benny Holmgren
 + * Copyright (C) 1997, 98 Kunihiro Ishiguro
@@ -616,6 +616,9 @@ diff -Naur quagga-0.99.23/lib/confapi.h quagga-0.99.23-rost/lib/confapi.h
 +
 +#ifndef _CONFAPI_H
 +#define _CONFAPI_H
++
++/* Config API protocol version number */
++#define CONFAPI_VERSION			2
 +
 +/* For input/output buffer to configuration API. */
 +#define CONFAPI_MAX_PACKET_SIZ          4096
