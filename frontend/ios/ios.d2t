@@ -58,13 +58,13 @@ ip route $rt->prefix @IF($rt->reject ? "reject" : "blackhole") $rt->distance
 @EACH($ipv4.access-list.standard.named[], $acl)
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-acl-standard-named.d2t")
 @END
-@EACH($access-list[], $acl)
-@IF($acl->remark)
-access-list $acl->id remark $acl->remark
-@ELSE
-access-list $acl->id $acl->action $acl->proto $acl->srcaddr $acl->srcmask@IF($acl->dstaddr ? " $acl->dstaddr $acl->dstmask") 
-@END
-@END
+#@EACH($access-list[], $acl)
+#@IF($acl->remark)
+#access-list $acl->id remark $acl->remark
+#@ELSE
+#access-list $acl->id $acl->action $acl->proto $acl->srcaddr $acl->srcmask@IF($acl->dstaddr ? " $acl->dstaddr $acl#->dstmask") 
+#@END
+#@END
 !
 @EACH($ipv4.prefix-list[], $pfx)
 @IF($pfx->description ? "ip prefix-list $pfx->name description $pfx->description\n")

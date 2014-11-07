@@ -854,13 +854,14 @@ static struct qaction qactions[] = {
 	ZEBRA_API_SOCK
     },
 
+#if notanymore
     {
 	"access-list[]",
 	"access-list $id $action$remark{ $$}$proto{ $$}$srcaddr{ $$}$srcmask{ $$}$dstaddr{ $$}$dstmask{ $$}",
 	"no access-list $id $action$remark{ $$}$proto{ $$}$srcaddr{ $$}$srcmask{ $$}$dstaddr{ $$}$dstmask{ $$}",
 	ALL_API_SOCK 
     },
-
+#endif
 
     {
 	"ipv4.access-list.standard[].remark",
