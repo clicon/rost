@@ -55,6 +55,9 @@ struct ios_mode ios_tree[] = {
     { IOS_MODE_BASE, IOS_MODE_NONE, MODE_BASE, "%U@%H>" },
     { IOS_MODE_ENABLE, IOS_MODE_NONE, MODE_ENABLE, "%U@%H#" },
     { IOS_MODE_CONFIG, IOS_MODE_ENABLE, MODE_CONFIG, "%U@%H(config)#"},
+    { IOS_MODE_ACLSTD, IOS_MODE_CONFIG, MODE_ACLSTD, "%U@%H(config-std-acl)#"},
+    { IOS_MODE_ACLNSTD, IOS_MODE_CONFIG, MODE_ACLNSTD, "%U@%H(config-std-nacl)#"},
+    { IOS_MODE_ACLEXT, IOS_MODE_CONFIG, MODE_ACLEXT, "%U@%H(config-ext-acl)#"},
     { IOS_MODE_INTERFACE, IOS_MODE_CONFIG, MODE_INTERFACE, "%U@%H(config-if)#"},
     { IOS_MODE_RIP, IOS_MODE_CONFIG, MODE_RIP, "%U@%H(config-router)#"},
     { IOS_MODE_RIPNG, IOS_MODE_CONFIG, MODE_RIPNG, "%U@%H(config-router)#"},
@@ -221,6 +224,11 @@ cli_mode_exit()
 {
     switch (cli_mode.mode) {
     
+    case IOS_MODE_ACLNSTD:
+	free(cli_mode.u.aclname);
+	cli_mode.u.aclname = NULL;
+	break;
+
     case IOS_MODE_INTERFACE:
 	free (cli_mode.u.iface);
 	cli_mode.u.iface = NULL;
@@ -304,7 +312,61 @@ cli_ios_mode(clicon_handle h, cvec *vars, cg_var *arg)
 	return 0;
     }
     switch (cli_mode.mode) {
-    case IOS_MODE_INTERFACE:
+    case IOS_MODE_ACLSTD: {
+	char *fmt;
+
+	cv1 = cvec_i(vars, 1);
+	cli_mode.u.aclid = cv_uint32_get(cv1);
+	fmt = chunk_sprintf(__FUNCTION__,
+			    "ipv4.access-list.standard[] $!id=(uint32)%u",
+			    cli_mode.u.aclid);
+	if (fmt == NULL || cv_parse(fmt, cgvs) < 0) {
+	    if (fmt) unchunk(fmt);
+	    cli_mode.mode = IOS_MODE_CONFIG;
+	    break;
+	}
+	unchunk(fmt);
+	cli_set (h, vars, cgvs);
+	break;
+    }
+	
+    case IOS_MODE_ACLEXT: {
+	char *fmt;
+
+	cv1 = cvec_i(vars, 1);
+	cli_mode.u.aclid = cv_uint32_get(cv1);
+	fmt = chunk_sprintf(__FUNCTION__,
+			    "ipv4.access-list.extended[] $!id=(uint32)%u",
+			    cli_mode.u.aclid);
+	if (fmt == NULL || cv_parse(fmt, cgvs) < 0) {
+	    if (fmt) unchunk(fmt);
+	    cli_mode.mode = IOS_MODE_CONFIG;
+	    break;
+	}
+	unchunk(fmt);
+	cli_set (h, vars, cgvs);
+	break;
+    }
+
+    case IOS_MODE_ACLNSTD: {
+	char *fmt;
+
+	cv1 = cvec_i(vars, 1);
+	cli_mode.u.aclname = strdup(cv_string_get(cv1));
+	fmt = chunk_sprintf(__FUNCTION__,
+			    "ipv4.access-list.standard.named[] $!name=(string)%s",
+			    cli_mode.u.aclname);
+	if (fmt == NULL || cv_parse(fmt, cgvs) < 0) {
+	    if (fmt) unchunk(fmt);
+	    cli_mode.mode = IOS_MODE_CONFIG;
+	    break;
+	}
+	unchunk(fmt);
+	cli_set (h, vars, cgvs);
+	break;
+    }
+	
+   case IOS_MODE_INTERFACE:
 	cv1 = cvec_i(vars, 1);
 	cli_mode.u.iface = strdup(cv_string_get(cv1));
 	if (cli_mode.u.iface == NULL) {
@@ -444,6 +506,7 @@ cli_ios_mode_up(clicon_handle h, cvec *vars, cg_var *arg)
     return 0;
 }
 
+#if 0
 int
 cli_ios_show_running(clicon_handle h, struct lvmap *lmap)
 {
@@ -480,6 +543,20 @@ catch:
   
     return 0;
 }
+#else
+int
+cli_ios_show_running(clicon_handle h, struct lvmap *lmap)
+{
+    char *out;
+
+    out = clicon_db2txt(h, clicon_running_db(h), "/home/benny/git/rost/frontend/ios/ios.d2t");
+    if(out) {
+	printf(out);
+        free(out);
+    }
+    return 0;
+}
+#endif
 
 
 /*

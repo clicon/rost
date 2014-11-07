@@ -861,6 +861,46 @@ static struct qaction qactions[] = {
 	ALL_API_SOCK 
     },
 
+
+    {
+	"ipv4.access-list.standard[].remark",
+	"access-list $id remark $remark",
+	"no access-list $id remark $remark",
+	ALL_API_SOCK 
+    },
+    {
+	"ipv4.access-list.standard[].line[]",
+	"access-list $id $action $src $srcmask",
+	"no access-list $id $action $src $srcmask",
+	ALL_API_SOCK 
+    },
+
+    {
+	"ipv4.access-list.standard.named[].remark",
+	"access-list $name remark $remark",
+	"no access-list $name remark $remark",
+	ALL_API_SOCK 
+    },
+    {
+	"ipv4.access-list.standard.named[].line[]",
+	"access-list $name $action $src $srcmask",
+	"no access-list $name $action $src $srcmask",
+	ALL_API_SOCK 
+    },
+
+    {
+	"ipv4.access-list.extended[].remark",
+	"access-list $id remark $remark",
+	"no access-list $id remark $remark",
+	ALL_API_SOCK 
+    },
+    {
+	"ipv4.access-list.extended[].line[]",
+	"access-list $id $action $protocol $src $srcmask $dst $dstmask",
+	"no access-list $id $action $protocol $src $srcmask $dst $dstmask",
+	ALL_API_SOCK 
+    },
+
     {
 	"ipv4.prefix-list[].description",
 	"ip prefix-list $name description $description",

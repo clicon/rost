@@ -168,6 +168,8 @@ struct qa_mode {
   uint8_t mode;
   union {
     char *iface;
+    uint32_t aclid;
+    char *aclname;
     uint32_t bgp_as;
     struct {
       char *name;

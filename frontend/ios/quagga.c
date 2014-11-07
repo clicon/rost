@@ -60,3 +60,33 @@ plugin_start(clicon_handle h, int argc, char **argv)
     return 0;
 }
 
+/*
+ * interface callback for cli_set parser
+ */
+int
+quagga_acl_cb(cvec *vars, cg_var *cv, cg_var *arg)
+{
+    char *name;
+    extern struct qa_mode cli_mode;
+
+    if ((name = cv_name_get(cv)) == NULL)
+	return -1;
+
+    if (*name == '!')
+	name++;
+
+    if (!strcmp (name, "name")) {
+	cv_type_set(cv, CGV_STRING);
+	cv_string_set(cv, cli_mode.u.aclname);
+	return 0;
+    }
+
+    if (!strcmp (name, "id")) {
+	cv_type_set(cv, CGV_UINT32);
+	cv_int_set(cv, cli_mode.u.aclid);
+	return 0;
+    }
+
+    return -1;    
+}
+

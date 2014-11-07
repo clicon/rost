@@ -23,7 +23,7 @@
 # Syntax: 
 # <line> ::= <key> <var>*
 # <var>  ::= $[!]<name>[:<type>] (string is default type)
-# Example: system.hostname $a:string $!b:number
+# Example: system.hostname $a:string $!b:int32
 # regexps start with ^. If vector([]) dont end with $
 # Följande hoppas över i XML översättningen: 
 
@@ -31,7 +31,7 @@
 system.boot                                          $dummie
 system.hostname                                      $hostname
 system.login.user[]                                  $!user
-system.login.user[].uid                              $!user $uid:number
+system.login.user[].uid                              $!user $uid:int32
 system.login.user[].class                            $!user $class
 system.login.user[].authentication.password          $!user $password
 
@@ -40,18 +40,18 @@ system.boot.url[]                                    $!url $default $fallback # 
 # ipv4
 ipv4.domain                                          $domain   # !?
 ipv4.name-server[]                                   $!address:ipv4addr
-ipv4.forwarding                                      $status:number
-ipv4.route.static[]                                  $!prefix:ipv4prefix $!nexthop:ipv4addr $distance:number
-ipv4.route.static.null[]                             $!prefix:ipv4prefix $reject $blackhole $distance:number
+ipv4.forwarding                                      $status:int32
+ipv4.route.static[]                                  $!prefix:ipv4prefix $!nexthop:ipv4addr $distance:int32
+ipv4.route.static.null[]                             $!prefix:ipv4prefix $reject $blackhole $distance:int32
 ipv4.arp[]                                           $!address:ipv4addr $!mac:macaddr
 ipv4.as-path.access-list[]                           $!name $!action $!regexp:rest
 ipv4.prefix-list[]                                   $!name
-ipv4.prefix-list[].line[]                            $!name $!action $!prefix:ipv4prefix $le:number $ge:number $_SEQ:number
+ipv4.prefix-list[].line[]                            $!name $!action $!prefix:ipv4prefix $le:int8 $ge:int8 $_SEQ:int32
 ipv4.prefix-list[].description                       $!name $description
 
 # logging
-logging.host[]                                       $!host:ipv4addr $protocol:string $port:number
-logging.buffered                                     $rows:number $level:string
+logging.host[]                                       $!host:ipv4addr $protocol:string $port:int32
+logging.buffered                                     $rows:int32 $level:string
 logging.trap                                         $level:string
 
 # snmp
@@ -62,111 +62,121 @@ snmp.location                                        $location:rest
 
 #ntp
 ntp.server[]                                         $!address:ipv4addr
-ntp.logging                                          $dummy:number # XXX
+ntp.logging                                          $dummy:int32 # XXX
 
 
 # access-list
-#access-list[]                                        $!id:number
-access-list[]                                        $!id:number $!action $!remark $!proto $!srcaddr:ipv4addr $!srcmask:ipv4addr $!dstaddr:ipv4addr $!dstmask:ipv4addr $exact_match $_SEQ:number
+ipv4.access-list.standard[]                          $!id:uint32
+ipv4.access-list.standard[].remark                   $!id:uint32 $remark:rest
+ipv4.access-list.standard[].line[]                   $!id:uint32 $_SEQ:int32 $!action:string $!src:ipv4addr $!srcmask:ipv4addr
+
+ipv4.access-list.standard.named[]                    $!name:string
+ipv4.access-list.standard.named[].remark             $!name:string $remark:rest
+ipv4.access-list.standard.named[].line[]             $!name:string $_SEQ=int32 $!action $!src:ipv4prefix $!exact_match:bool
+
+ipv4.access-list.extended[]                          $!id:uint32
+ipv4.access-list.extended[].remark                   $!id:uint32 $remark:rest
+ipv4.access-list.extended[].line[]                   $!id:uint32 $_SEQ:int32 $!action:string $!protocol $!src:ipv4prefix $!srcmask:ipv4addr $!dst:ipv4addr $!dstmask:ipv4addr
+
 #ipv4.access-list[]                                   $!name
 #ipv6.access-list[]                                   $!name
 
 # interface
 interface[]                                          $!name:string
-interface[].unit[]				     $!name:string $!unit:number
-interface[].unit[].inet.dhcp_client                  $!name:string $!unit:number $enabled:number
-interface[].unit[].inet.address[]                    $!name:string $!unit:number $!prefix:ipv4prefix
-interface[].unit[].description                       $!name:string $!unit:number $description:rest
-interface[].unit[].dot1q                             $!name:string $!unit:number $vlan:number
-interface[].unit[].tunnel.mode                       $!name:string $!unit:number $mode:string
-interface[].unit[].tunnel.source                     $!name:string $!unit:number $source:ipv4addr
-interface[].unit[].tunnel.destination                $!name:string $!unit:number $destination:ipv4addr
-interface[].unit[].tunnel.csum                       $!name:string $!unit:number $csum:number
-interface[].unit[].tunnel.tos                        $!name:string $!unit:number $tos:number
-interface[].unit[].tunnel.ttl                        $!name:string $!unit:number $ttl:number
-interface[].unit[].tunnel.key                        $!name:string $!unit:number $key:string
-interface[].unit[].tunnel.nopmtu                     $!name:string $!unit:number $nopmtu:number
-interface[].unit[].bandwidth                         $!name:string $!unit:number $bandwidth:number
-interface[].unit[].link-detect                       $!name:string $!unit:number $link_detect:number
-interface[].unit[].shutdown                          $!name:string $!unit:number $shutdown:number
-interface[].unit[].ipv4.rp_filter                    $!name:string $!unit:number $status:number
-interface[].unit[].ipv4.send_redirects               $!name:string $!unit:number $status:number
-interface[].unit[].ipv4.proxy_arp                    $!name:string $!unit:number $status:number
-interface[].unit[].ipv4.forwarding                   $!name:string $!unit:number $status:number
-interface[].unit[].ipv4.shared_media                 $!name:string $!unit:number $status:number
-interface[].unit[].ipv4.secure_redirects             $!name:string $!unit:number $status:number
-interface[].unit[].ipv4.accept_source_route          $!name:string $!unit:number $status:number
-interface[].unit[].ipv4.accept_redirects             $!name:string $!unit:number $status:number
-interface[].unit[].ipv4.log_martians                 $!name:string $!unit:number $status:number
-interface[].unit[].ospf.cost                         $!name:string $!unit:number $cost:number
-interface[].unit[].ospf.network-type                 $!name:string $!unit:number $network_type
-interface[].unit[].ospf.priority                     $!name:string $!unit:number $priority:number
-interface[].unit[].rip.receive                       $!name:string $!unit:number $version:number
-interface[].unit[].rip.send                          $!name:string $!unit:number $version:number
-interface[].unit[].rip.split-horizon                 $!name:string $!unit:number $no_poisoned_reverse
+interface[].unit[]				     $!name:string $!unit:int32
+interface[].unit[].inet.dhcp_client                  $!name:string $!unit:int32 $enabled:int32
+interface[].unit[].inet.address[]                    $!name:string $!unit:int32 $!prefix:ipv4prefix
+interface[].unit[].description                       $!name:string $!unit:int32 $description:rest
+interface[].unit[].dot1q                             $!name:string $!unit:int32 $vlan:int32
+interface[].unit[].tunnel.mode                       $!name:string $!unit:int32 $mode:string
+interface[].unit[].tunnel.source                     $!name:string $!unit:int32 $source:ipv4addr
+interface[].unit[].tunnel.destination                $!name:string $!unit:int32 $destination:ipv4addr
+interface[].unit[].tunnel.csum                       $!name:string $!unit:int32 $csum:int32
+interface[].unit[].tunnel.tos                        $!name:string $!unit:int32 $tos:int32
+interface[].unit[].tunnel.ttl                        $!name:string $!unit:int32 $ttl:int32
+interface[].unit[].tunnel.key                        $!name:string $!unit:int32 $key:string
+interface[].unit[].tunnel.nopmtu                     $!name:string $!unit:int32 $nopmtu:int32
+interface[].unit[].bandwidth                         $!name:string $!unit:int32 $bandwidth:int32
+interface[].unit[].link-detect                       $!name:string $!unit:int32 $link_detect:int32
+interface[].unit[].shutdown                          $!name:string $!unit:int32 $shutdown:int32
+interface[].unit[].ipv4.rp_filter                    $!name:string $!unit:int32 $status:int32
+interface[].unit[].ipv4.send_redirects               $!name:string $!unit:int32 $status:int32
+interface[].unit[].ipv4.proxy_arp                    $!name:string $!unit:int32 $status:int32
+interface[].unit[].ipv4.forwarding                   $!name:string $!unit:int32 $status:int32
+interface[].unit[].ipv4.shared_media                 $!name:string $!unit:int32 $status:int32
+interface[].unit[].ipv4.secure_redirects             $!name:string $!unit:int32 $status:int32
+interface[].unit[].ipv4.accept_source_route          $!name:string $!unit:int32 $status:int32
+interface[].unit[].ipv4.accept_redirects             $!name:string $!unit:int32 $status:int32
+interface[].unit[].ipv4.log_martians                 $!name:string $!unit:int32 $status:int32
+interface[].unit[].ospf.cost                         $!name:string $!unit:int32 $cost:int32
+interface[].unit[].ospf.network-type                 $!name:string $!unit:int32 $network_type
+interface[].unit[].ospf.priority                     $!name:string $!unit:int32 $priority:int32
+interface[].unit[].rip.receive                       $!name:string $!unit:int32 $version:int32
+interface[].unit[].rip.send                          $!name:string $!unit:int32 $version:int32
+interface[].unit[].rip.split-horizon                 $!name:string $!unit:int32 $no_poisoned_reverse
 
 # route-map
 route-map[]                                          $!name
-route-map[].line[]                                   $!name $!line:number $action 
-route-map[].line[].call                              $!name $!line:number $action $route-map
-route-map[].line[].description                       $!name $!line:number $action $description
-route-map[].line[].match.as-path                     $!name $!line:number $action $as_path
-route-map[].line[].match.interface                   $!name $!line:number $action $interface:string
-route-map[].line[].match.ip.address                  $!name $!line:number $action $acl
-route-map[].line[].match.ip.address.prefix-list      $!name $!line:number $action $prefix_list
-route-map[].line[].match.ip.next-hop                 $!name $!line:number $action $acl
-route-map[].line[].match.ip.next-hop.prefix-list     $!name $!line:number $action $prefix_list
-route-map[].line[].match.ip.route-source             $!name $!line:number $action $acl
-route-map[].line[].match.ip.route-source.prefix-list $!name $!line:number $action $prefix_list
-route-map[].line[].match.metric                      $!name $!line:number $action $metric:number
-route-map[].line[].on-match                          $!name $!line:number $action $op $goto:number
-route-map[].line[].set.as-path.exclude               $!name $!line:number $action $as_path
-route-map[].line[].set.as-path.prepend               $!name $!line:number $action $as_path
-route-map[].line[].set.ip.next-hop                   $!name $!line:number $action $nexthop:ipv4addr
-route-map[].line[].set.local-preference              $!name $!line:number $action $localpref:number
-route-map[].line[].set.metric                        $!name $!line:number $action $metric:number
-route-map[].line[].set.metric-type                   $!name $!line:number $action $metric_type
-route-map[].line[].set.origin                        $!name $!line:number $action $origin
-route-map[].line[].set.originator-id                 $!name $!line:number $action $originator_id
-route-map[].line[].set.pathlimit.ttl                 $!name $!line:number $action $ttl:number
-route-map[].line[].set.tag                           $!name $!line:number $action $route_tag
-route-map[].line[].set.weight                        $!name $!line:number $action $weight:number
-route-map[].line[].continue                          $!name $!line:number $action $goto:number
+route-map[].line[]                                   $!name $!line:int32 $action 
+route-map[].line[].call                              $!name $!line:int32 $action $route-map
+route-map[].line[].description                       $!name $!line:int32 $action $description
+route-map[].line[].match.as-path                     $!name $!line:int32 $action $as_path
+route-map[].line[].match.interface                   $!name $!line:int32 $action $interface:string
+route-map[].line[].match.ip.address                  $!name $!line:int32 $action $acl
+route-map[].line[].match.ip.address.prefix-list      $!name $!line:int32 $action $prefix_list
+route-map[].line[].match.ip.next-hop                 $!name $!line:int32 $action $acl
+route-map[].line[].match.ip.next-hop.prefix-list     $!name $!line:int32 $action $prefix_list
+route-map[].line[].match.ip.route-source             $!name $!line:int32 $action $acl
+route-map[].line[].match.ip.route-source.prefix-list $!name $!line:int32 $action $prefix_list
+route-map[].line[].match.metric                      $!name $!line:int32 $action $metric:int32
+route-map[].line[].on-match                          $!name $!line:int32 $action $op $goto:int32
+route-map[].line[].set.as-path.exclude               $!name $!line:int32 $action $as_path
+route-map[].line[].set.as-path.prepend               $!name $!line:int32 $action $as_path
+route-map[].line[].set.ip.next-hop                   $!name $!line:int32 $action $nexthop:ipv4addr
+route-map[].line[].set.local-preference              $!name $!line:int32 $action $localpref:int32
+route-map[].line[].set.metric                        $!name $!line:int32 $action $metric:int32
+route-map[].line[].set.metric-type                   $!name $!line:int32 $action $metric_type
+route-map[].line[].set.origin                        $!name $!line:int32 $action $origin
+route-map[].line[].set.originator-id                 $!name $!line:int32 $action $originator_id
+route-map[].line[].set.pathlimit.ttl                 $!name $!line:int32 $action $ttl:int32
+route-map[].line[].set.tag                           $!name $!line:int32 $action $route_tag
+route-map[].line[].set.weight                        $!name $!line:int32 $action $weight:int32
+route-map[].line[].continue                          $!name $!line:int32 $action $goto:int32
 
 # router.router-id
 router.router-id                                     $routerid:ipv4addr
 
 # router.bgp
-router.bgp                                           $as:number
+router.bgp                                           $as:int32
 router.bgp.router-id                                 $routerid:ipv4addr
-router.bgp.log-neighbor-changes                      $status:number
-router.bgp.always-compare-med                        $status:number
-router.bgp.default.local-preference                  $local_preference:number
-router.bgp.enforce-first-as                          $status:number
-router.bgp.deterministic-med                         $status:number
-router.bgp.graceful-restart                          $stalepath_time:number
-router.bgp.network.import-check                      $status:number
-router.bgp.dampening                                 $half_life:number $reuse:number $suppress:number $max_suppress:number
+router.bgp.log-neighbor-changes                      $status:int32
+router.bgp.always-compare-med                        $status:int32
+router.bgp.default.local-preference                  $local_preference:int32
+router.bgp.enforce-first-as                          $status:int32
+router.bgp.deterministic-med                         $status:int32
+router.bgp.graceful-restart                          $stalepath_time:int32
+router.bgp.network.import-check                      $status:int32
+router.bgp.dampening                                 $half_life:int32 $reuse:int32 $suppress:int32 $max_suppress:int32
 router.bgp.network[]                                 $!prefix:ipv4prefix $route_map
 router.bgp.aggregate-address[]                       $!prefix:ipv4prefix
-router.bgp.redistribute.connected                    $metric:number $route_map
-router.bgp.redistribute.kernel                       $metric:number $route_map
-router.bgp.redistribute.ospf                         $metric:number $route_map
-router.bgp.redistribute.rip                          $metric:number $route_map
-router.bgp.redistribute.static                       $metric:number $route_map
+router.bgp.redistribute.connected                    $metric:int32 $route_map
+router.bgp.redistribute.kernel                       $metric:int32 $route_map
+router.bgp.redistribute.ospf                         $metric:int32 $route_map
+router.bgp.redistribute.rip                          $metric:int32 $route_map
+router.bgp.redistribute.static                       $metric:int32 $route_map
 router.bgp.neighbor[]                                $!neighbor:ipv4addr
-router.bgp.neighbor[].remote-as                      $!neighbor:ipv4addr $remote_as:number
-router.bgp.neighbor[].local-as                       $!neighbor:ipv4addr $localas:number $no_prepend
+router.bgp.neighbor[].remote-as                      $!neighbor:ipv4addr $remote_as:int32
+router.bgp.neighbor[].local-as                       $!neighbor:ipv4addr $localas:int32 $no_prepend
 router.bgp.neighbor[].description                    $!neighbor:ipv4addr $description:rest
 router.bgp.neighbor[].shutdown                       $!neighbor:ipv4addr
 router.bgp.neighbor[].password                       $!neighbor:ipv4addr $password
 router.bgp.neighbor[].passive                        $!neighbor:ipv4addr
-router.bgp.neighbor[].ebgp-multihop                  $!neighbor:ipv4addr $maxhops:number
+router.bgp.neighbor[].ebgp-multihop                  $!neighbor:ipv4addr $maxhops:int32
 router.bgp.neighbor[].update-source                  $!neighbor:ipv4addr $source:ipv4addr
 router.bgp.neighbor[].advertisement-interval         $!neighbor:ipv4addr $interval
-router.bgp.neighbor[].timers                         $!neighbor:ipv4addr $keepalive:number $holdtime:number
-router.bgp.neighbor[].timers.connect                 $!neighbor:ipv4addr $connect:number
-router.bgp.neighbor[].weight                         $!neighbor:ipv4addr $weight:number
+router.bgp.neighbor[].timers                         $!neighbor:ipv4addr $keepalive:int32 $holdtime:int32
+router.bgp.neighbor[].timers.connect                 $!neighbor:ipv4addr $connect:int32
+router.bgp.neighbor[].weight                         $!neighbor:ipv4addr $weight:int32
 router.bgp.neighbor[].next-hop-self                  $!neighbor:ipv4addr
 router.bgp.neighbor[].remove-private-as              $!neighbor:ipv4addr
 router.bgp.neighbor[].default-originate              $!neighbor:ipv4addr $route_map
@@ -180,66 +190,66 @@ router.bgp.neighbor[].distribute-list.out            $!neighbor:ipv4addr $acl
 router.bgp.neighbor[].filter-list.in                 $!neighbor:ipv4addr $acl
 router.bgp.neighbor[].filter-list.out                $!neighbor:ipv4addr $acl
 router.bgp.neighbor[].activate                       $!neighbor:ipv4addr
-router.bgp.distance.bgp                              $external:number $internal:number $local:number
+router.bgp.distance.bgp                              $external:int32 $internal:int32 $local:int32
 router.bgp.distance[]                                $!prefix:ipv4prefix $distance $acl
 
 # router.ospf
-router.ospf                                          $instance:number
+router.ospf                                          $instance:int32
 router.ospf.router-id                                $routerid:ipv4addr
 router.ospf.abr-type                                 $abr_type
-router.ospf.log-adjacency-changes                    $status:number $detail
-router.ospf.compatible                               $rfc1583:number
-router.ospf.auto-cost.reference-bandwidth            $bandwidth:number
-router.ospf.timers.throttle.spf                      $delay:number $initial_hold:number $max_hold:number
-router.ospf.max-metric.router-lsa.on-startup         $on_startup:number
-router.ospf.max-metric.router-lsa.on-shutdown        $on_shutdown:number
-router.ospf.max-metric.router-lsa.on-administrative  $administrative:number
-router.ospf.refresh-timer                            $timer:number
-router.ospf.redistribute.bgp                         $metric:number $metric_type $route_map 
-router.ospf.redistribute.connected                   $metric:number $metric_type $route_map 
-router.ospf.redistribute.isis                        $metric:number $metric_type $route_map 
-router.ospf.redistribute.kernel                      $metric:number $metric_type $route_map 
-router.ospf.redistribute.rip                         $metric:number $metric_type $route_map 
-router.ospf.redistribute.static                      $metric:number $metric_type $route_map 
+router.ospf.log-adjacency-changes                    $status:int32 $detail
+router.ospf.compatible                               $rfc1583:int32
+router.ospf.auto-cost.reference-bandwidth            $bandwidth:int32
+router.ospf.timers.throttle.spf                      $delay:int32 $initial_hold:int32 $max_hold:int32
+router.ospf.max-metric.router-lsa.on-startup         $on_startup:int32
+router.ospf.max-metric.router-lsa.on-shutdown        $on_shutdown:int32
+router.ospf.max-metric.router-lsa.on-administrative  $administrative:int32
+router.ospf.refresh-timer                            $timer:int32
+router.ospf.redistribute.bgp                         $metric:int32 $metric_type $route_map 
+router.ospf.redistribute.connected                   $metric:int32 $metric_type $route_map 
+router.ospf.redistribute.isis                        $metric:int32 $metric_type $route_map 
+router.ospf.redistribute.kernel                      $metric:int32 $metric_type $route_map 
+router.ospf.redistribute.rip                         $metric:int32 $metric_type $route_map 
+router.ospf.redistribute.static                      $metric:int32 $metric_type $route_map 
 router.ospf.passive-interface[]                      $!interface:string
 router.ospf.network[]                                $!prefix:ipv4prefix $area:ipv4addr
 router.ospf.area[]                                   $!area:ipv4addr
 router.ospf.area[].auth                              $!area:ipv4addr $auth
 router.ospf.area[].shortcut                          $!area:ipv4addr $mode
-router.ospf.area[].stub                              $!area:ipv4addr $stub:number $no_summary
-router.ospf.area[].default-cost                      $!area:ipv4addr $cost:number
+router.ospf.area[].stub                              $!area:ipv4addr $stub:int32 $no_summary
+router.ospf.area[].default-cost                      $!area:ipv4addr $cost:int32
 router.ospf.area[].export-list                       $!area:ipv4addr $export_list
 router.ospf.area[].import-list                       $!area:ipv4addr $import_list
 router.ospf.area[].nssa                              $!area:ipv4addr $translate $no_summary
-router.ospf.area[].range[]                           $!area:ipv4addr $!range:ipv4prefix $not_advertise $cost:number $substitute:ipv4prefix
-router.ospf.neighbor[]                               $!neighbor:ipv4addr $priority:number $poll_interval:number
-router.ospf.default-metric                           $metric:number
+router.ospf.area[].range[]                           $!area:ipv4addr $!range:ipv4prefix $not_advertise $cost:int32 $substitute:ipv4prefix
+router.ospf.neighbor[]                               $!neighbor:ipv4addr $priority:int32 $poll_interval:int32
+router.ospf.default-metric                           $metric:int32
 router.ospf.distribute-list[]                        $!direction $!protocol $acl 
-router.ospf.default-information.originate            $always $metric:number $metric_type $route_map
-router.ospf.distance                                 $distance:number
-router.ospf.distance.ospf                            $inter_area:number $external:number $intra_area:number
-router.ospf.capability                               $opaque:number
+router.ospf.default-information.originate            $always $metric:int32 $metric_type $route_map
+router.ospf.distance                                 $distance:int32
+router.ospf.distance.ospf                            $inter_area:int32 $external:int32 $intra_area:int32
+router.ospf.capability                               $opaque:int32
 
 # router.rip
-router.rip                                           $instance:number
-router.rip.default-information                       $status:number
-router.rip.default-metric                            $metric:number
-router.rip.distance                                  $distance:number
-router.rip.distance.prefix[]                         $!prefix:ipv4prefix $distance:number $acl
+router.rip                                           $instance:int32
+router.rip.default-information                       $status:int32
+router.rip.default-metric                            $metric:int32
+router.rip.distance                                  $distance:int32
+router.rip.distance.prefix[]                         $!prefix:ipv4prefix $distance:int32 $acl
 router.rip.distribute-list[]                         $!direction $!interface:string $acl
 router.rip.distribute-list.prefix[]                  $!direction $!interface:string $prefix:ipv4prefix
 router.rip.neighbor[]                                $!neighbor:ipv4addr
 router.rip.network.prefix[]                          $!prefix:ipv4prefix
 router.rip.network.interface[]                       $!interface:string
-router.rip.offset-list[]                             $!direction $!interface:string $acl $metric:number 
+router.rip.offset-list[]                             $!direction $!interface:string $acl $metric:int32 
 router.rip.passive-interface[]                       $!interface:string
-router.rip.redistribute.bgp                         $metric:number $route_map 
-router.rip.redistribute.connected                   $metric:number $route_map 
-router.rip.redistribute.isis                        $metric:number $route_map 
-router.rip.redistribute.kernel                      $metric:number $route_map 
-router.rip.redistribute.ospf                        $metric:number $route_map 
-router.rip.redistribute.static                      $metric:number $route_map 
+router.rip.redistribute.bgp                         $metric:int32 $route_map 
+router.rip.redistribute.connected                   $metric:int32 $route_map 
+router.rip.redistribute.isis                        $metric:int32 $route_map 
+router.rip.redistribute.kernel                      $metric:int32 $route_map 
+router.rip.redistribute.ospf                        $metric:int32 $route_map 
+router.rip.redistribute.static                      $metric:int32 $route_map 
 router.rip.route[]                                   $!prefix:ipv4prefix
-router.rip.version                                   $version:number
-router.rip.timers.basic                              $update:number $timeout:number $garbage:number
+router.rip.version                                   $version:int32
+router.rip.timers.basic                              $update:int32 $timeout:int32 $garbage:int32
 router.rip.route-map[]                               $!direction $!interface:string $route_map 

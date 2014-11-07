@@ -320,8 +320,8 @@ quaggapi_exec (const char *sockpath, struct quaggapi_batch *batch, int ignerr)
   }
 
   for (idx = 0; idx < batch->numcmd; idx++) {
-      cp = batch->cmds[idx].cmd;
-      clicon_debug(1, "%s: write %s",  __FUNCTION__, cp);
+    cp = batch->cmds[idx].cmd;
+    clicon_debug(1, "%s: write %s",  __FUNCTION__, cp);
     if (write (sock, cp, strlen (cp)) != strlen (cp)) {
 	clicon_err(OE_UNIX, errno, "Connecting to quagga: write");
 	batch->numexec = -1;
