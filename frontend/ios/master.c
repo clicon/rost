@@ -32,6 +32,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/param.h>
 #include <net/if.h>
 #include <netinet/in.h>
 
@@ -548,8 +549,10 @@ int
 cli_ios_show_running(clicon_handle h, struct lvmap *lmap)
 {
     char *out;
+    char d2t[MAXPATHLEN+1];
 
-    out = clicon_db2txt(h, clicon_running_db(h), "/home/benny/git/rost/frontend/ios/ios.d2t");
+    snprintf(d2t, MAXPATHLEN, "%s/ios.d2t", clicon_clispec_dir(h));
+    out = clicon_db2txt(h, clicon_running_db(h), d2t);
     if(out) {
 	printf(out);
         free(out);
