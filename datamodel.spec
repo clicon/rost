@@ -76,7 +76,7 @@ ipv4.access-list.standard.named[].line[]             $!name:string $_SEQ=int32 $
 
 ipv4.access-list.extended[]                          $!id:uint32
 ipv4.access-list.extended[].remark                   $!id:uint32 $remark:rest
-ipv4.access-list.extended[].line[]                   $!id:uint32 $_SEQ:int32 $!action:string $!protocol $!src:ipv4prefix $!srcmask:ipv4addr $!dst:ipv4addr $!dstmask:ipv4addr
+ipv4.access-list.extended[].line[]                   $!id:uint32 $_SEQ:int32 $!action:string $!protocol $!src:ipv4addr $!srcmask:ipv4addr $!dst:ipv4addr $!dstmask:ipv4addr
 
 #ipv4.access-list[]                                   $!name
 #ipv6.access-list[]                                   $!name
