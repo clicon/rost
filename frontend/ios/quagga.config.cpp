@@ -91,6 +91,7 @@ undebug("Disable debugging functions (see also 'debug')") {
 } /* UNDEBUG */
 
 
+#if notanymore
 /* ACCESS-LIST */
 access-list("Add an access list entry") {
 
@@ -195,7 +196,7 @@ no("Negate a command or set its defaults") {
     } /* NO ACCESS-LIST */
 
 } /* NO */
-
+#endif /* notanynmore */
 
 
 #ifdef notyet  /* cligen get's confused having both number and strings */
