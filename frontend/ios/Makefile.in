@@ -45,7 +45,7 @@ OBJS    = $(SRC:.c=.o)
 SHOBJS	= $(OBJS:.o=.so)
 STXCPP  = $(wildcard *.cpp)
 STXCLI	= $(STXCPP:.cpp=.cli)
-
+STXD2T	= *.d2t
 
 all:	 $(SHOBJS) $(STXCLI)
 
@@ -64,6 +64,7 @@ install: $(SHOBJS) $(STXCLI)
 	$(INSTALL) -d $(clispecdir)
 	$(INSTALL) $(SHOBJS) $(plugindir)
 	$(INSTALL) $(STXCLI) $(clispecdir)
+	$(INSTALL) $(STXD2T) $(clispecdir)
 
 uninstall:
 	for i in $(SHOBJS); do \
