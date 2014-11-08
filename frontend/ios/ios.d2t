@@ -86,10 +86,10 @@ route-map $rml->name $rml->action $rml->line
 @IF($logging.trap->level ? "logging trap $logging.trap->level")
 @EACH($logging.host[], $lh, "logging host \$lh->host transport \$lh->protocol port \$lh->port\n")
 !
-@EACH($snmp.community.ro[], $ro, "snmp-server community \$ro->community ro")
-@EACH($snmp.community.rw[], $rw, "snmp-server community \$rw->community rw")
-@IF($snmp.contact->contact ? "snmp-server contact $snmp.contact->contact")
-@IF($snmp.location->location ? "snmp-server location $snmp.location->location")
+@EACH($snmp.community.ro[], $ro, "snmp-server community \$ro->community ro\n")
+@EACH($snmp.community.rw[], $rw, "snmp-server community \$rw->community rw\n")
+@IF($snmp.contact->contact ? "snmp-server contact $snmp.contact->contact\n")
+@IF($snmp.location->location ? "snmp-server location $snmp.location->location\n")
 !
 @IF($ntp.logging->dummy ? "ntp logging\n")
 @EACH($ntp.server[], $serv, "ntp server \$serv->address\n")

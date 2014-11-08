@@ -25,6 +25,7 @@
 #endif /* HAVE_ROST_CONFIG_H */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <signal.h>
 #include <netinet/in.h>
@@ -47,6 +48,7 @@
 static int snmp_reload = 0;
 
 
+#if depreciated
 /* lvmap formats for db to config-file transforms */
 static struct lvmap snmpd_conf_fmts[] = {
   {"snmp.location", "sysLocation\t\"$location\"", NULL, LVPRINT_CMD},
@@ -54,9 +56,25 @@ static struct lvmap snmpd_conf_fmts[] = {
   {"snmp.community.ro[]", "rocommunity\t\"$community\"", NULL, LVPRINT_CMD},
   {"snmp.community.rw[]", "rwcommunity\t\"$community\"", NULL, LVPRINT_CMD},
   {NULL, NULL, NULL}
-
 };
-
+#else /* depreciated */
+static char *snmpd_keys[] = {
+    "snmp.location",
+    "snmp.contact",
+    "snmp.community.ro[]",
+    "snmp.community.rw[]",
+    NULL, 
+};
+static char *snmpd_conf_fmt = 
+    "sysLocation\t\"$snmp.location->location\"\n"
+    "sysContact\t\"$snmp.contact->contact\"\n"
+    "@EACH($snmp.community.ro[], $ro)\n"
+    "rocommunity\t\"$ro->community\"\n"
+    "@END\n"
+    "@EACH($snmp.community.rw[], $rw)\n"
+    "rwcommunity\t\"$rw->community\"\n"
+    "@END\n";
+#endif /* depreciated */
 
 /*
  * Commit callback. 
@@ -94,6 +112,7 @@ transaction_end(clicon_handle h)
     int retval = -1;
     FILE *out = NULL;
     char product[128];
+    char *d2t;
     
     if (snmp_reload == 0)
 	return 0; /* Nothing has changed */
@@ -103,7 +122,7 @@ transaction_end(clicon_handle h)
 	goto catch;
     
     if ((out = fopen(SNMPD_CONF, "w")) == NULL) {
-	clicon_err(OE_CFG, errno, "%s: fopen", __FUNCTION__);
+	clicon_err(OE_CFG, errno, "%s: fopen(%s)", __FUNCTION__, SNMPD_CONF);
 	goto catch;
     }
     
@@ -117,7 +136,14 @@ transaction_end(clicon_handle h)
     fprintf (out, "sysDescr\t\"%s, Version %s\"\n", product, CLICON_VERSION);
 #endif
     fprintf (out, "sysServices\t%s\n", SYSSERVICES);
+#if depreciated
     lvmap_print(out, clicon_running_db(h), snmpd_conf_fmts, NULL);
+#else /* depreciated */
+    if ((d2t = clicon_db2txt_buf(h, clicon_running_db(h), snmpd_conf_fmt)) != NULL) {
+	fprintf (out, "%s", d2t);
+	free(d2t);
+    }
+#endif /* depreciated */
     fclose(out);
   
     if (debug)
@@ -142,14 +168,20 @@ plugin_init(clicon_handle h)
     char *key;
     int retval = -1;
 
+#if depreciated
     for (i = 0; snmpd_conf_fmts[i].lm_key; i++) {
 	key = snmpd_conf_fmts[i].lm_key;
+#else /* depreciated */
+    for (i = 0; snmpd_keys[i]; i++) {
+	key = snmpd_keys[i];
+#endif /* depreciated */
 	if (dbdep(h, TRANS_CB_COMMIT, snmp_commit, (void *)NULL, 1, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}
 	clicon_debug(1, "Created dependency '%s'", key);
     }
+    
     retval = 0;
   done:
     return retval;
