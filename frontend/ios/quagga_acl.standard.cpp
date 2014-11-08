@@ -27,9 +27,9 @@ CLICON_MODE=STRINGIFY(IOS_ACLSTD);
 	
     any("Any source host"), cli_set("ipv4.access-list.standard[].line[] $!id=quagga::quagga_acl_cb() $_SEQ=(sequence)10 $!action=$1 $!src=(ipv4addr)0.0.0.0 $!srcmask=(ipv4addr)255.255.255.255"), ADMIN;
     
-    <addr:ipv4addr>("Address to match") <mask:ipv4addr>("Wildcard bits"), cli_set("ipv4.access-list.standard[].line[] $!id=quagga::quagga_acl_cb() $_SEQ=(sequence)10 $!action=$action $!src=$addr $!srcmask=$mask"), ADMIN;
+    <src:ipv4addr show:A.B.C.D>("Address to match") <mask:ipv4addr show:A.B.C.D>("Wildcard bits"), cli_set("ipv4.access-list.standard[].line[] $!id=quagga::quagga_acl_cb() $_SEQ=(sequence)10 $!action=$action $!src=$src $!srcmask=$mask"), ADMIN;
         
-    host("A single host address") <addr:ipv4addr>("Host address"), cli_set("ipv4.access-list.standard[].line[] $!id=quagga::quagga_acl_cb() $_SEQ=(sequence)10 $!action=$action $!src=$addr $!srcmask=(ipv4addr)0.0.0.0"),ADMIN;
+    host("A single host address") <addr:ipv4addr show:A.B.C.D>("Host address"), cli_set("ipv4.access-list.standard[].line[] $!id=quagga::quagga_acl_cb() $_SEQ=(sequence)10 $!action=$action $!src=$addr $!srcmask=(ipv4addr)0.0.0.0"),ADMIN;
   
 }
 remark("Access list entry comment") <rest>("Comment up to 100 characters"), cli_set("ipv4.access-list.standard[].remark $!id=quagga::quagga_acl_cb() $remark"), ADMIN;
@@ -44,9 +44,9 @@ no("Negate a command or set its defaults") {
 	
         any("Any source host"), cli_del("ipv4.access-list.standard[].line[] $!id=quagga::quagga_acl_cb() $_SEQ=(sequence)10 $!action=$1 $!src=(ipv4addr)0.0.0.0 $!srcmask=(ipv4addr)255.255.255.255"), ADMIN;
     
-        <addr:ipv4addr>("Address to match") <mask:ipv4addr>("Wildcard bits"), cli_del("ipv4.access-list.standard[].line[] $!id=quagga::quagga_acl_cb() $_SEQ=(sequence)10 $!action=$action $!src=$addr $!srcmask=$mask"), ADMIN;
+        <addr:ipv4addr show:A.B.C.D>("Address to match") <mask:ipv4addr show:A.B.C.D>("Wildcard bits"), cli_del("ipv4.access-list.standard[].line[] $!id=quagga::quagga_acl_cb() $_SEQ=(sequence)10 $!action=$action $!src=$addr $!srcmask=$mask"), ADMIN;
         
-        host("A single host address") <addr:ipv4addr>("Host address"), cli_del("ipv4.access-list.standard[].line[] $!id=quagga::quagga_acl_cb() $_SEQ=(sequence)10 $!action=$action $!src=$addr $!srcmask=(ipv4addr)0.0.0.0"),ADMIN;
+        host("A single host address") <addr:ipv4addr show:A.B.C.D>("Host address"), cli_del("ipv4.access-list.standard[].line[] $!id=quagga::quagga_acl_cb() $_SEQ=(sequence)10 $!action=$action $!src=$addr $!srcmask=(ipv4addr)0.0.0.0"),ADMIN;
 
     }
 
