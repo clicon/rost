@@ -51,5 +51,11 @@ interface $iface->name
 @if($iface.ospf.priority->priority != nil ? " ip ospf priority $iface.ospf.priority->priority\n")
 @if($iface.rip.receive->version ? " ip rip receive version $iface.rip.receive->version\n")
 @if($iface.rip.send->version ? " ip rip send version $iface.rip.send->version\n")
-### XXXX FIX ME ###@if($iface.rip.split-horizon ? "$no{ no ip rip split-horizon}$poisoned_reverse{ ip rip split-horizon $$}", NULL, LVPRINT_CMD, NULL},
+@if($iface.rip.split-horizon != nil)
+@if($iface.rip.split-horizon->split-horizon == (bool)false)
+ no ip rip split-horizon
+@else
+@if($iface.rip.split-horizon->poison_reverse == (bool)true ? " ip rip split-horizon poisoned-reverse\n")
+@end
+@end
 !

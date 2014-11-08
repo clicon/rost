@@ -78,9 +78,6 @@ ipv4.access-list.extended[]                          $!id:uint32
 ipv4.access-list.extended[].remark                   $!id:uint32 $remark:rest
 ipv4.access-list.extended[].line[]                   $!id:uint32 $_SEQ:int32 $!action:string $!protocol $!src:ipv4addr $!srcmask:ipv4addr $!dst:ipv4addr $!dstmask:ipv4addr
 
-#ipv4.access-list[]                                   $!name
-#ipv6.access-list[]                                   $!name
-
 # interface
 interface[]                                          $!name:string
 interface[].unit[]				     $!name:string $!unit:int32
@@ -113,7 +110,7 @@ interface[].unit[].ospf.network-type                 $!name:string $!unit:int32 
 interface[].unit[].ospf.priority                     $!name:string $!unit:int32 $priority:int32
 interface[].unit[].rip.receive                       $!name:string $!unit:int32 $version:int32
 interface[].unit[].rip.send                          $!name:string $!unit:int32 $version:int32
-interface[].unit[].rip.split-horizon                 $!name:string $!unit:int32 $no_poisoned_reverse
+interface[].unit[].rip.split-horizon                 $!name:string $!unit:int32 $split_horizon:bool $poisoned_reverse:bool
 
 # route-map
 route-map[]                                          $!name

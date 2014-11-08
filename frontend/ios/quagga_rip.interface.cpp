@@ -56,9 +56,9 @@ no("Negate a command or set its defaults") ip("Interface Internet Protocol confi
 
 
     /* IP RIP SPLIT-HORIZON */
-ip("Interface Internet Protocol config commands") rip("Routing Information Protocol") split-horizon("Perform split horizon"), cli_del("interface[].unit[].rip.split-horizon $!name=ios_interface_cb() $!unit=ios_interface_cb()"), ADMIN;
-ip("Interface Internet Protocol config commands") rip("Routing Information Protocol") split-horizon("Perform split horizon") poisoned-reverse("With poisoned-reverse"), cli_set("interface[].unit[].rip.split-horizon $!name=ios_interface_cb() $!unit=ios_interface_cb() $poisoned_reverse=(string)\"poisoned-reverse\""), ADMIN;
+ip("Interface Internet Protocol config commands") rip("Routing Information Protocol") split-horizon("Perform split horizon"), cli_set("interface[].unit[].rip.split-horizon $!name=ios_interface_cb() $!unit=ios_interface_cb() $split_horizon=(bool)true $poisoned_reverse=(bool)false"), ADMIN;
+ip("Interface Internet Protocol config commands") rip("Routing Information Protocol") split-horizon("Perform split horizon") poisoned-reverse("With poisoned-reverse"), cli_set("interface[].unit[].rip.split-horizon $!name=ios_interface_cb() $!unit=ios_interface_cb() $split_horizon=(bool)true $poisoned_reverse=(bool)true"), ADMIN;
 
 
-no("Negate a command or set its defaults") ip("Interface Internet Protocol config commands") rip("Routing Information Protocol") split-horizon("Perform split horizon"), cli_set("interface[].unit[].rip.split-horizon $!name=ios_interface_cb() $!unit=ios_interface_cb() $no=(string)\"no\""), ADMIN;
-no("Negate a command or set its defaults") ip("Interface Internet Protocol config commands") rip("Routing Information Protocol") split-horizon("Perform split horizon") poisoned-reverse("With poisoned-reverse"), cli_del("interface[].unit[].rip.split-horizon $!name=ios_interface_cb() $!unit=ios_interface_cb()"), ADMIN;
+no("Negate a command or set its defaults") ip("Interface Internet Protocol config commands") rip("Routing Information Protocol") split-horizon("Perform split horizon"), cli_set("interface[].unit[].rip.split-horizon $!name=ios_interface_cb() $!unit=ios_interface_cb() $split_horizon=(bool)false $poisoned_reverse=(bool)false"), ADMIN;
+no("Negate a command or set its defaults") ip("Interface Internet Protocol config commands") rip("Routing Information Protocol") split-horizon("Perform split horizon") poisoned-reverse("With poisoned-reverse"), cli_set("interface[].unit[].rip.split-horizon $!name=ios_interface_cb() $!unit=ios_interface_cb() $split_horizon=(bool)false $poisoned_reverse=(bool)false"), ADMIN;
