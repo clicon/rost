@@ -507,7 +507,7 @@ cli_ios_mode_up(clicon_handle h, cvec *vars, cg_var *arg)
     return 0;
 }
 
-#if 0
+#if depreciated
 int
 cli_ios_show_running(clicon_handle h, struct lvmap *lmap)
 {
@@ -554,14 +554,15 @@ cli_ios_show_running(clicon_handle h, struct lvmap *lmap)
     snprintf(d2t, MAXPATHLEN, "%s/ios.d2t", clicon_clispec_dir(h));
     out = clicon_db2txt(h, clicon_running_db(h), d2t);
     if(out) {
-	printf(out);
+	cli_output_formatted(out);
         free(out);
     }
     return 0;
 }
-#endif
+#endif /* depreciated */
 
 
+#if depreciated
 /*
  * Print config stored in an XML file as per the formatting specified
  * in the lvmap.
@@ -587,6 +588,43 @@ cli_ios_show_config(clicon_handle h, char *file, struct lvmap *lmap)
     unchunk(db);
     return 0;
 }
+#else /* depreciated */
+/*
+ * Print config stored in an XML file as per the formatting specified
+ * in the lvmap.
+ */
+int
+cli_ios_show_config(clicon_handle h, char *file, struct lvmap *lmap)
+{
+    char *db;
+    char *out;
+    char d2t[MAXPATHLEN+1];
+
+    if ((db = clicon_tmpfile(__FUNCTION__)) == NULL)
+	return -1;
+
+    if (db_init(db) < 0)
+	return -1;
+
+    if (load_xml_to_db(file, clicon_dbspec_key(h), db) < 0) {
+	unchunk(db);
+	return -1;
+    }
+
+    snprintf(d2t, MAXPATHLEN, "%s/ios.d2t", clicon_clispec_dir(h));
+    out = clicon_db2txt(h, clicon_running_db(h), d2t);
+    if(out) {
+	cli_output_formatted(out);
+        free(out);
+    }
+    unlink(db);
+    unchunk(db);
+
+    return 0;
+}
+#endif /* depreciated */
+
+
 
 int
 show_hostname(clicon_handle h, cvec *vars, cg_var *arg)
