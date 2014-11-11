@@ -48,16 +48,6 @@
 static int snmp_reload = 0;
 
 
-#if depreciated
-/* lvmap formats for db to config-file transforms */
-static struct lvmap snmpd_conf_fmts[] = {
-  {"snmp.location", "sysLocation\t\"$location\"", NULL, LVPRINT_CMD},
-  {"snmp.contact", "sysContact\t\"$contact\"", NULL, LVPRINT_CMD},
-  {"snmp.community.ro[]", "rocommunity\t\"$community\"", NULL, LVPRINT_CMD},
-  {"snmp.community.rw[]", "rwcommunity\t\"$community\"", NULL, LVPRINT_CMD},
-  {NULL, NULL, NULL}
-};
-#else /* depreciated */
 static char *snmpd_keys[] = {
     "snmp.location",
     "snmp.contact",
@@ -74,7 +64,6 @@ static char *snmpd_conf_fmt =
     "@EACH($snmp.community.rw[], $rw)\n"
     "rwcommunity\t\"$rw->community\"\n"
     "@END\n";
-#endif /* depreciated */
 
 /*
  * Commit callback. 
@@ -136,14 +125,10 @@ transaction_end(clicon_handle h)
     fprintf (out, "sysDescr\t\"%s, Version %s\"\n", product, CLICON_VERSION);
 #endif
     fprintf (out, "sysServices\t%s\n", SYSSERVICES);
-#if depreciated
-    lvmap_print(out, clicon_running_db(h), snmpd_conf_fmts, NULL);
-#else /* depreciated */
     if ((d2t = clicon_db2txt_buf(h, clicon_running_db(h), snmpd_conf_fmt)) != NULL) {
 	fprintf (out, "%s", d2t);
 	free(d2t);
     }
-#endif /* depreciated */
     fclose(out);
   
     if (debug)
@@ -168,13 +153,8 @@ plugin_init(clicon_handle h)
     char *key;
     int retval = -1;
 
-#if depreciated
-    for (i = 0; snmpd_conf_fmts[i].lm_key; i++) {
-	key = snmpd_conf_fmts[i].lm_key;
-#else /* depreciated */
     for (i = 0; snmpd_keys[i]; i++) {
 	key = snmpd_keys[i];
-#endif /* depreciated */
 	if (dbdep(h, TRANS_CB_COMMIT, snmp_commit, (void *)NULL, 1, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;

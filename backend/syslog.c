@@ -44,6 +44,7 @@
 
 #define SYSLOG		"syslog-ng"
 #define SYSLOG_PARMS	""
+#define SQLITE3		"/usr/bin/sqlite3"
 
 #define SYSLOG_CONF	"/etc/syslog-ng/syslog-ng.conf"
 #define SYSLOG_CONF_BASE	\
@@ -79,14 +80,22 @@ static int syslog_reload;
 /* Flag set if we need to reset log table trigger */
 static int syslog_trigger;
 
-/* lvmap formats for db to config-file transforms */
-static struct lvmap syslog_conf_fmts[] = {
-  {"logging.trap", "filter f_trap { level(emerg..$level); };", NULL, LVPRINT_CMD},
-  {"logging.host[]", "destination d_host_$host { $protocol(\"$host\" port($port));  };\nlog { source(s_local); filter(f_trap); destination(d_host_$host);  };", NULL, LVPRINT_CMD},
-  {"logging.buffered", "filter f_local { level(emerg..$level); };\ndestination d_sql { program('/usr/bin/sqlite3 " SYSLOG_DB "' template(\"INSERT INTO logs VALUES(NULL, '$${R_YEAR}-$${R_MONTH}-$${R_DAY} $${R_HOUR}:$${R_MIN}:$${R_SEC}','$$FACILITY','$$LEVEL','$$HOST','$$PROGRAM','$$PID','$$MSGONLY');\n\") template-escape(yes) ); };\nlog { source(s_local); filter(f_local); destination(d_sql); };\n", NULL, LVPRINT_CMD},
-
-  {NULL, NULL, NULL}
+static char *syslog_keys[] = {
+    "logging.trap",
+    "logging.host[]",
+    "logging.buffered",
+    NULL
 };
+static char *syslog_conf_fmt = 
+    "@IF($logging.trap->level)\n"
+    "filter f_trap { level(emerg..$logging.trap->level); };\n"
+    "@END\n"
+    "@EACH($logging.host[], $host)\n"
+    "destination d_host_${host->host} { ${host->protocol}(\"${host->host}\" port(${host->port}));  };\nlog { source(s_local); filter(f_trap); destination(d_host_${host->host});  };\n"
+    "@END\n"
+    "@IF($logging.buffered)\n"
+    "filter f_local { level(emerg..$logging.buffered->level); };\ndestination d_sql { program('" SQLITE3 " " SYSLOG_DB "' template(\"INSERT INTO logs VALUES(NULL, '\\${R_YEAR}-\\${R_MONTH}-\\${R_DAY} \\${R_HOUR}:\\${R_MIN}:\\${R_SEC}','\\$FACILITY','\\$LEVEL','\\$HOST','\\$PROGRAM','\\$PID','\\$MSGONLY');\n\") template-escape(yes) ); };\nlog { source(s_local); filter(f_local); destination(d_sql); };\n"
+    "@END\n";
 
 
 /* Declaration of support functions */
@@ -131,7 +140,8 @@ int
 transaction_end(clicon_handle h)
 {
     FILE *out = NULL;
-    
+    char *d2t;
+
     if (syslog_reload == 0)
 	return 0; /* Unchanged */
     
@@ -141,7 +151,12 @@ transaction_end(clicon_handle h)
     }
     
     fprintf (out, SYSLOG_CONF_BASE);
-    lvmap_print(out, clicon_running_db(h), syslog_conf_fmts, NULL);
+    d2t = clicon_db2txt_buf(h, clicon_running_db(h), syslog_conf_fmt);
+    if (d2t != NULL) {
+	fprintf (out, "%s", d2t);
+	printf("#\n%s\n#\n",d2t);
+	free(d2t);
+    }
     fclose(out);
     
     syslog_create_db();	/* Make sure DB-file exists */
@@ -166,8 +181,8 @@ plugin_init(clicon_handle h)
     char *key;
     int retval = -1;
 
-    for (i = 0; syslog_conf_fmts[i].lm_key; i++) {
-	key = syslog_conf_fmts[i].lm_key;
+    for (i = 0; syslog_keys[i]; i++) {
+	key = syslog_keys[i];
 	if (dbdep(h, TRANS_CB_COMMIT, syslog_commit, (void *)NULL, 1, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;

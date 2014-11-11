@@ -25,6 +25,7 @@
 #endif /* HAVE_ROST_CONFIG_H */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <netinet/in.h>
 
@@ -38,12 +39,14 @@
 /* Flag set if config changed and we need create a new RESOLV_CONF */
 static int dns_reload;
 
-/* lvmap formats for db to config-file transforms */
-static struct lvmap resolv_conf_fmts[] = {
-  {"ipv4.domain", "domain\t$domain", NULL, LVPRINT_CMD},
-  {"ipv4.name-server[]", "nameserver $address", NULL, LVPRINT_CMD},
-  {NULL, NULL, NULL}
+static char *resolv_keys[] = {
+    "ipv4.domain", 
+    "ipv4.name-server[]", 
+    NULL
 };
+static char *resolv_fmt = 
+    "domain\t${ipv4.domain->domain}\n"
+    "nameserver\t${ipv4.name-server->address}\n";
 
 /*
  * Commit callback. 
@@ -72,8 +75,8 @@ plugin_init(clicon_handle h)
     char *key;
     int retval = -1;
 
-    for (i = 0; resolv_conf_fmts[i].lm_key; i++) {
-	key = resolv_conf_fmts[i].lm_key;
+    for (i = 0; resolv_keys[i]; i++) {
+	key = resolv_keys[i];
 	if (dbdep(h, TRANS_CB_COMMIT, dns_commit, (void *)NULL, 1, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
@@ -113,6 +116,7 @@ transaction_begin(clicon_handle h)
 int
 transaction_end(clicon_handle h)
 {    
+    char *d2t;
     FILE *out = NULL;
     
     if (dns_reload == 0)
@@ -123,7 +127,10 @@ transaction_end(clicon_handle h)
 	return -1;
     }
     
-    lvmap_print(out, clicon_running_db(h), resolv_conf_fmts, NULL);
+    if ((d2t=clicon_db2txt_buf(h, clicon_running_db(h), resolv_fmt)) != NULL) {
+	fprintf (out, "%s", d2t);
+	free(d2t);
+    }
     fclose(out);
     
     return 0;

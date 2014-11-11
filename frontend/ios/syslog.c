@@ -89,7 +89,6 @@ syslog_show_local_cb(void (outcb)(char *, ...),
 int
 syslog_show_local(clicon_handle h, void (outcb)(char *, ...), int argc, char **argv)
 {
-  int i;
   char *str;
   cg_var *trap = NULL;
   cg_var *sql = NULL;
@@ -119,15 +118,15 @@ syslog_show_local(clicon_handle h, void (outcb)(char *, ...), int argc, char **a
     outcb("  Trap logging: enabled, level %s, %d destinations\n",
 	  trap ? cv_string_get(trap) : "notice",
 	  npairs);
+  
   /* Loop through list */
-  for (i = 0; i < npairs; i++) {
-    if ((vr = lvec2cvec (pairs[i].dp_val, pairs[i].dp_vlen)) == NULL)
-      goto catch;
-    str = lvmap_var_fmt(vr,"       Logging to $host, $protocol port $port\n\n");
-    if (str) {
-      outcb("%s", str);
-      free(str);
-    }
+  str = clicon_db2txt_buf(h, clicon_running_db(h),
+			  "@EACH($logging.host[], $host)\n"
+			  "       Logging to ${host->host}, ${host->protocol} port ${host->port}\n"
+			  "@END\n");
+  if (str) {
+    outcb("%s\n", str);
+    free(str);
   }
 
   syslog_sqlite3_exec(SYSLOG_DB,

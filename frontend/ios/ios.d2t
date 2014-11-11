@@ -83,7 +83,7 @@ route-map $rml->name $rml->action $rml->line
 @END
 @END
 @IF($logging.buffered->rows ? "logging buffered $logging.buffered->rows $logging.buffered->level\n")
-@IF($logging.trap->level ? "logging trap $logging.trap->level")
+@IF($logging.trap->level ? "logging trap $logging.trap->level\n")
 @EACH($logging.host[], $lh, "logging host \$lh->host transport \$lh->protocol port \$lh->port\n")
 !
 @EACH($snmp.community.ro[], $ro, "snmp-server community \$ro->community ro\n")

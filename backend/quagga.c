@@ -42,6 +42,7 @@
 #include "quaggapi.h"
 #include "system.h"
 
+#define ROST_CURKEY	"ROST_CURKEY"
 
 struct qaction {
     char *key;
@@ -52,8 +53,8 @@ struct qaction {
 static struct qaction qactions[] = {
     {
 	"system.hostname",
-	"hostname $ROST_CURKEY->hostname",
-	"no hostname $ROST_CURKEY->hostname",
+	"hostname $" ROST_CURKEY "->hostname",
+	"no hostname $" ROST_CURKEY "->hostname",
 	ALL_API_SOCK
     },
 
@@ -66,414 +67,414 @@ static struct qaction qactions[] = {
     
     {
 	"interface[].unit[]",
-	"interface $ROST_CURKEY->name",
-	"no interface $ROST_CURKEY->name",
+	"interface $" ROST_CURKEY "->name",
+	"no interface $" ROST_CURKEY "->name",
 	ZEBRA_API_SOCK
     },
     
     {
 	"interface[].unit[].description",
-	"interface $ROST_CURKEY->name\n description $ROST_CURKEY->description",
-	"interface $ROST_CURKEY->name\n no description",
+	"interface $" ROST_CURKEY "->name\n description $" ROST_CURKEY "->description",
+	"interface $" ROST_CURKEY "->name\n no description",
 	ZEBRA_API_SOCK
     },
 
     {
 	"interface[].unit[].inet.address[]",
-	"interface $ROST_CURKEY->name\n ip address $ROST_CURKEY->prefix",
-	"interface $ROST_CURKEY->name\n no ip address $ROST_CURKEY->prefix",
+	"interface $" ROST_CURKEY "->name\n ip address $" ROST_CURKEY "->prefix",
+	"interface $" ROST_CURKEY "->name\n no ip address $" ROST_CURKEY "->prefix",
 	ZEBRA_API_SOCK
     },
 
     {
 	"interface[].unit[].ipv6.address[]",
-	"interface $ROST_CURKEY->name\n ipv6 address $ROST_CURKEY->prefix",
-	"interface $ROST_CURKEY->name\n no ipv6 address $ROST_CURKEY->prefix",
+	"interface $" ROST_CURKEY "->name\n ipv6 address $" ROST_CURKEY "->prefix",
+	"interface $" ROST_CURKEY "->name\n no ipv6 address $" ROST_CURKEY "->prefix",
 	ZEBRA_API_SOCK
     },
 
     {
 	"interface[].unit[].bandwidth",
-	"interface $ROST_CURKEY->name\n bandwidth $ROST_CURKEY->bandwidth",
-	"interface $ROST_CURKEY->name\n no bandwidth $ROST_CURKEY->bandwidth",
+	"interface $" ROST_CURKEY "->name\n bandwidth $" ROST_CURKEY "->bandwidth",
+	"interface $" ROST_CURKEY "->name\n no bandwidth $" ROST_CURKEY "->bandwidth",
 	ZEBRA_API_SOCK
     },
 
     {
 	"interface[].unit[].link-detect",
-	"interface $ROST_CURKEY->name\n link-detect",
-	"interface $ROST_CURKEY->name\n no link-detect",
+	"interface $" ROST_CURKEY "->name\n link-detect",
+	"interface $" ROST_CURKEY "->name\n no link-detect",
 	ZEBRA_API_SOCK
     },
 
     {
 	"interface[].unit[].shutdown",
-	"interface $ROST_CURKEY->name\n shutdown",
-	"interface $ROST_CURKEY->name\n no shutdown",
+	"interface $" ROST_CURKEY "->name\n shutdown",
+	"interface $" ROST_CURKEY "->name\n no shutdown",
 	ZEBRA_API_SOCK
     },
 
     {
 	"interface[].unit[].ospf.cost",
-	"interface $ROST_CURKEY->name\n ip ospf cost $ROST_CURKEY->cost",
-	"interface $ROST_CURKEY->name\n no ip ospf cost $ROST_CURKEY->cost",
+	"interface $" ROST_CURKEY "->name\n ip ospf cost $" ROST_CURKEY "->cost",
+	"interface $" ROST_CURKEY "->name\n no ip ospf cost $" ROST_CURKEY "->cost",
 	OSPF_API_SOCK
     },
 
     {
 	"interface[].unit[].ospf.network-type",
-	"interface $ROST_CURKEY->name\n ip ospf network-type $ROST_CURKEY->network_type",
-	"interface $ROST_CURKEY->name\n no ip ospf network-type $ROST_CURKEY->network_type",
+	"interface $" ROST_CURKEY "->name\n ip ospf network-type $" ROST_CURKEY "->network_type",
+	"interface $" ROST_CURKEY "->name\n no ip ospf network-type $" ROST_CURKEY "->network_type",
 	OSPF_API_SOCK
     },
 
     {
 	"interface[].unit[].ospf.priority",
-	"interface $ROST_CURKEY->name\n ip ospf priority $ROST_CURKEY->priority",
-	"interface $ROST_CURKEY->name\n no ip ospf priority $ROST_CURKEY->priority",
+	"interface $" ROST_CURKEY "->name\n ip ospf priority $" ROST_CURKEY "->priority",
+	"interface $" ROST_CURKEY "->name\n no ip ospf priority $" ROST_CURKEY "->priority",
 	OSPF_API_SOCK
     },
 
     {
 	"interface[].unit[].rip.receive",
-	"interface $ROST_CURKEY->name\n ip rip receive version $ROST_CURKEY->version",
-	"interface $ROST_CURKEY->name\n no ip rip receive version",
+	"interface $" ROST_CURKEY "->name\n ip rip receive version $" ROST_CURKEY "->version",
+	"interface $" ROST_CURKEY "->name\n no ip rip receive version",
 	RIP_API_SOCK
     },
 
     {
 	"interface[].unit[].rip.send",
-	"interface $ROST_CURKEY->name\n ip rip send version $ROST_CURKEY->version",
-	"interface $ROST_CURKEY->name\n no ip rip send version",
+	"interface $" ROST_CURKEY "->name\n ip rip send version $" ROST_CURKEY "->version",
+	"interface $" ROST_CURKEY "->name\n no ip rip send version",
 	RIP_API_SOCK
     },
 
     {
 	"interface[].unit[].rip.split-horizon",
-	"interface $ROST_CURKEY->name\n@IF($ROST_CURKEY->split_horizon == (bool)false)\nno ip rip split-horizon\n@ELSE\nip rip split-horizon@IF($ROST_CURKEY->poisoned_reverse == (bool)true ?  \" poisoned-reverse\\n\" : \"\\n\")\n@END\n",
+	"interface $" ROST_CURKEY "->name\n@IF($" ROST_CURKEY "->split_horizon == (bool)false)\nno ip rip split-horizon\n@ELSE\nip rip split-horizon@IF($" ROST_CURKEY "->poisoned_reverse == (bool)true ?  \" poisoned-reverse\\n\" : \"\\n\")\n@END\n",
 	NULL,
 	RIP_API_SOCK
     },
 
     {
 	"router.router-id",
-	"router-id $ROST_CURKEY->routerid",
+	"router-id $" ROST_CURKEY "->routerid",
 	"no router-id",
 	ZEBRA_API_SOCK
     },
 
     {
 	"router.bgp",
-	"router bgp $ROST_CURKEY->as",
-	"no router bgp $ROST_CURKEY->as",
+	"router bgp $" ROST_CURKEY "->as",
+	"no router bgp $" ROST_CURKEY "->as",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.router-id",
-	"router bgp $ROST_CURKEY->router.bgp:as\n bgp router-id $ROST_CURKEY->routerid",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no bgp router-id $ROST_CURKEY->routerid",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp router-id $" ROST_CURKEY "->routerid",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp router-id $" ROST_CURKEY "->routerid",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.log-neighbor-changes",
-	"router bgp $ROST_CURKEY->router.bgp:as\n bgp log-neighbor-changes",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no bgp log-neighbor-changes",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp log-neighbor-changes",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp log-neighbor-changes",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.always-compare-med",
-	"router bgp $ROST_CURKEY->router.bgp:as\n bgp always-compare-med",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no bgp always-compare-med",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp always-compare-med",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp always-compare-med",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.default.local-preference",
-	"router bgp $ROST_CURKEY->router.bgp:as\n bgp default local-preference $ROST_CURKEY->local_preference",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no bgp default local-preference $ROST_CURKEY->local_preference",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp default local-preference $" ROST_CURKEY "->local_preference",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp default local-preference $" ROST_CURKEY "->local_preference",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.enforce-first-as",
-	"router bgp $ROST_CURKEY->router.bgp:as\n bgp enforce-first-as",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no bgp enforce-first-as",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp enforce-first-as",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp enforce-first-as",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.deterministic-med",
-	"router bgp $ROST_CURKEY->router.bgp:as\n bgp deterministic-med",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no bgp deterministic-med",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp deterministic-med",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp deterministic-med",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.graceful-restart",
-	"router bgp $router.bgp:as\n bgp graceful-restart@IF($ROST_CURKEY->stalepath_time ? \" stalepath-time $ROST_CURKEY->stalepath_time\")",
-	"router bgp $router.bgp:as\n no bgp graceful-restart@IF($ROST_CURKEY->stalepath_time ? \" stalepath-time $ROST_CURKEY->stalepath_time\")",
+	"router bgp $router.bgp:as\n bgp graceful-restart@IF($" ROST_CURKEY "->stalepath_time ? \" stalepath-time $" ROST_CURKEY "->stalepath_time\")",
+	"router bgp $router.bgp:as\n no bgp graceful-restart@IF($" ROST_CURKEY "->stalepath_time ? \" stalepath-time $" ROST_CURKEY "->stalepath_time\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.network.import-check",
-	"router bgp $ROST_CURKEY->router.bgp:as\n bgp network import-check",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no network import-check",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp network import-check",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no network import-check",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.dampening",
-	"router bgp $ROST_CURKEY->router.bgp:as\n bgp dampening@IF(ROST_CURKEY->half_life ? \" $ROST_CURKEY->half_life\")@IF($ROST_CURKEY->reuse ? \" $ROST_CURKEY->reuse\")@IF($ROST_CURKEY->suppress ? \" $ROST_CURKEY->suppress\")@IF($ROST_CURKEY->max_suppress ? \" $ROST_CURKEY->max_suppress\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no bgp dampening@IF(ROST_CURKEY->half_life ? \" $ROST_CURKEY->half_life\")@IF($ROST_CURKEY->reuse ? \" $ROST_CURKEY->reuse\")@IF($ROST_CURKEY->suppress ? \" $ROST_CURKEY->suppress\")@IF($ROST_CURKEY->max_suppress ? \" $ROST_CURKEY->max_suppress\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp dampening@IF(ROST_CURKEY->half_life ? \" $" ROST_CURKEY "->half_life\")@IF($" ROST_CURKEY "->reuse ? \" $" ROST_CURKEY "->reuse\")@IF($" ROST_CURKEY "->suppress ? \" $" ROST_CURKEY "->suppress\")@IF($" ROST_CURKEY "->max_suppress ? \" $" ROST_CURKEY "->max_suppress\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp dampening@IF(ROST_CURKEY->half_life ? \" $" ROST_CURKEY "->half_life\")@IF($" ROST_CURKEY "->reuse ? \" $" ROST_CURKEY "->reuse\")@IF($" ROST_CURKEY "->suppress ? \" $" ROST_CURKEY "->suppress\")@IF($" ROST_CURKEY "->max_suppress ? \" $" ROST_CURKEY "->max_suppress\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.network[]",
-	"router bgp $ROST_CURKEY->router.bgp:as\n network $ROST_CURKEY->prefix@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no network $ROST_CURKEY->prefix@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n network $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no network $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.aggregate-address[]",
-	"router bgp $ROST_CURKEY->router.bgp:as\n aggregate-address $ROST_CURKEY->prefix@IF($ROST_CURKEY->as_set ? \" $ROST_CURKEY->as_set\")@IF($ROST_CURKEY->summary_only ? \" $ROST_CURKEY->summary_only\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no aggregate-address $ROST_CURKEY->prefix@IF($ROST_CURKEY->as_set ? \" $ROST_CURKEY->as_set\")@IF($ROST_CURKEY->summary_only ? \" $ROST_CURKEY->summary_only\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n aggregate-address $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->as_set ? \" $" ROST_CURKEY "->as_set\")@IF($" ROST_CURKEY "->summary_only ? \" $" ROST_CURKEY "->summary_only\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no aggregate-address $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->as_set ? \" $" ROST_CURKEY "->as_set\")@IF($" ROST_CURKEY "->summary_only ? \" $" ROST_CURKEY "->summary_only\")",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.redistribute.connected",
-	"router bgp $ROST_CURKEY->router.bgp:as\n redistribute connected @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no redistribute connected",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n redistribute connected @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no redistribute connected",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.redistribute.kernel",
-	"router bgp $ROST_CURKEY->router.bgp:as\n redistribute kernel @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no redistribute kernel",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n redistribute kernel @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no redistribute kernel",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.redistribute.ospf",
-	"router bgp $ROST_CURKEY->router.bgp:as\n redistribute ospf @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no redistribute ospf",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n redistribute ospf @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no redistribute ospf",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.redistribute.rip",
-	"router bgp $ROST_CURKEY->router.bgp:as\n redistribute rip @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no redistribute rip",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n redistribute rip @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no redistribute rip",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.redistribute.static",
-	"router bgp $ROST_CURKEY->router.bgp:as\n redistribute static @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no redistribute static",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n redistribute static @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no redistribute static",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].remote-as",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor remote-as $ROST_CURKEY->remote_as",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor remote-as $ROST_CURKEY->remote_as",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor remote-as $" ROST_CURKEY "->remote_as",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor remote-as $" ROST_CURKEY "->remote_as",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].local-as",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor local-as $ROST_CURKEY->localas@IF($ROST_CURKEY->no_prepend ? \" $ROST_CURKEY->no_prepend\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor local-as $ROST_CURKEY->localas@IF($ROST_CURKEY->no_prepend ? \" $ROST_CURKEY->no_prepend\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor local-as $" ROST_CURKEY "->localas@IF($" ROST_CURKEY "->no_prepend ? \" $" ROST_CURKEY "->no_prepend\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor local-as $" ROST_CURKEY "->localas@IF($" ROST_CURKEY "->no_prepend ? \" $" ROST_CURKEY "->no_prepend\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].description",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor description $ROST_CURKEY->description",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor description $ROST_CURKEY->description",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor description $" ROST_CURKEY "->description",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor description $" ROST_CURKEY "->description",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].shutdown",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor shutdown",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor shutdown",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor shutdown",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor shutdown",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].password",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor password $ROST_CURKEY->password",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor password $ROST_CURKEY->password",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor password $" ROST_CURKEY "->password",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor password $" ROST_CURKEY "->password",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].passive",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor passive",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor passive",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor passive",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor passive",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].ebgp-multihop",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor ebgp-multihop@IF($ROST_CURKEY->maxhops ? \" $ROST_CURKEY->maxhops\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor ebgp-multihop@IF($ROST_CURKEY->maxhops ? \" $ROST_CURKEY->maxhops\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor ebgp-multihop@IF($" ROST_CURKEY "->maxhops ? \" $" ROST_CURKEY "->maxhops\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor ebgp-multihop@IF($" ROST_CURKEY "->maxhops ? \" $" ROST_CURKEY "->maxhops\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].update-source",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor update-source $ROST_CURKEY->source",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor update-source",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor update-source $" ROST_CURKEY "->source",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor update-source",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].advertisement-interval",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor advertisement-interval $ROST_CURKEY->interval",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor advertisement-interval $ROST_CURKEY->interval",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor advertisement-interval $" ROST_CURKEY "->interval",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor advertisement-interval $" ROST_CURKEY "->interval",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].timers",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor timers $ROST_CURKEY->keepalive $ROST_CURKEY->holdtime",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor timers $ROST_CURKEY->keepalive $ROST_CURKEY->holdtime",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor timers $" ROST_CURKEY "->keepalive $" ROST_CURKEY "->holdtime",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor timers $" ROST_CURKEY "->keepalive $" ROST_CURKEY "->holdtime",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].timers.connect",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor timers connect $ROST_CURKEY->connect",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor timers connect $ROST_CURKEY->connect",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor timers connect $" ROST_CURKEY "->connect",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor timers connect $" ROST_CURKEY "->connect",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].weight",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor weight $ROST_CURKEY->weight",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor weight $ROST_CURKEY->weight",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor weight $" ROST_CURKEY "->weight",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor weight $" ROST_CURKEY "->weight",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].next-hop-self",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor next-hop-self",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor next-hop-self",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor next-hop-self",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor next-hop-self",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].remove-private-as",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor remove-private-AS",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor remove-private-AS",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor remove-private-AS",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor remove-private-AS",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].default-originate",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor default-originate@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor default-originate@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor default-originate@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor default-originate@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].soft-reconfiguration.inbound",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor soft-reconfiguration inbound",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor soft-reconfiguration inbound",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor soft-reconfiguration inbound",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor soft-reconfiguration inbound",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].prefix-list.in",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor prefix-list $ROST_CURKEY->prefix_list in",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor prefix-list $ROST_CURKEY->prefix_list in",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list in",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list in",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].prefix-list.out",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor prefix-list $ROST_CURKEY->prefix_list out",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor prefix-list $ROST_CURKEY->prefix_list out",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list out",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list out",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].route-map.in",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor route-map $ROST_CURKEY->route_map in",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor route-map $ROST_CURKEY->route_map in",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map in",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map in",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].route-map.out",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor route-map $ROST_CURKEY->route_map out",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor route-map $ROST_CURKEY->route_map out",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map out",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map out",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].filter-list.in",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor filter-list $ROST_CURKEY->acl in",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor filter-list $ROST_CURKEY->acl in",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl in",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl in",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].filter-list.out",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor filter-list $ROST_CURKEY->acl out",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor filter-list $ROST_CURKEY->acl out",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl out",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl out",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].activate",
-	"router bgp $ROST_CURKEY->router.bgp:as\n neighbor $ROST_CURKEY->neighbor activate",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no neighbor $ROST_CURKEY->neighbor activate",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor activate",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor activate",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.distance.bgp",
-	"router bgp $ROST_CURKEY->router.bgp:as\n distance bgp $ROST_CURKEY->external $ROST_CURKEY->internal $ROST_CURKEY->local",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no distance bgp $ROST_CURKEY->external $ROST_CURKEY->internal $ROST_CURKEY->local",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n distance bgp $" ROST_CURKEY "->external $" ROST_CURKEY "->internal $" ROST_CURKEY "->local",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no distance bgp $" ROST_CURKEY "->external $" ROST_CURKEY "->internal $" ROST_CURKEY "->local",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.distance[]",
-	"router bgp $ROST_CURKEY->router.bgp:as\n distance $ROST_CURKEY->distance $ROST_CURKEY->prefix@IF($ROST_CURKEY->acl ? \" $ROST_CURKEY->acl\")",
-	"router bgp $ROST_CURKEY->router.bgp:as\n no distance $ROST_CURKEY->distance $ROST_CURKEY->prefix@IF($ROST_CURKEY->acl ? \" $ROST_CURKEY->acl\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n distance $" ROST_CURKEY "->distance $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->acl ? \" $" ROST_CURKEY "->acl\")",
+	"router bgp $" ROST_CURKEY "->router.bgp:as\n no distance $" ROST_CURKEY "->distance $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->acl ? \" $" ROST_CURKEY "->acl\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.ospf.router-id",
-	"router ospf\n ospf router-id $ROST_CURKEY->routerid",
+	"router ospf\n ospf router-id $" ROST_CURKEY "->routerid",
 	"router ospf\n no ospf router-id",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.abr-type",
-	"router ospf\n ospf abr-type $ROST_CURKEY->abr_type",
-	"router ospf\n no ospf abr-type $ROST_CURKEY->abr_type",
+	"router ospf\n ospf abr-type $" ROST_CURKEY "->abr_type",
+	"router ospf\n no ospf abr-type $" ROST_CURKEY "->abr_type",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.log-adjacency-changes",
-	"router ospf\n log-adjacency-changes@IF($ROST_CURKEY->detail ? \" $ROST_CURKEY->detail\")",
-	"router ospf\n no log-adjacency-changes@IF($ROST_CURKEY->detail ? \" $ROST_CURKEY->detail\")",
+	"router ospf\n log-adjacency-changes@IF($" ROST_CURKEY "->detail ? \" $" ROST_CURKEY "->detail\")",
+	"router ospf\n no log-adjacency-changes@IF($" ROST_CURKEY "->detail ? \" $" ROST_CURKEY "->detail\")",
 	OSPF_API_SOCK
     },
 
@@ -486,28 +487,28 @@ static struct qaction qactions[] = {
 
     {
 	"router.ospf.auto-cost.reference-bandwidth",
-	"router ospf\n auto-cost reference-bandwidth $ROST_CURKEY->bandwidth",
-	"router ospf\n noauto-cost reference-bandwidth $ROST_CURKEY->bandwidth",
+	"router ospf\n auto-cost reference-bandwidth $" ROST_CURKEY "->bandwidth",
+	"router ospf\n noauto-cost reference-bandwidth $" ROST_CURKEY "->bandwidth",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.timers.throttle.spf",
-	"router ospf\n timers throttle spf $ROST_CURKEY->delay $ROST_CURKEY->initial_hold $ROST_CURKEY->max_hold",
-	"router ospf\n no timers throttle spf $ROST_CURKEY->delay $ROST_CURKEY->initial_hold $ROST_CURKEY->max_hold",
+	"router ospf\n timers throttle spf $" ROST_CURKEY "->delay $" ROST_CURKEY "->initial_hold $" ROST_CURKEY "->max_hold",
+	"router ospf\n no timers throttle spf $" ROST_CURKEY "->delay $" ROST_CURKEY "->initial_hold $" ROST_CURKEY "->max_hold",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.max-metric.router-lsa.on-startup",
-	"router ospf\n max-metric router-lsa on-startup $ROST_CURKEY->on_startup",
+	"router ospf\n max-metric router-lsa on-startup $" ROST_CURKEY "->on_startup",
 	"router ospf\n no max-metric router-lsa on-startup",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.max-metric.router-lsa.on-shutdown",
-	"router ospf\n max-metric router-lsa on-shutdown $ROST_CURKEY->on_shutdown",
+	"router ospf\n max-metric router-lsa on-shutdown $" ROST_CURKEY "->on_shutdown",
 	"router ospf\n no max-metric router-lsa on-shutdown",
 	OSPF_API_SOCK
     },
@@ -521,162 +522,162 @@ static struct qaction qactions[] = {
 
     {
 	"router.ospf.refresh-timer",
-	"router ospf\n refresh timer $ROST_CURKEY->timer",
-	"router ospf\n no refresh timer $ROST_CURKEY->timer",
+	"router ospf\n refresh timer $" ROST_CURKEY "->timer",
+	"router ospf\n no refresh timer $" ROST_CURKEY "->timer",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.redistribute.bgp",
-	"router ospf\n redistribute bgp @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->metric_type ? \" metric-type $ROST_CURKEY->metric_type\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router ospf\n redistribute bgp @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->metric_type ? \" metric-type $" ROST_CURKEY "->metric_type\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router ospf\n no redistribute bgp",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.redistribute.connected",
-	"router ospf\n redistribute connected @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->metric_type ? \" metric-type $ROST_CURKEY->metric_type\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router ospf\n redistribute connected @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->metric_type ? \" metric-type $" ROST_CURKEY "->metric_type\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router ospf\n no redistribute connected",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.redistribute.isis",
-	"router ospf\n redistribute isis @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->metric_type ? \" metric-type $ROST_CURKEY->metric_type\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router ospf\n redistribute isis @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->metric_type ? \" metric-type $" ROST_CURKEY "->metric_type\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router ospf\n no redistribute isis",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.redistribute.kernel",
-	"router ospf\n redistribute kernel @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->metric_type ? \" metric-type $ROST_CURKEY->metric_type\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router ospf\n redistribute kernel @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->metric_type ? \" metric-type $" ROST_CURKEY "->metric_type\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router ospf\n no redistribute kernel",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.redistribute.rip",
-	"router ospf\n redistribute rip @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->metric_type ? \" metric-type $ROST_CURKEY->metric_type\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router ospf\n redistribute rip @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->metric_type ? \" metric-type $" ROST_CURKEY "->metric_type\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router ospf\n no redistribute rip",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.redistribute.static",
-	"router ospf\n redistribute static @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->metric_type ? \" metric-type $ROST_CURKEY->metric_type\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router ospf\n redistribute static @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->metric_type ? \" metric-type $" ROST_CURKEY "->metric_type\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router ospf\n no redistribute static",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.passive-interface[]",
-	"router ospf\n passive-interface $ROST_CURKEY->interface",
-	"router ospf\n no passive-interface $ROST_CURKEY->interface",
+	"router ospf\n passive-interface $" ROST_CURKEY "->interface",
+	"router ospf\n no passive-interface $" ROST_CURKEY "->interface",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.network[]",
-	"router ospf\n network $ROST_CURKEY->prefix area $ROST_CURKEY->area",
-	"router ospf\n no network $ROST_CURKEY->prefix area $ROST_CURKEY->area",
+	"router ospf\n network $" ROST_CURKEY "->prefix area $" ROST_CURKEY "->area",
+	"router ospf\n no network $" ROST_CURKEY "->prefix area $" ROST_CURKEY "->area",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.area[].auth",
-	"router ospf\n area $ROST_CURKEY->area authentication@IF($ROST_CURKEY->auth ? \" $ROST_CURKEY->auth\")",
-	"router ospf\n no area $ROST_CURKEY->area authentication@IF($ROST_CURKEY->auth ? \" $ROST_CURKEY->auth\")",
+	"router ospf\n area $" ROST_CURKEY "->area authentication@IF($" ROST_CURKEY "->auth ? \" $" ROST_CURKEY "->auth\")",
+	"router ospf\n no area $" ROST_CURKEY "->area authentication@IF($" ROST_CURKEY "->auth ? \" $" ROST_CURKEY "->auth\")",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.area[].shortcut",
-	"router ospf\n area $ROST_CURKEY->area shortcut $ROST_CURKEY->mode",
-	"router ospf\n no area $ROST_CURKEY->area shortcut $ROST_CURKEY->mode",
+	"router ospf\n area $" ROST_CURKEY "->area shortcut $" ROST_CURKEY "->mode",
+	"router ospf\n no area $" ROST_CURKEY "->area shortcut $" ROST_CURKEY "->mode",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.area[].stub",
-	"router ospf\n area $ROST_CURKEY->area stub@IF($ROST_CURKEY->no_summary ? \" $ROST_CURKEY->no_summary\")",
-	"router ospf\n no area $ROST_CURKEY->area stub@IF($ROST_CURKEY->no_summary ? \" $ROST_CURKEY->no_summary\")",
+	"router ospf\n area $" ROST_CURKEY "->area stub@IF($" ROST_CURKEY "->no_summary ? \" $" ROST_CURKEY "->no_summary\")",
+	"router ospf\n no area $" ROST_CURKEY "->area stub@IF($" ROST_CURKEY "->no_summary ? \" $" ROST_CURKEY "->no_summary\")",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.area[].default-cost",
-	"router ospf\n area $ROST_CURKEY->area default-cost $ROST_CURKEY->cost",
-	"router ospf\n no area $ROST_CURKEY->area default-cost $ROST_CURKEY->cost",
+	"router ospf\n area $" ROST_CURKEY "->area default-cost $" ROST_CURKEY "->cost",
+	"router ospf\n no area $" ROST_CURKEY "->area default-cost $" ROST_CURKEY "->cost",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.area[].export-list",
-	"router ospf\n area $ROST_CURKEY->area export-list $ROST_CURKEY->export_list",
-	"router ospf\n no area $ROST_CURKEY->area export-list $ROST_CURKEY->export_list",
+	"router ospf\n area $" ROST_CURKEY "->area export-list $" ROST_CURKEY "->export_list",
+	"router ospf\n no area $" ROST_CURKEY "->area export-list $" ROST_CURKEY "->export_list",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.area[].import-list",
-	"router ospf\n area $ROST_CURKEY->area import-list $ROST_CURKEY->import_list",
-	"router ospf\n no area $ROST_CURKEY->area import-list $ROST_CURKEY->import_list",
+	"router ospf\n area $" ROST_CURKEY "->area import-list $" ROST_CURKEY "->import_list",
+	"router ospf\n no area $" ROST_CURKEY "->area import-list $" ROST_CURKEY "->import_list",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.area[].nssa",
-	"router ospf\n area $ROST_CURKEY->area nssa@IF($ROST_CURKEY->translate ? \" translate-$ROST_CURKEY->translate\")@IF($ROST_CURKEY->no_summary ? \" $ROST_CURKEY->no_summary\")",
-	"router ospf\n no area $ROST_CURKEY->area nssa@IF($ROST_CURKEY->translate ? \" translate-$ROST_CURKEY->translate\")@IF($ROST_CURKEY->no_summary ? \" $ROST_CURKEY->no_summary\")",
+	"router ospf\n area $" ROST_CURKEY "->area nssa@IF($" ROST_CURKEY "->translate ? \" translate-$" ROST_CURKEY "->translate\")@IF($" ROST_CURKEY "->no_summary ? \" $" ROST_CURKEY "->no_summary\")",
+	"router ospf\n no area $" ROST_CURKEY "->area nssa@IF($" ROST_CURKEY "->translate ? \" translate-$" ROST_CURKEY "->translate\")@IF($" ROST_CURKEY "->no_summary ? \" $" ROST_CURKEY "->no_summary\")",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.area[].range",
-	"router ospf\n area $ROST_CURKEY->area range $ROST_CURKEY->range@IF($ROST_CURKEY->substitute ? \" substitute $ROST_CURKEY->substitute\")@IF($ROST_CURKEY->not_advertise ? \" $ROST_CURKEY->not_advertise\")@IF($ROST_CURKEY->cost ? \" cost $ROST_CURKEY->cost\")",
-	"router ospf\n no area $ROST_CURKEY->area range $ROST_CURKEY->range@IF($ROST_CURKEY->substitute ? \" substitute $ROST_CURKEY->substitute\")@IF($ROST_CURKEY->not_advertise ? \" $ROST_CURKEY->not_advertise\")@IF($ROST_CURKEY->cost ? \" cost $ROST_CURKEY->cost\")",
+	"router ospf\n area $" ROST_CURKEY "->area range $" ROST_CURKEY "->range@IF($" ROST_CURKEY "->substitute ? \" substitute $" ROST_CURKEY "->substitute\")@IF($" ROST_CURKEY "->not_advertise ? \" $" ROST_CURKEY "->not_advertise\")@IF($" ROST_CURKEY "->cost ? \" cost $" ROST_CURKEY "->cost\")",
+	"router ospf\n no area $" ROST_CURKEY "->area range $" ROST_CURKEY "->range@IF($" ROST_CURKEY "->substitute ? \" substitute $" ROST_CURKEY "->substitute\")@IF($" ROST_CURKEY "->not_advertise ? \" $" ROST_CURKEY "->not_advertise\")@IF($" ROST_CURKEY "->cost ? \" cost $" ROST_CURKEY "->cost\")",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.neighbor[]",
-	"router ospf\n neighbor $ROST_CURKEY->neighbor@IF($ROST_CURKEY->priority ? \" priority $ROST_CURKEY->priority\")@IF($ROST_CURKEY->poll_interval ? \" poll-interval $ROST_CURKEY->poll_interval\")",
-	"router ospf\n no neighbor $ROST_CURKEY->neighbor@IF($ROST_CURKEY->priority ? \" priority $ROST_CURKEY->priority\")@IF($ROST_CURKEY->poll_interval ? \" poll-interval $ROST_CURKEY->poll_interval\")",
+	"router ospf\n neighbor $" ROST_CURKEY "->neighbor@IF($" ROST_CURKEY "->priority ? \" priority $" ROST_CURKEY "->priority\")@IF($" ROST_CURKEY "->poll_interval ? \" poll-interval $" ROST_CURKEY "->poll_interval\")",
+	"router ospf\n no neighbor $" ROST_CURKEY "->neighbor@IF($" ROST_CURKEY "->priority ? \" priority $" ROST_CURKEY "->priority\")@IF($" ROST_CURKEY "->poll_interval ? \" poll-interval $" ROST_CURKEY "->poll_interval\")",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.default-metric",
-	"router ospf\n default-metric $ROST_CURKEY->metric",
-	"router ospf\n no default-metric $ROST_CURKEY->metric",
+	"router ospf\n default-metric $" ROST_CURKEY "->metric",
+	"router ospf\n no default-metric $" ROST_CURKEY "->metric",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.distribute-list[]",
-	"router ospf\n distribute-list $ROST_CURKEY->acl $ROST_CURKEY->direction $ROST_CURKEY->protocol",
-	"router ospf\n no distribute-list $ROST_CURKEY->acl $ROST_CURKEY->direction $ROST_CURKEY->protocol",
+	"router ospf\n distribute-list $" ROST_CURKEY "->acl $" ROST_CURKEY "->direction $" ROST_CURKEY "->protocol",
+	"router ospf\n no distribute-list $" ROST_CURKEY "->acl $" ROST_CURKEY "->direction $" ROST_CURKEY "->protocol",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.default-information.originate",
-	"router ospf\n default-information originate@IF($ROST_CURKEY->always ? \" $ROST_CURKEY->always\")@IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->metric_type ? \" metric-type $ROST_CURKEY->metric_type\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
-	"router ospf\n no default-information originate@IF($ROST_CURKEY->always ? \" $ROST_CURKEY->always\")@IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->metric_type ? \" metric-type $ROST_CURKEY->metric_type\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router ospf\n default-information originate@IF($" ROST_CURKEY "->always ? \" $" ROST_CURKEY "->always\")@IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->metric_type ? \" metric-type $" ROST_CURKEY "->metric_type\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router ospf\n no default-information originate@IF($" ROST_CURKEY "->always ? \" $" ROST_CURKEY "->always\")@IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->metric_type ? \" metric-type $" ROST_CURKEY "->metric_type\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.distance",
-	"router ospf\n distance $ROST_CURKEY->distance",
-	"router ospf\n no distance $ROST_CURKEY->distance",
+	"router ospf\n distance $" ROST_CURKEY "->distance",
+	"router ospf\n no distance $" ROST_CURKEY "->distance",
 	OSPF_API_SOCK
     },
 
     {
 	"router.ospf.distance.ospf",
-	"router ospf\n distance ospf@IF($ROST_CURKEY->intra_area ? \" intra-area $ROST_CURKEY->intra_area\")@IF($ROST_CURKEY->inter_area ? \" inter-area $ROST_CURKEY->inter_area\")@IF($ROST_CURKEY->external ? \" external $ROST_CURKEY->external\")",
-	"router ospf\n no distance ospf@IF($ROST_CURKEY->intra_area ? \" intra-area $ROST_CURKEY->intra_area\")@IF($ROST_CURKEY->inter_area ? \" inter-area $ROST_CURKEY->inter_area\")@IF($ROST_CURKEY->external ? \" external $ROST_CURKEY->external\")",
+	"router ospf\n distance ospf@IF($" ROST_CURKEY "->intra_area ? \" intra-area $" ROST_CURKEY "->intra_area\")@IF($" ROST_CURKEY "->inter_area ? \" inter-area $" ROST_CURKEY "->inter_area\")@IF($" ROST_CURKEY "->external ? \" external $" ROST_CURKEY "->external\")",
+	"router ospf\n no distance ospf@IF($" ROST_CURKEY "->intra_area ? \" intra-area $" ROST_CURKEY "->intra_area\")@IF($" ROST_CURKEY "->inter_area ? \" inter-area $" ROST_CURKEY "->inter_area\")@IF($" ROST_CURKEY "->external ? \" external $" ROST_CURKEY "->external\")",
 	OSPF_API_SOCK
     },
 
@@ -696,14 +697,14 @@ static struct qaction qactions[] = {
 
     {
 	"router.rip.version",
-	"router rip\nversion $ROST_CURKEY->version",
+	"router rip\nversion $" ROST_CURKEY "->version",
 	"router rip\nno version",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.timers.basic",
-	"router rip\ntimers basic $ROST_CURKEY->update $ROST_CURKEY->timeout $ROST_CURKEY->garbage",
+	"router rip\ntimers basic $" ROST_CURKEY "->update $" ROST_CURKEY "->timeout $" ROST_CURKEY "->garbage",
 	"router rip\nno timers basic",
 	RIP_API_SOCK
     },
@@ -717,120 +718,120 @@ static struct qaction qactions[] = {
 
     {
 	"router.rip.redistribute.bgp",
-	"router rip\n redistribute bgp @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router rip\n redistribute bgp @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router rip\n no redistribute bgp",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.redistribute.connected",
-	"router rip\n redistribute connected @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router rip\n redistribute connected @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router rip\n no redistribute connected",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.redistribute.isis",
-	"router rip\n redistribute isis @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router rip\n redistribute isis @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router rip\n no redistribute isis",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.redistribute.kernel",
-	"router rip\n redistribute kernel @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router rip\n redistribute kernel @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router rip\n no redistribute kernel",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.redistribute.ospf",
-	"router rip\n redistribute ospf @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router rip\n redistribute ospf @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router rip\n no redistribute ospf",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.redistribute.static",
-	"router rip\n redistribute static @IF($ROST_CURKEY->metric ? \" metric $ROST_CURKEY->metric\")@IF($ROST_CURKEY->route_map ? \" route-map $ROST_CURKEY->route_map\")",
+	"router rip\n redistribute static @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	"router rip\n no redistribute static",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.offset-list[]",
-	"router rip\noffset-list $ROST_CURKEY->acl $ROST_CURKEY->direction $ROST_CURKEY->metric@IF($ROST_CURKEY->interface ? \" $ROST_CURKEY->interface\")",
-	"router rip\nno offset-list $ROST_CURKEY->acl $ROST_CURKEY->direction $ROST_CURKEY->metric@IF($ROST_CURKEY->interface ? \" $ROST_CURKEY->interface\")",
+	"router rip\noffset-list $" ROST_CURKEY "->acl $" ROST_CURKEY "->direction $" ROST_CURKEY "->metric@IF($" ROST_CURKEY "->interface ? \" $" ROST_CURKEY "->interface\")",
+	"router rip\nno offset-list $" ROST_CURKEY "->acl $" ROST_CURKEY "->direction $" ROST_CURKEY "->metric@IF($" ROST_CURKEY "->interface ? \" $" ROST_CURKEY "->interface\")",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.network.prefix[]",
-	"router rip\nnetwork $ROST_CURKEY->prefix",
-	"router rip\nno network $ROST_CURKEY->prefix",
+	"router rip\nnetwork $" ROST_CURKEY "->prefix",
+	"router rip\nno network $" ROST_CURKEY "->prefix",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.network.interface[",
-	"router rip\nnetwork $ROST_CURKEY->interface",
-	"router rip\nno network $ROST_CURKEY->interface",
+	"router rip\nnetwork $" ROST_CURKEY "->interface",
+	"router rip\nno network $" ROST_CURKEY "->interface",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.neighbor[]",
-	"router rip\nneighbor $ROST_CURKEY->neighbor",
-	"router rip\nno neighbor $ROST_CURKEY->neighbor",
+	"router rip\nneighbor $" ROST_CURKEY "->neighbor",
+	"router rip\nno neighbor $" ROST_CURKEY "->neighbor",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.passive-interface[].unit[]",
-	"router rip\npassive-interface $ROST_CURKEY->interface",
-	"router rip\nno passive-interface $ROST_CURKEY->interface",
+	"router rip\npassive-interface $" ROST_CURKEY "->interface",
+	"router rip\nno passive-interface $" ROST_CURKEY "->interface",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.default-metric",
-	"router rip\ndefault-metric $ROST_CURKEY->metric",
+	"router rip\ndefault-metric $" ROST_CURKEY "->metric",
 	"router rip\nno default-metric",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.distribute-list[]",
-	"router rip\ndistribute-list $ROST_CURKEY->acl $ROST_CURKEY->direction@IF($ROST_CURKEY->interface ? \" $ROST_CURKEY->interface\")",
-	"router rip\nno distribute-list $ROST_CURKEY->acl $ROST_CURKEY->direction@IF($ROST_CURKEY->interface ? \" $ROST_CURKEY->interface\")",
+	"router rip\ndistribute-list $" ROST_CURKEY "->acl $" ROST_CURKEY "->direction@IF($" ROST_CURKEY "->interface ? \" $" ROST_CURKEY "->interface\")",
+	"router rip\nno distribute-list $" ROST_CURKEY "->acl $" ROST_CURKEY "->direction@IF($" ROST_CURKEY "->interface ? \" $" ROST_CURKEY "->interface\")",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.distribute-list.prefix[]",
-	"router rip\ndistribute-list prefix $ROST_CURKEY->prefix $ROST_CURKEY->direction@IF($ROST_CURKEY->interface ? \" $ROST_CURKEY->interface\")",
-	"router rip\nno distribute-list prefix $ROST_CURKEY->prefix $ROST_CURKEY->direction@IF($ROST_CURKEY->interface ? \" $ROST_CURKEY->interface\")",
+	"router rip\ndistribute-list prefix $" ROST_CURKEY "->prefix $" ROST_CURKEY "->direction@IF($" ROST_CURKEY "->interface ? \" $" ROST_CURKEY "->interface\")",
+	"router rip\nno distribute-list prefix $" ROST_CURKEY "->prefix $" ROST_CURKEY "->direction@IF($" ROST_CURKEY "->interface ? \" $" ROST_CURKEY "->interface\")",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.route-map[]",
-	"router rip\nroute-map $ROST_CURKEY->route_map $ROST_CURKEY->direction $ROST_CURKEY->interface",
-	"router rip\nno route-map $ROST_CURKEY->route_map $ROST_CURKEY->direction $ROST_CURKEY->interface",
+	"router rip\nroute-map $" ROST_CURKEY "->route_map $" ROST_CURKEY "->direction $" ROST_CURKEY "->interface",
+	"router rip\nno route-map $" ROST_CURKEY "->route_map $" ROST_CURKEY "->direction $" ROST_CURKEY "->interface",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.distance",
-	"router rip\ndistance $ROST_CURKEY->distance",
-	"router rip\nno distance $ROST_CURKEY->distance",
+	"router rip\ndistance $" ROST_CURKEY "->distance",
+	"router rip\nno distance $" ROST_CURKEY "->distance",
 	RIP_API_SOCK
     },
 
     {
 	"router.rip.distance.prefix[]",
-	"router rip\ndistance $ROST_CURKEY->distance $ROST_CURKEY->prefix @IF($ROST_CURKEY->acl ? \" $ROST_CURKEY->acl\")",
-	"router rip\nno distance $ROST_CURKEY->distance $ROST_CURKEY->prefix",
+	"router rip\ndistance $" ROST_CURKEY "->distance $" ROST_CURKEY "->prefix @IF($" ROST_CURKEY "->acl ? \" $" ROST_CURKEY "->acl\")",
+	"router rip\nno distance $" ROST_CURKEY "->distance $" ROST_CURKEY "->prefix",
 	RIP_API_SOCK
     },
 
@@ -843,252 +844,252 @@ static struct qaction qactions[] = {
 
     {
 	"ipv4.route.static[]",
-	"ip route $ROST_CURKEY->prefix $ROST_CURKEY->nexthop@IF($ROST_CURKEY->distance ? \" $ROST_CURKEY->distance\")",
-	"no ip route $ROST_CURKEY->prefix $ROST_CURKEY->nexthop@IF($ROST_CURKEY->distance ? \" $ROST_CURKEY->distance\")",
+	"ip route $" ROST_CURKEY "->prefix $" ROST_CURKEY "->nexthop@IF($" ROST_CURKEY "->distance ? \" $" ROST_CURKEY "->distance\")",
+	"no ip route $" ROST_CURKEY "->prefix $" ROST_CURKEY "->nexthop@IF($" ROST_CURKEY "->distance ? \" $" ROST_CURKEY "->distance\")",
 	ZEBRA_API_SOCK
     },
 
     {
 	"ipv4.route.static.null[]",
-	"ip route $ROST_CURKEY->prefix@IF($ROST_CURKEY->reject ? \" $ROST_CURKEY->reject\")@IF($ROST_CURKEY->blackhole ? \" $ROST_CURKEY->blackhole\")@IF($ROST_CURKEY->distance ? \" $ROST_CURKEY->distance\")",
-	"no ip route $ROST_CURKEY->prefix@IF($ROST_CURKEY->reject ? \" $ROST_CURKEY->reject\")@IF($ROST_CURKEY->blackhole ? \" $ROST_CURKEY->blackhole\")@IF($ROST_CURKEY->distance ? \" $ROST_CURKEY->distance\")",
+	"ip route $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->reject ? \" $" ROST_CURKEY "->reject\")@IF($" ROST_CURKEY "->blackhole ? \" $" ROST_CURKEY "->blackhole\")@IF($" ROST_CURKEY "->distance ? \" $" ROST_CURKEY "->distance\")",
+	"no ip route $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->reject ? \" $" ROST_CURKEY "->reject\")@IF($" ROST_CURKEY "->blackhole ? \" $" ROST_CURKEY "->blackhole\")@IF($" ROST_CURKEY "->distance ? \" $" ROST_CURKEY "->distance\")",
 	ZEBRA_API_SOCK
     },
 
 #if notanymore
     {
 	"access-list[]",
-	"access-list $ROST_CURKEY->id $ROST_CURKEY->action@IF($ROST_CURKEY->remark ? \" $ROST_CURKEY->remark\")@IF($ROST_CURKEY->proto ? \" $ROST_CURKEY->proto\")@IF($ROST_CURKEY->srcaddr ? \" $ROST_CURKEY->srcaddr\")@IF($ROST_CURKEY->srcmask ? \" $ROST_CURKEY->srcmask\")@IF($ROST_CURKEY->dstaddr ? \" $ROST_CURKEY->dstaddr\")@IF($ROST_CURKEY->dstmask ? \" $ROST_CURKEY->dstmask\")",
-	"no access-list $ROST_CURKEY->id $ROST_CURKEY->action@IF($ROST_CURKEY->remark ? \" $ROST_CURKEY->remark\")@IF($ROST_CURKEY->proto ? \" $ROST_CURKEY->proto\")@IF($ROST_CURKEY->srcaddr ? \" $ROST_CURKEY->srcaddr\")@IF($ROST_CURKEY->srcmask ? \" $ROST_CURKEY->srcmask\")@IF($ROST_CURKEY->dstaddr ? \" $ROST_CURKEY->dstaddr\")@IF($ROST_CURKEY->dstmask ? \" $ROST_CURKEY->dstmask\")",
+	"access-list $" ROST_CURKEY "->id $" ROST_CURKEY "->action@IF($" ROST_CURKEY "->remark ? \" $" ROST_CURKEY "->remark\")@IF($" ROST_CURKEY "->proto ? \" $" ROST_CURKEY "->proto\")@IF($" ROST_CURKEY "->srcaddr ? \" $" ROST_CURKEY "->srcaddr\")@IF($" ROST_CURKEY "->srcmask ? \" $" ROST_CURKEY "->srcmask\")@IF($" ROST_CURKEY "->dstaddr ? \" $" ROST_CURKEY "->dstaddr\")@IF($" ROST_CURKEY "->dstmask ? \" $" ROST_CURKEY "->dstmask\")",
+	"no access-list $" ROST_CURKEY "->id $" ROST_CURKEY "->action@IF($" ROST_CURKEY "->remark ? \" $" ROST_CURKEY "->remark\")@IF($" ROST_CURKEY "->proto ? \" $" ROST_CURKEY "->proto\")@IF($" ROST_CURKEY "->srcaddr ? \" $" ROST_CURKEY "->srcaddr\")@IF($" ROST_CURKEY "->srcmask ? \" $" ROST_CURKEY "->srcmask\")@IF($" ROST_CURKEY "->dstaddr ? \" $" ROST_CURKEY "->dstaddr\")@IF($" ROST_CURKEY "->dstmask ? \" $" ROST_CURKEY "->dstmask\")",
 	ALL_API_SOCK 
     },
 #endif
 
     {
 	"ipv4.access-list.standard[].remark",
-	"access-list $ROST_CURKEY->id remark $ROST_CURKEY->remark",
-	"no access-list $ROST_CURKEY->id remark $ROST_CURKEY->remark",
+	"access-list $" ROST_CURKEY "->id remark $" ROST_CURKEY "->remark",
+	"no access-list $" ROST_CURKEY "->id remark $" ROST_CURKEY "->remark",
 	ALL_API_SOCK 
     },
     {
 	"ipv4.access-list.standard[].line[]",
-	"access-list $ROST_CURKEY->id $ROST_CURKEY->action $ROST_CURKEY->src $ROST_CURKEY->srcmask",
-	"no access-list $ROST_CURKEY->id $ROST_CURKEY->action $ROST_CURKEY->src $ROST_CURKEY->srcmask",
+	"access-list $" ROST_CURKEY "->id $" ROST_CURKEY "->action $" ROST_CURKEY "->src $" ROST_CURKEY "->srcmask",
+	"no access-list $" ROST_CURKEY "->id $" ROST_CURKEY "->action $" ROST_CURKEY "->src $" ROST_CURKEY "->srcmask",
 	ALL_API_SOCK 
     },
 
     {
 	"ipv4.access-list.standard.named[].remark",
-	"access-list $ROST_CURKEY->name remark $ROST_CURKEY->remark",
-	"no access-list $ROST_CURKEY->name remark $ROST_CURKEY->remark",
+	"access-list $" ROST_CURKEY "->name remark $" ROST_CURKEY "->remark",
+	"no access-list $" ROST_CURKEY "->name remark $" ROST_CURKEY "->remark",
 	ALL_API_SOCK 
     },
     {
 	"ipv4.access-list.standard.named[].line[]",
-	"access-list $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->src $ROST_CURKEY->srcmask",
-	"no access-list $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->src $ROST_CURKEY->srcmask",
+	"access-list $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->src $" ROST_CURKEY "->srcmask",
+	"no access-list $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->src $" ROST_CURKEY "->srcmask",
 	ALL_API_SOCK 
     },
 
     {
 	"ipv4.access-list.extended[].remark",
-	"access-list $ROST_CURKEY->id remark $ROST_CURKEY->remark",
-	"no access-list $ROST_CURKEY->id remark $ROST_CURKEY->remark",
+	"access-list $" ROST_CURKEY "->id remark $" ROST_CURKEY "->remark",
+	"no access-list $" ROST_CURKEY "->id remark $" ROST_CURKEY "->remark",
 	ALL_API_SOCK 
     },
     {
 	"ipv4.access-list.extended[].line[]",
-	"access-list $ROST_CURKEY->id $ROST_CURKEY->action $ROST_CURKEY->protocol $ROST_CURKEY->src $ROST_CURKEY->srcmask $ROST_CURKEY->dst $ROST_CURKEY->dstmask",
-	"no access-list $ROST_CURKEY->id $ROST_CURKEY->action $ROST_CURKEY->protocol $ROST_CURKEY->src $ROST_CURKEY->srcmask $ROST_CURKEY->dst $ROST_CURKEY->dstmask",
+	"access-list $" ROST_CURKEY "->id $" ROST_CURKEY "->action $" ROST_CURKEY "->protocol $" ROST_CURKEY "->src $" ROST_CURKEY "->srcmask $" ROST_CURKEY "->dst $" ROST_CURKEY "->dstmask",
+	"no access-list $" ROST_CURKEY "->id $" ROST_CURKEY "->action $" ROST_CURKEY "->protocol $" ROST_CURKEY "->src $" ROST_CURKEY "->srcmask $" ROST_CURKEY "->dst $" ROST_CURKEY "->dstmask",
 	ALL_API_SOCK 
     },
 
     {
 	"ipv4.prefix-list[].description",
-	"ip prefix-list $ROST_CURKEY->name description $ROST_CURKEY->description",
-	"no ip prefix-list $ROST_CURKEY->name $ROST_CURKEY->description",
+	"ip prefix-list $" ROST_CURKEY "->name description $" ROST_CURKEY "->description",
+	"no ip prefix-list $" ROST_CURKEY "->name $" ROST_CURKEY "->description",
 	ALL_API_SOCK 
     },
 
     {
 	"ipv4.prefix-list[].line[]",
-	"ip prefix-list $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->prefix @IF($ROST_CURKEY->ge ? \" ge $ROST_CURKEY->ge\")@IF($ROST_CURKEY->le ? \" le $ROST_CURKEY->le\")",
-	"no ip prefix-list $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->prefix @IF($ROST_CURKEY->ge ? \" ge $ROST_CURKEY->ge\")@IF($ROST_CURKEY->le ? \" le $ROST_CURKEY->le\")",
+	"ip prefix-list $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->prefix @IF($" ROST_CURKEY "->ge ? \" ge $" ROST_CURKEY "->ge\")@IF($" ROST_CURKEY "->le ? \" le $" ROST_CURKEY "->le\")",
+	"no ip prefix-list $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->prefix @IF($" ROST_CURKEY "->ge ? \" ge $" ROST_CURKEY "->ge\")@IF($" ROST_CURKEY "->le ? \" le $" ROST_CURKEY "->le\")",
 	ALL_API_SOCK 
     },
 
     {
 	"route-map[].line[]",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line",
-	"no route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line",
+	"no route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line",
 	ALL_API_SOCK
     },
 
     {
 	"route-map[].line[].call",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n call $ROST_CURKEY->route_map",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no call $ROST_CURKEY->route_map",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n call $" ROST_CURKEY "->route_map",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no call $" ROST_CURKEY "->route_map",
 	ALL_API_SOCK
     },
 
     {
 	"route-map[].line[].description",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n description $ROST_CURKEY->description",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no description $ROST_CURKEY->description",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n description $" ROST_CURKEY "->description",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no description $" ROST_CURKEY "->description",
 	ALL_API_SOCK
     },
 
     {
 	"route-map[].line[].match.as-path",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n match as-path $ROST_CURKEY->as_path",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no match as-path@IF($ROST_CURKEY->as_path ? \" $ROST_CURKEY->as_path\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n match as-path $" ROST_CURKEY "->as_path",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no match as-path@IF($" ROST_CURKEY "->as_path ? \" $" ROST_CURKEY "->as_path\")",
 	BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].match.interface",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n match interface $ROST_CURKEY->interface",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no match interface@IF($ROST_CURKEY->interface ? \" $ROST_CURKEY->interface\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n match interface $" ROST_CURKEY "->interface",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no match interface@IF($" ROST_CURKEY "->interface ? \" $" ROST_CURKEY "->interface\")",
 	ZEBRA_API_SOCK ":" OSPF_API_SOCK ":" RIP_API_SOCK 
     },
 
     {
 	"route-map[].line[].match.ip.address",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n match ip address $ROST_CURKEY->acl",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no match ip address@IF($ROST_CURKEY->acl ? \" $ROST_CURKEY->acl\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n match ip address $" ROST_CURKEY "->acl",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no match ip address@IF($" ROST_CURKEY "->acl ? \" $" ROST_CURKEY "->acl\")",
 	ALL_API_SOCK
     },
 
     {
 	"route-map[].line[].match.ip.address.prefix-list",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n match ip address prefix-list $ROST_CURKEY->prefix_list",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no match ip address prefix-list@IF($ROST_CURKEY->prefix_list ? \" $ROST_CURKEY->prefix_list\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n match ip address prefix-list $" ROST_CURKEY "->prefix_list",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no match ip address prefix-list@IF($" ROST_CURKEY "->prefix_list ? \" $" ROST_CURKEY "->prefix_list\")",
 	ALL_API_SOCK
     },
 
     {
 	"route-map[].line[].match.ip.next-hop",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n match ip next-hop $ROST_CURKEY->acl",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no match ip next-hop@IF($ROST_CURKEY->acl ? \" $ROST_CURKEY->acl\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n match ip next-hop $" ROST_CURKEY "->acl",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no match ip next-hop@IF($" ROST_CURKEY "->acl ? \" $" ROST_CURKEY "->acl\")",
 	ALL_API_SOCK
     },
 
     {
 	"route-map[].line[].match.ip.next-hop.prefix-list",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n match ip next-hop prefix-list$ROST_CURKEY->prefix_list",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no match ip next-hop prefix-list@IF($ROST_CURKEY->prefix_list ? \" $ROST_CURKEY->prefix_list\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n match ip next-hop prefix-list$" ROST_CURKEY "->prefix_list",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no match ip next-hop prefix-list@IF($" ROST_CURKEY "->prefix_list ? \" $" ROST_CURKEY "->prefix_list\")",
 	ALL_API_SOCK
     },
 
     {
 	"route-map[].line[].match.ip.route-source",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n match ip route-source $ROST_CURKEY->acl",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no match ip route-source@IF($ROST_CURKEY->acl ? \" $ROST_CURKEY->acl\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n match ip route-source $" ROST_CURKEY "->acl",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no match ip route-source@IF($" ROST_CURKEY "->acl ? \" $" ROST_CURKEY "->acl\")",
 	BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].match.ip.route-source.prefix-list",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n match ip route-source prefix-list$ROST_CURKEY->prefix_list",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no match ip route-source prefix-list@IF($ROST_CURKEY->prefix_list ? \" $ROST_CURKEY->prefix_list\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n match ip route-source prefix-list$" ROST_CURKEY "->prefix_list",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no match ip route-source prefix-list@IF($" ROST_CURKEY "->prefix_list ? \" $" ROST_CURKEY "->prefix_list\")",
 	ALL_API_SOCK
     },
 
     {
 	"route-map[].line[].match.metric",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n match metric $ROST_CURKEY->metric",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no match metric@IF($ROST_CURKEY->metric ? \" $ROST_CURKEY->metric\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n match metric $" ROST_CURKEY "->metric",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no match metric@IF($" ROST_CURKEY "->metric ? \" $" ROST_CURKEY "->metric\")",
 	RIP_API_SOCK ":" BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].on-match",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n on-match $ROST_CURKEY->op@IF($ROST_CURKEY->goto ? \" $ROST_CURKEY->goto\")",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no on-match $ROST_CURKEY->op",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n on-match $" ROST_CURKEY "->op@IF($" ROST_CURKEY "->goto ? \" $" ROST_CURKEY "->goto\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no on-match $" ROST_CURKEY "->op",
 	ALL_API_SOCK
     },
 
     {
 	"route-map[].line[].set.as-path.exclude",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set as-path exclude $ROST_CURKEY->as_path",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set as-path exclude@IF($ROST_CURKEY->as_path ? \" $ROST_CURKEY->as_path\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set as-path exclude $" ROST_CURKEY "->as_path",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set as-path exclude@IF($" ROST_CURKEY "->as_path ? \" $" ROST_CURKEY "->as_path\")",
 	BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].set.as-path.prepend",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set as-path prepend $ROST_CURKEY->as_path",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set as-path prepend@IF($ROST_CURKEY->as_path ? \" $ROST_CURKEY->as_path\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set as-path prepend $" ROST_CURKEY "->as_path",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set as-path prepend@IF($" ROST_CURKEY "->as_path ? \" $" ROST_CURKEY "->as_path\")",
 	BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].set.ip.next-hop",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set ip next-hop $ROST_CURKEY->nexthop",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set ip next-hop@IF($ROST_CURKEY->nexthop ? \" $ROST_CURKEY->nexthop\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set ip next-hop $" ROST_CURKEY "->nexthop",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set ip next-hop@IF($" ROST_CURKEY "->nexthop ? \" $" ROST_CURKEY "->nexthop\")",
 	BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].set.local-preference",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set local-preference $ROST_CURKEY->localpref",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set local-preference@IF($ROST_CURKEY->localpref ? \" $ROST_CURKEY->localpref\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set local-preference $" ROST_CURKEY "->localpref",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set local-preference@IF($" ROST_CURKEY "->localpref ? \" $" ROST_CURKEY "->localpref\")",
 	BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].set.metric",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set metric@IF($ROST_CURKEY->op ? \" $ROST_CURKEY->op\") $ROST_CURKEY->metric",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set metric@IF($ROST_CURKEY->op ? \" $ROST_CURKEY->op\")@IF($ROST_CURKEY->metric ? \" $ROST_CURKEY->metric\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set metric@IF($" ROST_CURKEY "->op ? \" $" ROST_CURKEY "->op\") $" ROST_CURKEY "->metric",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set metric@IF($" ROST_CURKEY "->op ? \" $" ROST_CURKEY "->op\")@IF($" ROST_CURKEY "->metric ? \" $" ROST_CURKEY "->metric\")",
 	RIP_API_SOCK ":" BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].set.metric-type",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set metric-type $ROST_CURKEY->metric_type",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set metric-type@IF($ROST_CURKEY->metric_type ? \" $ROST_CURKEY->metric_type\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set metric-type $" ROST_CURKEY "->metric_type",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set metric-type@IF($" ROST_CURKEY "->metric_type ? \" $" ROST_CURKEY "->metric_type\")",
 	OSPF_API_SOCK
     },
 
     {
 	"route-map[].line[].set.origin",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set origin $ROST_CURKEY->origin",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set origin@IF($ROST_CURKEY->origin ? \" $ROST_CURKEY->origin\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set origin $" ROST_CURKEY "->origin",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set origin@IF($" ROST_CURKEY "->origin ? \" $" ROST_CURKEY "->origin\")",
 	BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].set.originator-id",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set originator-id $ROST_CURKEY->originator_id",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set originator-id@IF($ROST_CURKEY->originator_id ? \" $ROST_CURKEY->originator_id\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set originator-id $" ROST_CURKEY "->originator_id",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set originator-id@IF($" ROST_CURKEY "->originator_id ? \" $" ROST_CURKEY "->originator_id\")",
 	BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].set.pathlimit.ttl",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set pathlimit ttl $ROST_CURKEY->ttl",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set pathlimit ttl@IF($ROST_CURKEY->ttl ? \" $ROST_CURKEY->ttl\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set pathlimit ttl $" ROST_CURKEY "->ttl",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set pathlimit ttl@IF($" ROST_CURKEY "->ttl ? \" $" ROST_CURKEY "->ttl\")",
 	BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].set.tag",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set tag $ROST_CURKEY->route_tag",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set tag@IF($ROST_CURKEY->route_tag ? \" $ROST_CURKEY->route_tag\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set tag $" ROST_CURKEY "->route_tag",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set tag@IF($" ROST_CURKEY "->route_tag ? \" $" ROST_CURKEY "->route_tag\")",
 	RIP_API_SOCK
     },
 
     {
 	"route-map[].line[].set.weight",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n set weight $ROST_CURKEY->weight",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no set weight@IF($ROST_CURKEY->weight ? \" $ROST_CURKEY->weight\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n set weight $" ROST_CURKEY "->weight",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no set weight@IF($" ROST_CURKEY "->weight ? \" $" ROST_CURKEY "->weight\")",
 	BGP_API_SOCK
     },
 
     {
 	"route-map[].line[].continue",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n continue@IF($ROST_CURKEY->goto ? \" $ROST_CURKEY->goto\")",
-	"route-map $ROST_CURKEY->name $ROST_CURKEY->action $ROST_CURKEY->line\n no continue@IF($ROST_CURKEY->goto ? \" $ROST_CURKEY->goto\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n continue@IF($" ROST_CURKEY "->goto ? \" $" ROST_CURKEY "->goto\")",
+	"route-map $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->line\n no continue@IF($" ROST_CURKEY "->goto ? \" $" ROST_CURKEY "->goto\")",
 	ALL_API_SOCK
     },
 
@@ -1171,7 +1172,6 @@ quagga_commit(clicon_handle h, char *db,
 	      void *arg)
 {
     int retval = -1;
-    char *d2t;
     char *cmd;
     struct qaction *qa = (struct qaction *)arg;
     char *qfmt = (op == LV_SET) ? qa->cmd : qa->nocmd;
@@ -1179,32 +1179,16 @@ quagga_commit(clicon_handle h, char *db,
     if (qfmt == NULL) /* Nothing to do */
 	return 0;
 
-#if deprectiated
-    if (op == LV_SET)
-	cmd = lvmap_fmt(db, qa->cmd, key);
-    else
-	cmd = lvmap_fmt(db, qa->nocmd, key);
-    if (cmd == NULL)
+    if (clicon_option_str_set(h, ROST_CURKEY, key))
 	return -1;
-
-    if (debug)
-	clicon_log(LOG_DEBUG, "%s: %s: %s\n",  __FUNCTION__, key, cmd);
-
-#else /* depreciated */
-    d2t = chunk_sprintf(__FUNCTION__, "@SET($ROST_CURKEY, \"%s\")\n%s",
-			key, qfmt);
-    if (d2t == NULL) {
-	clicon_err(OE_UNIX, errno, "chunk_sprintf");
-	return -1;
-    }
-    cmd = clicon_db2txt_buf(h, db, d2t);
-    unchunk(d2t);
+    
+    cmd = clicon_db2txt_buf(h, db, qfmt);
+    clicon_option_del(h, ROST_CURKEY);
     if (cmd == NULL) {
 	clicon_err(OE_PLUGIN, 0, "Failed to format quagga command");
 	return -1;
     }
 
-#endif /* depreciated */
     if (debug)
 	clicon_log(LOG_DEBUG, "%s: %s: %s\n",  __FUNCTION__, key, cmd);
 
