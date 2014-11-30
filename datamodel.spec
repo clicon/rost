@@ -171,6 +171,7 @@ router.bgp.neighbor[].passive                        $!neighbor:ipv4addr
 router.bgp.neighbor[].ebgp-multihop                  $!neighbor:ipv4addr $maxhops:int32
 router.bgp.neighbor[].update-source                  $!neighbor:ipv4addr $source:ipv4addr
 router.bgp.neighbor[].advertisement-interval         $!neighbor:ipv4addr $interval
+router.bgp.neighbor[].allowas-in                     $!neighbor:ipv4addr $num_as:int8
 router.bgp.neighbor[].timers                         $!neighbor:ipv4addr $keepalive:int32 $holdtime:int32
 router.bgp.neighbor[].timers.connect                 $!neighbor:ipv4addr $connect:int32
 router.bgp.neighbor[].weight                         $!neighbor:ipv4addr $weight:int32
@@ -178,6 +179,7 @@ router.bgp.neighbor[].next-hop-self                  $!neighbor:ipv4addr
 router.bgp.neighbor[].remove-private-as              $!neighbor:ipv4addr
 router.bgp.neighbor[].default-originate              $!neighbor:ipv4addr $route_map
 router.bgp.neighbor[].soft-reconfiguration.inbound   $!neighbor:ipv4addr
+router.bgp.neighbor[].peer-group                     $!neighbor:ipv4addr $peergroup:string
 router.bgp.neighbor[].prefix-list.in                 $!neighbor:ipv4addr $prefix_list
 router.bgp.neighbor[].prefix-list.out                $!neighbor:ipv4addr $prefix_list
 router.bgp.neighbor[].route-map.in                   $!neighbor:ipv4addr $route_map
@@ -187,6 +189,33 @@ router.bgp.neighbor[].distribute-list.out            $!neighbor:ipv4addr $acl
 router.bgp.neighbor[].filter-list.in                 $!neighbor:ipv4addr $acl
 router.bgp.neighbor[].filter-list.out                $!neighbor:ipv4addr $acl
 router.bgp.neighbor[].activate                       $!neighbor:ipv4addr
+router.bgp.peer-group[]                              $!peergroup:string
+router.bgp.peer-group[].remote-as                    $!peergroup:string $remote_as:int32
+router.bgp.peer-group[].local-as                     $!peergroup:string $localas:int32 $no_prepend
+router.bgp.peer-group[].description                  $!peergroup:string $description:rest
+router.bgp.peer-group[].shutdown                     $!peergroup:string
+router.bgp.peer-group[].password                     $!peergroup:string $password
+router.bgp.peer-group[].passive                      $!peergroup:string
+router.bgp.peer-group[].ebgp-multihop                $!peergroup:string $maxhops:int32
+router.bgp.peer-group[].update-source                $!peergroup:string $source:ipv4addr
+router.bgp.peer-group[].advertisement-interval       $!peergroup:string $interval
+router.bgp.peer-group[].allowas-in                   $!peergroup:string $num_as:int8
+router.bgp.peer-group[].timers                       $!peergroup:string $keepalive:int32 $holdtime:int32
+router.bgp.peer-group[].timers.connect               $!peergroup:string $connect:int32
+router.bgp.peer-group[].weight                       $!peergroup:string $weight:int32
+router.bgp.peer-group[].next-hop-self                $!peergroup:string
+router.bgp.peer-group[].remove-private-as            $!peergroup:string
+router.bgp.peer-group[].default-originate            $!peergroup:string $route_map
+router.bgp.peer-group[].soft-reconfiguration.inbound $!peergroup:string
+router.bgp.peer-group[].prefix-list.in               $!peergroup:string $prefix_list
+router.bgp.peer-group[].prefix-list.out              $!peergroup:string $prefix_list
+router.bgp.peer-group[].route-map.in                 $!peergroup:string $route_map
+router.bgp.peer-group[].route-map.out                $!peergroup:string $route_map
+router.bgp.peer-group[].distribute-list.in           $!peergroup:string $acl
+router.bgp.peer-group[].distribute-list.out          $!peergroup:string $acl
+router.bgp.peer-group[].filter-list.in               $!peergroup:string $acl
+router.bgp.peer-group[].filter-list.out              $!peergroup:string $acl
+router.bgp.peer-group[].activate                     $!peergroup:string
 router.bgp.distance.bgp                              $external:int32 $internal:int32 $local:int32
 router.bgp.distance[]                                $!prefix:ipv4prefix $distance $acl
 
