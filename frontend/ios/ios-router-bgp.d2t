@@ -60,7 +60,7 @@ router bgp $router.bgp->as
  redistribute static@IF($router.bgp.redistribute.static->metric ? " metric $router.bgp.redistribute.static->metric")@IF($router.bgp.redistribute.static->route_map ? " route-map $router.bgp.redistribute.static->route_map")\n
 @END
 @EACH($router.bgp.neighbor[], $neigh)
-@IF($neigh.remote-as ? " neighbor $neigh->neighbor remote-as $neigh.remote-ad->remote_as\n")
+@IF($neigh.remote-as ? " neighbor $neigh->neighbor remote-as $neigh.remote-as->remote_as")
 @IF($neigh.local-as)
  neighbor $neigh->neighbor local-as $neigh.local-as->localas@IF($neigh.local-as->no_prepend ? " $neigh.local-as->no_prepend")\n"
 @END
@@ -83,12 +83,15 @@ router bgp $router.bgp->as
  neighbor $neigh->neighbor default-originate@IF($neigh.default-originate->route_map ? " route-map $neigh.default-originate->route_map")\n
 @END
 @IF($neigh.soft-reconfiguration.inbound ? " neighbor $neigh->neighbor soft-reconfiguration inbound\n")
+@IF($neigh.allowas-in)
+ neighbor $neigh->neighbor allowas-in@IF($neigh.allowas-in->num_as ? " $neigh.allowas-in->num_as\n" : "\n")
+@END
 @IF($neigh.prefix-list.in ? " neighbor $neigh->neighbor prefix-list $neigh.prefix-list.in->prefix_list in\n")
 @IF($neigh.prefix-list.out ? " neighbor $neigh->neighbor prefix-list $neigh.prefix-list.out->prefix_list out\n")
-@IF($neigh.route-map.in ? " neighbor $neigh->neighbor route-map $neigh.route-map.in->route_map in\n")
-@IF($neigh.route-map.out ? " neighbor $neigh->neighbor route-map $neigh.route-map.out->route_map out\n")
 @IF($neigh.distribute-list.in ? " neighbor $neigh->neighbor distribute-list $neigh.distribute-list.in->acl in\n")
 @IF($neigh.distribute-list.out ? " neighbor $neigh->neighbor distribute-list $neigh.distribute-list.out->acl out\n")
+@IF($neigh.route-map.in ? " neighbor $neigh->neighbor route-map $neigh.route-map.in->route_map in\n")
+@IF($neigh.route-map.out ? " neighbor $neigh->neighbor route-map $neigh.route-map.out->route_map out\n")
 @IF($neigh.filter-list.in ? " neighbor $neigh->neighbor filter-list $neigh.filter-list.in->acl in\n")
 @IF($neigh.filter-list.out ? " neighbor $neigh->neighbor filter-list $neigh.filter-list.out->acl out\n")
 @IF($neigh.activate ? " neighbor $neigh->neighbor activate\n")

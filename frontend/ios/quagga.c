@@ -90,3 +90,13 @@ quagga_acl_cb(cvec *vars, cg_var *cv, cg_var *arg)
     return -1;    
 }
 
+
+
+/*
+ *
+ */
+int
+quagga_bgp_peergroup_set(cvec *vars, cg_var *cv, cg_var *arg)
+{
+    return 0;
+}
