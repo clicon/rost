@@ -94,8 +94,8 @@ plugin_init(clicon_handle h)
     char *key;
     int retval = -1;
 
-    for (i = 0; ntp_fmt[i]; i++) {
-	key = ntp_fmt[i];
+    for (i = 0; ntp_keys[i]; i++) {
+	key = ntp_keys[i];
 	if (dbdep(h, TRANS_CB_COMMIT, ntp_commit, (void *)NULL, 1, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
