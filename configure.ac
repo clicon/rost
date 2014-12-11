@@ -40,6 +40,10 @@ CFLAGS="-Wall ${CFLAGS}"
 LDFLAGS="-g ${LDFLAGS}"
 APPNAME="rost"
 
+AC_CHECK_PROG(SYSLOG_NG, syslog-ng, yes)
+if test x"$SYSLOG_NG" != x"yes" ; then
+    AC_MSG_ERROR([Please install syslog-ng.])
+fi
 PKG_CHECK_MODULES([sqlite], [sqlite3])
 PKG_CHECK_MODULES([blkid], [blkid])
 PKG_CHECK_MODULES([curl], [libcurl])

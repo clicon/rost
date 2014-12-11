@@ -630,6 +630,7 @@ blkid_LIBS
 blkid_CFLAGS
 sqlite_LIBS
 sqlite_CFLAGS
+SYSLOG_NG
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
@@ -3368,6 +3369,46 @@ CFLAGS="-Wall ${CFLAGS}"
 LDFLAGS="-g ${LDFLAGS}"
 APPNAME="rost"
 
+# Extract the first word of "syslog-ng", so it can be a program name with args.
+set dummy syslog-ng; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_SYSLOG_NG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$SYSLOG_NG"; then
+  ac_cv_prog_SYSLOG_NG="$SYSLOG_NG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_SYSLOG_NG="yes"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+SYSLOG_NG=$ac_cv_prog_SYSLOG_NG
+if test -n "$SYSLOG_NG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SYSLOG_NG" >&5
+$as_echo "$SYSLOG_NG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+if test x"$SYSLOG_NG" != x"yes" ; then
+    as_fn_error $? "Please install syslog-ng." "$LINENO" 5
+fi
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sqlite" >&5
