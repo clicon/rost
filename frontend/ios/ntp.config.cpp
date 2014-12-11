@@ -25,7 +25,7 @@
 CLICON_MODE=MODE_CONFIG;
 
 /* NTP LOGGING */
-ntp("Configure NTP") logging("Enable NTP message logging"), cli_set("ntp.logging $dummy=(int)0"), ADMIN;
+ntp("Configure NTP") logging("Enable NTP message logging"), cli_set("ntp.logging $dummy=(int)1"), ADMIN;
 no("Negate a command or set its defaults") ntp("Configure NTP") logging("Enable NTP message logging"), cli_del("ntp.logging $dummy=(int)0"), ADMIN;
     
 /* NTP SERVER */
