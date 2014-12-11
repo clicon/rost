@@ -1,6 +1,4 @@
 /*
- *  CVS Version: $Id: quagga.c,v 1.26 2013/08/09 13:27:46 olof Exp $
- *
  *  Copyright (C) 2009-2014 Olof Hagsand and Benny Holmgren
  *
  *  This file is part of ROST.
@@ -172,288 +170,302 @@ static struct qaction qactions[] = {
 
     {
 	"router.bgp.router-id",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp router-id $" ROST_CURKEY "->routerid",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp router-id $" ROST_CURKEY "->routerid",
+	"router bgp $router.bgp->as\n bgp router-id $" ROST_CURKEY "->routerid",
+	"router bgp $router.bgp->as\n no bgp router-id $" ROST_CURKEY "->routerid",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.log-neighbor-changes",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp log-neighbor-changes",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp log-neighbor-changes",
+	"router bgp $router.bgp->as\n bgp log-neighbor-changes",
+	"router bgp $router.bgp->as\n no bgp log-neighbor-changes",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.always-compare-med",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp always-compare-med",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp always-compare-med",
+	"router bgp $router.bgp->as\n bgp always-compare-med",
+	"router bgp $router.bgp->as\n no bgp always-compare-med",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.default.local-preference",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp default local-preference $" ROST_CURKEY "->local_preference",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp default local-preference $" ROST_CURKEY "->local_preference",
+	"router bgp $router.bgp->as\n bgp default local-preference $" ROST_CURKEY "->local_preference",
+	"router bgp $router.bgp->as\n no bgp default local-preference $" ROST_CURKEY "->local_preference",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.enforce-first-as",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp enforce-first-as",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp enforce-first-as",
+	"router bgp $router.bgp->as\n bgp enforce-first-as",
+	"router bgp $router.bgp->as\n no bgp enforce-first-as",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.deterministic-med",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp deterministic-med",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp deterministic-med",
+	"router bgp $router.bgp->as\n bgp deterministic-med",
+	"router bgp $router.bgp->as\n no bgp deterministic-med",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.graceful-restart",
-	"router bgp $router.bgp:as\n bgp graceful-restart@IF($" ROST_CURKEY "->stalepath_time ? \" stalepath-time $" ROST_CURKEY "->stalepath_time\")",
-	"router bgp $router.bgp:as\n no bgp graceful-restart@IF($" ROST_CURKEY "->stalepath_time ? \" stalepath-time $" ROST_CURKEY "->stalepath_time\")",
+	"router bgp $router.bgp->as\n bgp graceful-restart@IF($" ROST_CURKEY "->stalepath_time ? \" stalepath-time $" ROST_CURKEY "->stalepath_time\")",
+	"router bgp $router.bgp->as\n no bgp graceful-restart@IF($" ROST_CURKEY "->stalepath_time ? \" stalepath-time $" ROST_CURKEY "->stalepath_time\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.network.import-check",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp network import-check",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no network import-check",
+	"router bgp $router.bgp->as\n bgp network import-check",
+	"router bgp $router.bgp->as\n no network import-check",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.dampening",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n bgp dampening@IF(ROST_CURKEY->half_life ? \" $" ROST_CURKEY "->half_life\")@IF($" ROST_CURKEY "->reuse ? \" $" ROST_CURKEY "->reuse\")@IF($" ROST_CURKEY "->suppress ? \" $" ROST_CURKEY "->suppress\")@IF($" ROST_CURKEY "->max_suppress ? \" $" ROST_CURKEY "->max_suppress\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no bgp dampening@IF(ROST_CURKEY->half_life ? \" $" ROST_CURKEY "->half_life\")@IF($" ROST_CURKEY "->reuse ? \" $" ROST_CURKEY "->reuse\")@IF($" ROST_CURKEY "->suppress ? \" $" ROST_CURKEY "->suppress\")@IF($" ROST_CURKEY "->max_suppress ? \" $" ROST_CURKEY "->max_suppress\")",
+	"router bgp $router.bgp->as\n bgp dampening@IF(ROST_CURKEY->half_life ? \" $" ROST_CURKEY "->half_life\")@IF($" ROST_CURKEY "->reuse ? \" $" ROST_CURKEY "->reuse\")@IF($" ROST_CURKEY "->suppress ? \" $" ROST_CURKEY "->suppress\")@IF($" ROST_CURKEY "->max_suppress ? \" $" ROST_CURKEY "->max_suppress\")",
+	"router bgp $router.bgp->as\n no bgp dampening@IF(ROST_CURKEY->half_life ? \" $" ROST_CURKEY "->half_life\")@IF($" ROST_CURKEY "->reuse ? \" $" ROST_CURKEY "->reuse\")@IF($" ROST_CURKEY "->suppress ? \" $" ROST_CURKEY "->suppress\")@IF($" ROST_CURKEY "->max_suppress ? \" $" ROST_CURKEY "->max_suppress\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.network[]",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n network $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no network $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $router.bgp->as\n network $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $router.bgp->as\n no network $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.aggregate-address[]",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n aggregate-address $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->as_set ? \" $" ROST_CURKEY "->as_set\")@IF($" ROST_CURKEY "->summary_only ? \" $" ROST_CURKEY "->summary_only\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no aggregate-address $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->as_set ? \" $" ROST_CURKEY "->as_set\")@IF($" ROST_CURKEY "->summary_only ? \" $" ROST_CURKEY "->summary_only\")",
+	"router bgp $router.bgp->as\n aggregate-address $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->as_set ? \" $" ROST_CURKEY "->as_set\")@IF($" ROST_CURKEY "->summary_only ? \" $" ROST_CURKEY "->summary_only\")",
+	"router bgp $router.bgp->as\n no aggregate-address $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->as_set ? \" $" ROST_CURKEY "->as_set\")@IF($" ROST_CURKEY "->summary_only ? \" $" ROST_CURKEY "->summary_only\")",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.redistribute.connected",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n redistribute connected @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no redistribute connected",
+	"router bgp $router.bgp->as\n redistribute connected @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $router.bgp->as\n no redistribute connected",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.redistribute.kernel",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n redistribute kernel @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no redistribute kernel",
+	"router bgp $router.bgp->as\n redistribute kernel @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $router.bgp->as\n no redistribute kernel",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.redistribute.ospf",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n redistribute ospf @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no redistribute ospf",
+	"router bgp $router.bgp->as\n redistribute ospf @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $router.bgp->as\n no redistribute ospf",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.redistribute.rip",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n redistribute rip @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no redistribute rip",
+	"router bgp $router.bgp->as\n redistribute rip @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $router.bgp->as\n no redistribute rip",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.redistribute.static",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n redistribute static @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no redistribute static",
+	"router bgp $router.bgp->as\n redistribute static @IF($" ROST_CURKEY "->metric ? \" metric $" ROST_CURKEY "->metric\")@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $router.bgp->as\n no redistribute static",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].remote-as",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor remote-as $" ROST_CURKEY "->remote_as",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor remote-as $" ROST_CURKEY "->remote_as",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor remote-as $" ROST_CURKEY "->remote_as",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor remote-as $" ROST_CURKEY "->remote_as",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].local-as",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor local-as $" ROST_CURKEY "->localas@IF($" ROST_CURKEY "->no_prepend ? \" $" ROST_CURKEY "->no_prepend\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor local-as $" ROST_CURKEY "->localas@IF($" ROST_CURKEY "->no_prepend ? \" $" ROST_CURKEY "->no_prepend\")",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor local-as $" ROST_CURKEY "->localas@IF($" ROST_CURKEY "->no_prepend ? \" $" ROST_CURKEY "->no_prepend\")",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor local-as $" ROST_CURKEY "->localas@IF($" ROST_CURKEY "->no_prepend ? \" $" ROST_CURKEY "->no_prepend\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].description",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor description $" ROST_CURKEY "->description",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor description $" ROST_CURKEY "->description",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor description $" ROST_CURKEY "->description",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor description $" ROST_CURKEY "->description",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].shutdown",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor shutdown",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor shutdown",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor shutdown",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor shutdown",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].password",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor password $" ROST_CURKEY "->password",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor password $" ROST_CURKEY "->password",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor password $" ROST_CURKEY "->password",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor password $" ROST_CURKEY "->password",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].passive",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor passive",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor passive",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor passive",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor passive",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].ebgp-multihop",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor ebgp-multihop@IF($" ROST_CURKEY "->maxhops ? \" $" ROST_CURKEY "->maxhops\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor ebgp-multihop@IF($" ROST_CURKEY "->maxhops ? \" $" ROST_CURKEY "->maxhops\")",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor ebgp-multihop@IF($" ROST_CURKEY "->maxhops ? \" $" ROST_CURKEY "->maxhops\")",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor ebgp-multihop@IF($" ROST_CURKEY "->maxhops ? \" $" ROST_CURKEY "->maxhops\")",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].update-source",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor update-source $" ROST_CURKEY "->source",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor update-source",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor update-source $" ROST_CURKEY "->source",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor update-source",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].advertisement-interval",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor advertisement-interval $" ROST_CURKEY "->interval",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor advertisement-interval $" ROST_CURKEY "->interval",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor advertisement-interval $" ROST_CURKEY "->interval",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor advertisement-interval $" ROST_CURKEY "->interval",
+	BGP_API_SOCK
+    },
+
+    {
+	"router.bgp.neighbor[].allowas-in",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor allowas-in @IF($" ROST_CURKEY "->num_as != (int8)3 ? \" $" ROST_CURKEY "->num_as\")",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor allowas-in",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].timers",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor timers $" ROST_CURKEY "->keepalive $" ROST_CURKEY "->holdtime",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor timers $" ROST_CURKEY "->keepalive $" ROST_CURKEY "->holdtime",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor timers $" ROST_CURKEY "->keepalive $" ROST_CURKEY "->holdtime",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor timers $" ROST_CURKEY "->keepalive $" ROST_CURKEY "->holdtime",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].timers.connect",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor timers connect $" ROST_CURKEY "->connect",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor timers connect $" ROST_CURKEY "->connect",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor timers connect $" ROST_CURKEY "->connect",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor timers connect $" ROST_CURKEY "->connect",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].weight",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor weight $" ROST_CURKEY "->weight",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor weight $" ROST_CURKEY "->weight",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor weight $" ROST_CURKEY "->weight",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor weight $" ROST_CURKEY "->weight",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].next-hop-self",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor next-hop-self",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor next-hop-self",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor next-hop-self",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor next-hop-self",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].remove-private-as",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor remove-private-AS",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor remove-private-AS",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor remove-private-AS",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor remove-private-AS",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].default-originate",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor default-originate@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor default-originate@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor default-originate@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor default-originate@IF($" ROST_CURKEY "->route_map ? \" route-map $" ROST_CURKEY "->route_map\")",
 	BGP_API_SOCK
     },
     
     {
 	"router.bgp.neighbor[].soft-reconfiguration.inbound",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor soft-reconfiguration inbound",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor soft-reconfiguration inbound",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor soft-reconfiguration inbound",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor soft-reconfiguration inbound",
+	BGP_API_SOCK
+    },
+
+    {
+	"router.bgp.neighbor[].peer-group",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor peer-group $" ROST_CURKEY "->peergroup",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor peer-group $" ROST_CURKEY "->peergroup",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].prefix-list.in",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list in",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list in",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list in",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list in",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].prefix-list.out",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list out",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list out",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list out",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor prefix-list $" ROST_CURKEY "->prefix_list out",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].route-map.in",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map in",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map in",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map in",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map in",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].route-map.out",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map out",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map out",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map out",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor route-map $" ROST_CURKEY "->route_map out",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].filter-list.in",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl in",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl in",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl in",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl in",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].filter-list.out",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl out",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl out",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl out",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor filter-list $" ROST_CURKEY "->acl out",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.neighbor[].activate",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n neighbor $" ROST_CURKEY "->neighbor activate",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no neighbor $" ROST_CURKEY "->neighbor activate",
+	"router bgp $router.bgp->as\n neighbor $" ROST_CURKEY "->neighbor activate",
+	"router bgp $router.bgp->as\n no neighbor $" ROST_CURKEY "->neighbor activate",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.distance.bgp",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n distance bgp $" ROST_CURKEY "->external $" ROST_CURKEY "->internal $" ROST_CURKEY "->local",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no distance bgp $" ROST_CURKEY "->external $" ROST_CURKEY "->internal $" ROST_CURKEY "->local",
+	"router bgp $router.bgp->as\n distance bgp $" ROST_CURKEY "->external $" ROST_CURKEY "->internal $" ROST_CURKEY "->local",
+	"router bgp $router.bgp->as\n no distance bgp $" ROST_CURKEY "->external $" ROST_CURKEY "->internal $" ROST_CURKEY "->local",
 	BGP_API_SOCK
     },
 
     {
 	"router.bgp.distance[]",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n distance $" ROST_CURKEY "->distance $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->acl ? \" $" ROST_CURKEY "->acl\")",
-	"router bgp $" ROST_CURKEY "->router.bgp:as\n no distance $" ROST_CURKEY "->distance $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->acl ? \" $" ROST_CURKEY "->acl\")",
+	"router bgp $router.bgp->as\n distance $" ROST_CURKEY "->distance $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->acl ? \" $" ROST_CURKEY "->acl\")",
+	"router bgp $router.bgp->as\n no distance $" ROST_CURKEY "->distance $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->acl ? \" $" ROST_CURKEY "->acl\")",
 	BGP_API_SOCK
     },
 

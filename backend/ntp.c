@@ -25,6 +25,7 @@
 #endif /* HAVE_ROST_CONFIG_H */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <signal.h>
@@ -60,6 +61,8 @@ static char *ntp_keys[] = {
     NULL
 };
 static char *ntp_fmt =
+    "driftfile\t" NTP_DRIFT "\n"
+    "restrict\t127.0.0.1\n"
     "@EACH($ntp.server[], $serv)\n"
     "server\t\t${serv->address}\nrestrict\t${serv->address}\n"
     "@END\n"
@@ -150,12 +153,13 @@ transaction_end(clicon_handle h)
 	goto catch;
     }
     
-    fprintf (out, "driftfile\t%s\n", NTP_DRIFT);
-    fprintf (out, "restrict\t127.0.0.1\n");
-    if ((d2t = clicon_db2txt_buf(h, clicon_running_db(h), ntp_fmt)) != NULL) {
-	fprintf (out, "%s", d2t);
-	free(d2t);
+    if ((d2t = clicon_db2txt_buf(h, clicon_running_db(h), ntp_fmt)) == NULL) {
+	fclose(out);
+	goto catch;
     }
+
+    fprintf (out, "%s", d2t);
+    free(d2t);
     fclose(out);
 
     /* Restart ntpd. XXX Any way to do a soft reconfig? */

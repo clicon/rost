@@ -1,6 +1,4 @@
 /*
- * CVS Version: $Id: quagga_bgp.router_bgp.cpp,v 1.11 2014/01/10 14:08:25 olof Exp $
- *
  *  Copyright (C) 2009-2014 Olof Hagsand and Benny Holmgren
  *
  *  This file is part of ROST.
@@ -22,6 +20,10 @@
  */
 #include "ios_macros.h"
 CLICON_MODE=STRINGIFY(IOS_BGP);
+
+/* NEIGHBOR */
+neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr show:A.B.C.D>("Neighbor address")) @IOS_BGP_NEIGHBOR, cli_merge(), ADMIN;
+no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") @IOS_BGP_NONEIGHBOR, cli_del(), ADMIN;
 
 /* AGGREGATE-ADDRESS <ipv4prefix> */
 aggregate-address("Configure BGP aggregate entries") <ipv4prefix>("Aggregate prefix"), cli_set("router.bgp.aggregate-address[] $!prefix"), ADMIN; {
@@ -119,145 +121,6 @@ no("Negate a command or set its defaults") distance("Define an administrative di
 no("Negate a command or set its defaults") distance("Define an administrative distance") <number range[1:255]>("Administrative distance") <ipv4prefix>("IP source prefix") <string>("Access-list name"), cli_del("router.bgp.distance[] $distance $!prefix $acl"), ADMIN;
 no("Negate a command or set its defaults") distance("Define an administrative distance") bgp("BGP distance"), cli_del("router.bgp.distance.bgp"), ADMIN;
 no("Negate a command or set its defaults") distance("Define an administrative distance") bgp("BGP distance") <number range[1:255]>("Distance for routes external to the AS") <number range[1:255]>("Distance for routes internal to the AS") <number range[1:255]>("Distance for local routes"), cli_del("router.bgp.distance.bgp"), ADMIN;
-
-/* NEIGHBOR ACTIVATE */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) activate("Enable the Address Family for this Neighbor"), cli_set("router.bgp.neighbor[].activate $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") activate("Enable the Address Family for this Neighbor"), cli_del("router.bgp.neighbor[].activate $!neighbor"), ADMIN;
-
-/* NEIGHBOR ADVERTISEMENT-INTERVAL */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) advertisement-interval("Minimum interval between sending BGP routing updates") <number range[0:600]>("Minimum interval between sending BGP routing updates"), cli_set("router.bgp.neighbor[].advertisement-interval $!neighbor $interval"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") advertisement-interval("Minimum interval between sending BGP routing updates") <number range[0:600]>("Minimum interval between sending BGP routing updates"), cli_del("router.bgp.neighbor[].advertisement-interval $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") advertisement-interval("Minimum interval between sending BGP routing updates"), cli_del("router.bgp.neighbor[].advertisement-interval $!neighbor"), ADMIN;
-
-/* NEIGHBOR DEFAULT-ORIGINATE */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) default-originate("Originate default route to this neighbor"), cli_set("router.bgp.neighbor[].default-originate $!neighbor"), ADMIN;
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) default-originate("Originate default route to this neighbor") route-map("Route-map to specify criteria to originate default") <string>("route-map name"), cli_set("router.bgp.neighbor[].default-originate $!neighbor $route_map"), ADMIN;
-
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") default-originate("Originate default route to this neighbor"), cli_del("router.bgp.neighbor[].default-originate $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") default-originate("Originate default route to this neighbor") route-map("Route-map to specify criteria to originate default"), cli_del("router.bgp.neighbor[].default-originate $!neighbor $route_map"), ADMIN;
-
-/* NEIGHBOR DESCRIPTION */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) description("Neighbor specific description") <rest>("Up to 80 characters describing this neighbor"), cli_set("router.bgp.neighbor[].description $!neighbor $description"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") description("Neighbor specific description") <rest>("Up to 80 characters describing this neighbor"), cli_del("router.bgp.neighbor[].description $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") description("Neighbor specific description"), cli_del("router.bgp.neighbor[].description $!neighbor"), ADMIN;
-
-
-/* NEIGHBOR DISTRIBUTE-LIST */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) distribute-list("Filter updates to/from this neighbor") <string>("IP Access-list name") in("Filter incoming updates"), cli_set("router.bgp.neighbor[].distribute-list.in $!neighbor $acl"), ADMIN;
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) distribute-list("Filter updates to/from this neighbor") <string>("IP Access-list name") out("Filter outgoing updates"), cli_set("router.bgp.neighbor[].distribute-list.out $!neighbor $acl"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") distribute-list("Filter updates to/from this neighbor") <string>("IP Access-list name") in("Filter incoming updates"), cli_del("router.bgp.neighbor[].distribute-list.in $!neighbor $acl"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") distribute-list("Filter updates to/from this neighbor") <string>("IP Access-list name") out("Filter outgoing updates"), cli_del("router.bgp.neighbor[].distribute-list.out $!neighbor $acl"), ADMIN;
-
-
-/* NEIGHBOR EBGP-MULTIHOP */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) ebgp-multihop("Allow EBGP neighbors not on directly connected networks"),  cli_set("router.bgp.neighbor[].ebgp-multihop $!neighbor"), ADMIN;
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) ebgp-multihop("Allow EBGP neighbors not on directly connected networks") <number range[1:255]>("maximum hop count"), cli_set("router.bgp.neighbor[].ebgp-multihop $!neighbor $maxhops"), ADMIN;
-
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") ebgp-multihop("Allow EBGP neighbors not on directly connected networks"), cli_del("router.bgp.neighbor[].ebgp-multihop $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") ebgp-multihop("expand_Allow EBGP neighbors not on directly connected networks") <number range[1:255]>("maximum hop count"), cli_del("router.bgp.neighbor[].ebgp-multihop $!neighbor"), ADMIN;
-
-/* NEIGHBOR FILTER-LIST */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) expand_filter-list("Establish BGP filters") <string>("AS path access-list name") in("Filter incoming updates"), cli_set("router.bgp.neighbor[].filter-list.in $!neighbor $acl"), ADMIN;
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) expand_filter-list("Establish BGP filters") <string>("AS path access-list name") out("Filter outgoing updates"), cli_set("router.bgp.neighbor[].filter-list.out $!neighbor $acl"), ADMIN;
-
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") filter-list("Establish BGP filters") <string>("AS path access-list name") in("Filter incoming expand_updates"), cli_del("router.bgp.neighbor[].filter-list.in $!neighbor $acl"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") filter-list("expand_Establish BGP filters") <string>("AS path access-list name") out("Filter outgoing updates"), cli_del("router.bgp.neighbor[].filter-list.out $!neighbor $acl"), ADMIN;
-
-
-/* NEIGHBOR LOCAL-AS */
-neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") local-as("Specify a local-as number") <uint32 range[1:4294967295]>("AS number used as local AS"),  cli_set("router.bgp.neighbor[].local-as $!neighbor $localas"), ADMIN;
-neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") local-as("Specify a local-as number") <uint32 range[1:4294967295]>("AS number used as local AS") no-prepend("Do not prepend local-as to updates from ebgp peers"), cli_set("router.bgp.neighbor[].local-as $!neighbor $localas $no_prepend=(string)\"no-prepend\""), expand_ADMIN;
-
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") local-as("Specify a local-as number"), cli_del("router.bgp.neighbor[].local-as $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") local-as("Specify a local-as number") <uint32 range[1:4294967295]>("AS number used as local AS"), cli_del("router.bgp.neighbor[].local-as $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("expand_Neighbor address") local-as("Specify a local-as number") <uint32 range[1:4294967295]>("AS number used as local AS") no-prepend("Do not prepend local-as to updates from ebgp peers"), cli_del("router.bgp.neighbor[].local-as $!neighbor"), ADMIN;
-
-/* NEIGHBOR NEXT-HOP-SELF */
-neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") next-hop-self("Disable the next hop calculation for this neighbor"), cli_set("router.bgp.neighbor[].next-hop-self $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify expand_a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") next-hop-self("Disable the next hop calculation for this neighbor"), cli_del("router.bgp.neighbor[].next-hop-self $!neighbor"), ADMIN;
-
-
-/* NEIGHBOR PASSIVE */
-neighbor("Specify a neighbor expand_router") <neighbor:ipv4addr>("Neighbor address") passive("Don't send open messages to this neighbor"), cli_set("router.bgp.neighbor[].passive $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") passive("Don't send open messages to this neighbor"), cli_del("router.bgp.neighbor[].passive $!neighbor"), ADMIN;
-
-
-/* NEIGHBOR PASSWORD */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) password("Set a password") <string>("The password"), cli_set("router.bgp.neighbor[].password $!neighbor $password"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") password("Set a password"), cli_del("router.bgp.neighbor[].password $!neighbor $password"), ADMIN;
-
-
-#if notyet
-/* NEIGHBOR PEER-GROUP */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) peer-group("Member of the peer-group") <string>("peer-group name"), cli_bgp_exec("neighbor %a peer-group %s"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") peer-group("Member of the peer-group") <string>("peer-group name"), cli_bgp_exec("no neighbor %a peer-group %s"), ADMIN;
-#endif
-
-/* NEIGHBOR REMOVE-PRIVATE-AS */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) remove-private-as("Remove private AS number from outbound updates"),  cli_set("router.bgp.neighbor[].remove-private-as $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") remove-private-as("Remove private AS number from outbound updates"), cli_del("router.bgp.neighbor[].remove-private-as $!neighbor"), ADMIN;
-
-
-/* NEIGHBOR PREFIX-LIST */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) prefix-list("Filter updates to/from this neighbor") <string>("Name of a prefix list") in("Filter incoming updates"), cli_set("router.bgp.neighbor[].prefix-list.in $!neighbor $prefix_list"), ADMIN;
-
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) prefix-list("Filter updates to/from this neighbor") <string>("Name of a prefix list") out("Filter outgoing updates"), cli_set("router.bgp.neighbor[].prefix-list.out $!neighbor $prefix_list"), ADMIN;
-
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") prefix-list("Filter updates to/from this neighbor") <string>("Name of a prefix list") in("Filter incoming updates"), cli_del("router.bgp.neighbor[].prefix-list.in $!neighbor $prefix_list"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") prefix-list("Filter updates to/from this neighbor") <string>("Name of a prefix list") out("Filter outgoing updates"), cli_del("router.bgp.neighbor[].prefix-list.out $!neighbor $prefix_list"), ADMIN;
-
-
-/* NEIGHBOR REMOTE-AS */
-#ifdef notyet
-neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") remote-as("Specify a BGP neighbor") <number range[1:65535]>("AS of remote neighbor"), cli_set("router.bgp.neighbor[].remote-as $!neighbor $remote_as"), ADMIN;
-neighbor("Specify a neighbor router") <neighbor:ipv4addr>("Neighbor address") remote-as("Specify a BGP neighbor") <number range[1:65535]>("AS of remote neighbor"), cli_set("router.bgp.neighbor[].remote-as $!neighbor $remote_as"), ADMIN;
-#endif
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) remote-as("Specify a BGP neighbor") <number range[1:65535]>("AS of remote neighbor"), cli_set("router.bgp.neighbor[].remote-as $!neighbor $remote_as"), ADMIN;
-
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") remote-as("Specify a BGP neighbor") <number range[1:65535]>("AS of remote neighbor"), cli_del("router.bgp.neighbor[].remote-as $!neighbor $remote_as"), ADMIN;
-
-
-/* NEIGHBOR ROUTEMAP */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) route-map("Apply route map to neighbor") <string>("Name of route map") in("Apply map to incoming routes"), cli_set("router.bgp.neighbor[].route-map.in $!neighbor $route_map"), ADMIN;
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) route-map("Apply route map to neighbor") <string>("Name of route map") out("Apply map to outbound routes"), cli_set("router.bgp.neighbor[].route-map.out $!neighbor $route_map"), ADMIN;
-
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") route-map("Apply route map to neighbor") <string>("Name of route map") in("Apply map to incoming routes"), cli_del("router.bgp.neighbor[].route-map.in $!neighbor $route_map"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") route-map("Apply route map to neighbor") <string>("Name of route map") out("Apply map to outbound routes"), cli_del("router.bgp.neighbor[].route-map.out $!neighbor $route_map"), ADMIN;
-
-
-/* NEIGHBOR SHUTDOWN */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) shutdown("Administratively shut down this neighbor"), cli_set("router.bgp.neighbor[].shutdown $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") shutdown("Administratively shut down this neighbor"), cli_del("router.bgp.neighbor[].shutdown $!neighbor"), ADMIN;
-
-
-/* NEIGHBOR SOFT-RECONFIGURATION */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) soft-reconfiguration("Per neighbor soft reconfiguration") inbound("Allow inbound soft reconfiguration for this neighbor"), cli_set("router.bgp.neighbor[].soft-reconfiguration.inbound $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") soft-reconfiguration("Per neighbor soft reconfiguration") inbound("Allow inbound soft reconfiguration for this neighbor"), cli_del("router.bgp.neighbor[].soft-reconfiguration.inbound $!neighbor"), ADMIN;
-
-
-/* NEIGHBOR TIMERS */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) timers("BGP per neighbor timers") connect("BGP connect timer") <number range[0:65535]>("Connect timer"), cli_set("router.bgp.neighbor[].timers.connect $!neighbor $connect"), ADMIN;
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) timers("BGP per neighbor timers") <number range[0:65535]>("Keepalive interval") <number range[0:65535]>("Holdtime"), cli_set("router.bgp.neighbor[].timers $!neighbor $keepalive $holdtime"), ADMIN;
-
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") timers("BGP per neighbor timers") connect("BGP connect timer"), cli_del("router.bgp.neighbor[].timers.connect $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") timers("BGP per neighbor timers") connect("BGP connect timer") <number range[0:65535]>("Connect timer"), cli_del("router.bgp.neighbor[].timers.connect $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") timers("BGP per neighbor timers"), cli_del("router.bgp.neighbor[].timers $!neighbor"), ADMIN;
-
-/* NEIGHBOR UPDATE-SOURCE */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) update-source("Source of routing updates") <neighbor:ipv4addr>("IPv4 address"), cli_set("router.bgp.neighbor[].update-source $!neighbor $source"), ADMIN;
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) update-source("Source of routing updates") <interface>("Interface name"), cli_set("router.bgp.neighbor[].update-source $!neighbor $source"), ADMIN;
-    
-
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") update-source("Source of routing updates"), cli_del("router.bgp.neighbor[].update-source $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") update-source("Source of routing updates") <neighbor:ipv4addr>("IPv4 address"), cli_del("router.bgp.neighbor[].update-source $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") update-source("Source of routing updates") <interface>("Interface name"), cli_del("router.bgp.neighbor[].update-source $!neighbor"), ADMIN;
-
-
-/* NEIGHBOR WEIGHT */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr>("Neighbor address")) weight("Set default weight for routes from this neighbor") <number range[0:65535]>("default weight"), cli_set("router.bgp.neighbor[].weight $!neighbor $weight"), ADMIN;
-
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") weight("Set default weight for routes from this neighbor"), cli_del("router.bgp.neighbor[].weight $!neighbor"), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") weight("Set default weight for routes from this neighbor") <number range[0:65535]>("default weight"), cli_del("router.bgp.neighbor[].weight $!neighbor"), ADMIN;
 
 
 /* NETWORK */
