@@ -146,7 +146,7 @@ transaction_end(clicon_handle h)
 	return 0; /* Unchanged */
     
     if ((out = fopen(SYSLOG_CONF, "w")) == NULL) {
-	clicon_err(OE_SYSLOG, errno, "");
+	clicon_err(OE_SYSLOG, errno, SYSLOG_CONF);
 	return -1;
     }
     
@@ -154,7 +154,6 @@ transaction_end(clicon_handle h)
     d2t = clicon_db2txt_buf(h, clicon_running_db(h), syslog_conf_fmt);
     if (d2t != NULL) {
 	fprintf (out, "%s", d2t);
-	printf("#\n%s\n#\n",d2t);
 	free(d2t);
     }
     fclose(out);
