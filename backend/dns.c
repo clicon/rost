@@ -45,8 +45,8 @@ static char *resolv_keys[] = {
     NULL
 };
 static char *resolv_fmt = 
-    "domain\t${ipv4.domain->domain}\n"
-    "nameserver\t${ipv4.name-server->address}\n";
+    "domain\t${ipv4.domain->domain}\\n"
+    "@EACH($ipv5.name-server[], $ns, \"nameserver\t$ns->address\\n\")\\n";
 
 /*
  * Commit callback. 
@@ -77,7 +77,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; resolv_keys[i]; i++) {
 	key = resolv_keys[i];
-	if (dbdep(h, TRANS_CB_COMMIT, dns_commit, (void *)NULL, 1, key) == NULL) {
+	if (dbdep(h, 0, TRANS_CB_COMMIT, dns_commit, (void *)NULL, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

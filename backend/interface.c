@@ -154,16 +154,15 @@ plugin_init(clicon_handle h)
     int retval = -1;
 
     key = "interface[].unit[]";
-    if (dbdep(h, TRANS_CB_COMMIT, interface_commit,
-	      (void *)NULL, 1, key) == NULL) {
+    if (dbdep(h, 0, TRANS_CB_COMMIT, interface_commit, (void *)NULL, key) == NULL) {
 	clicon_debug(1, "interface: Failed to create dependency '%s'", key);
 	goto done;
     }
     clicon_debug(1, "interface: Created dependency '%s'", key);
     for (i = 0; iface_flags[i].key; i++) {
 	key = iface_flags[i].key;
-	if (dbdep(h, TRANS_CB_COMMIT, interface_ipv4flg_commit,
-		  (void *)iface_flags[i].procfmt, 1, key) == NULL) {
+	if (dbdep(h, 0, TRANS_CB_COMMIT, interface_ipv4flg_commit,
+		  (void *)iface_flags[i].procfmt, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

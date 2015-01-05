@@ -87,15 +87,15 @@ static char *syslog_keys[] = {
     NULL
 };
 static char *syslog_conf_fmt = 
-    "@IF($logging.trap->level)\n"
-    "filter f_trap { level(emerg..$logging.trap->level); };\n"
-    "@END\n"
-    "@EACH($logging.host[], $host)\n"
-    "destination d_host_${host->host} { ${host->protocol}(\"${host->host}\" port(${host->port}));  };\nlog { source(s_local); filter(f_trap); destination(d_host_${host->host});  };\n"
-    "@END\n"
-    "@IF($logging.buffered)\n"
-    "filter f_local { level(emerg..$logging.buffered->level); };\ndestination d_sql { program('" SQLITE3 " " SYSLOG_DB "' template(\"INSERT INTO logs VALUES(NULL, '\\${R_YEAR}-\\${R_MONTH}-\\${R_DAY} \\${R_HOUR}:\\${R_MIN}:\\${R_SEC}','\\$FACILITY','\\$LEVEL','\\$HOST','\\$PROGRAM','\\$PID','\\$MSGONLY');\n\") template-escape(yes) ); };\nlog { source(s_local); filter(f_local); destination(d_sql); };\n"
-    "@END\n";
+    "@IF($logging.trap->level)\\n"
+    "filter f_trap { level(emerg..$logging.trap->level); };\\n"
+    "@END\\n"
+    "@EACH($logging.host[], $host)\\n"
+    "destination d_host_${host->host} { ${host->protocol}(\"${host->host}\" port(${host->port}));  };\\nlog { source(s_local); filter(f_trap); destination(d_host_${host->host});  };\\n"
+    "@END\\n"
+    "@IF($logging.buffered)\\n"
+    "filter f_local { level(emerg..$logging.buffered->level); };\\ndestination d_sql { program('" SQLITE3 " " SYSLOG_DB "' template(\"INSERT INTO logs VALUES(NULL, '\\${R_YEAR}-\\${R_MONTH}-\\${R_DAY} \\${R_HOUR}:\\${R_MIN}:\\${R_SEC}','\\$FACILITY','\\$LEVEL','\\$HOST','\\$PROGRAM','\\$PID','\\$MSGONLY');\\n\") template-escape(yes) ); };\\nlog { source(s_local); filter(f_local); destination(d_sql); };\\n"
+    "@END\\n";
 
 
 /* Declaration of support functions */
@@ -182,7 +182,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; syslog_keys[i]; i++) {
 	key = syslog_keys[i];
-	if (dbdep(h, TRANS_CB_COMMIT, syslog_commit, (void *)NULL, 1, key) == NULL) {
+	if (dbdep(h, 0, TRANS_CB_COMMIT, syslog_commit, (void *)NULL, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

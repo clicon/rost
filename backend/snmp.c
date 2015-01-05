@@ -56,14 +56,14 @@ static char *snmpd_keys[] = {
     NULL, 
 };
 static char *snmpd_conf_fmt = 
-    "sysLocation\t\"$snmp.location->location\"\n"
-    "sysContact\t\"$snmp.contact->contact\"\n"
-    "@EACH($snmp.community.ro[], $ro)\n"
-    "rocommunity\t\"$ro->community\"\n"
-    "@END\n"
-    "@EACH($snmp.community.rw[], $rw)\n"
-    "rwcommunity\t\"$rw->community\"\n"
-    "@END\n";
+    "sysLocation\t\"$snmp.location->location\"\\n"
+    "sysContact\t\"$snmp.contact->contact\"\\n"
+    "@EACH($snmp.community.ro[], $ro)\\n"
+    "rocommunity\t\"$ro->community\"\\n"
+    "@END\\n"
+    "@EACH($snmp.community.rw[], $rw)\\n"
+    "rwcommunity\t\"$rw->community\"\\n"
+    "@END\\n";
 
 /*
  * Commit callback. 
@@ -155,7 +155,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; snmpd_keys[i]; i++) {
 	key = snmpd_keys[i];
-	if (dbdep(h, TRANS_CB_COMMIT, snmp_commit, (void *)NULL, 1, key) == NULL) {
+	if (dbdep(h, 0, TRANS_CB_COMMIT, snmp_commit, (void *)NULL, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

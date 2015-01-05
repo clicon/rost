@@ -122,7 +122,7 @@ plugin_init(clicon_handle h)
     int retval = -1;
     char *key = "interface[].unit[].inet.dhcp_client";
 
-    if (dbdep(h, TRANS_CB_COMMIT, dhcpcd_commit, (void *)NULL, 1, key)==NULL) {
+    if (dbdep(h, 0, TRANS_CB_COMMIT, dhcpcd_commit, (void *)NULL, key)==NULL) {
 	clicon_debug(1, "failed to create dependency '%s'", key);
 	goto done;
     }

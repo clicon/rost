@@ -63,7 +63,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; system_depmap[i].key != NULL; i++) {
 	key = system_depmap[i].key;
-	if (dbdep(h, TRANS_CB_COMMIT, system_depmap[i].cb, (void *)NULL, 1, key) == NULL){
+	if (dbdep(h, 0, TRANS_CB_COMMIT, system_depmap[i].cb, (void *)NULL, key) == NULL){
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

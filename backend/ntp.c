@@ -61,14 +61,14 @@ static char *ntp_keys[] = {
     NULL
 };
 static char *ntp_fmt =
-    "driftfile\t" NTP_DRIFT "\n"
+    "driftfile\t" NTP_DRIFT "\\n"
     "restrict\t127.0.0.1\n"
-    "@EACH($ntp.server[], $serv)\n"
-    "server\t\t${serv->address}\nrestrict\t${serv->address}\n"
-    "@END\n"
-    "@IF($ntp.logging)\n"
-    "logconfig\t" NTP_LOGGING "\n"
-    "@END\n";
+    "@EACH($ntp.server[], $serv)\\n"
+    "server\t\t${serv->address}\\nrestrict\t${serv->address}\\n"
+    "@END\\n"
+    "@IF($ntp.logging)\\n"
+    "logconfig\t" NTP_LOGGING "\\n"
+    "@END\\n";
 
 /*
  * Commit callback. 
@@ -99,7 +99,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; ntp_keys[i]; i++) {
 	key = ntp_keys[i];
-	if (dbdep(h, TRANS_CB_COMMIT, ntp_commit, (void *)NULL, 1, key) == NULL) {
+	if (dbdep(h, 0, TRANS_CB_COMMIT, ntp_commit, (void *)NULL, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

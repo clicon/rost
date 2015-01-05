@@ -76,7 +76,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; auth_depmap[i].key != NULL; i++) {
 	key = auth_depmap[i].key;
-	if (dbdep(h, TRANS_CB_COMMIT, auth_depmap[i].cb, (void *)NULL, 1, key) == NULL){
+	if (dbdep(h, 0, TRANS_CB_COMMIT, auth_depmap[i].cb, (void *)NULL, key) == NULL){
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

@@ -53,10 +53,12 @@
 static int tunnel_new(clicon_handle, char *, trans_cb_type, lv_op_t, char *key, void *arg);
 static int tunnel_action(clicon_handle, char *, trans_cb_type, lv_op_t, char *key, void *arg);
 
+#define ROST_CURKEY	"ROST_CURKEY"
+
 struct tunnel_action {
     char *key;
     trans_cb cb;
-    char *set;
+    char *set; 
     char *del;
 };
 static struct tunnel_action tactions[] = {
@@ -70,50 +72,50 @@ static struct tunnel_action tactions[] = {
     {
 	"interface[].unit[].tunnel.source",
 	tunnel_action,
-	"ip tunnel change $name local $source",
-	"ip tunnel change $name local $source",
+	"ip tunnel change $" ROST_CURKEY "->name local $" ROST_CURKEY "->source",
+	"ip tunnel change $" ROST_CURKEY "->name local $" ROST_CURKEY "->source",
     },
 
     {
 	"interface[].unit[].tunnel.destination",
 	tunnel_action,
-	"ip tunnel change $name remote $destination",
-	"ip tunnel change $name remote $destination",
+	"ip tunnel change $" ROST_CURKEY "->name remote $" ROST_CURKEY "->destination",
+	"ip tunnel change $" ROST_CURKEY "->name remote $" ROST_CURKEY "->destination",
     },
 
     {
 	"interface[].unit[].tunnel.csum",
 	tunnel_action,
-	"ip tunnel change $name csum",
-	"ip tunnel change $name csum",
+	"ip tunnel change $" ROST_CURKEY "->name csum",
+	"ip tunnel change $" ROST_CURKEY "->name csum",
     },
 
     {
 	"interface[].unit[].tunnel.nopmtu",
 	tunnel_action,
-	"ip tunnel change $name nopmtudisc",
-	"ip tunnel change $name pmtudisc",
+	"ip tunnel change $" ROST_CURKEY "->name nopmtudisc",
+	"ip tunnel change $" ROST_CURKEY "->name pmtudisc",
     },
 
     {
 	"interface[].unit[].tunnel.tos",
 	tunnel_action,
-	"ip tunnel change $name tos $tos",
-	"ip tunnel change $name tos 0",
+	"ip tunnel change $" ROST_CURKEY "->name tos $" ROST_CURKEY "->tos",
+	"ip tunnel change $" ROST_CURKEY "->name tos 0",
     },
 
     {
 	"interface[].unit[].tunnel.ttl",
 	tunnel_action,
-	"ip tunnel change $name ttl $ttl",
-	"ip tunnel change $name ttl 0",
+	"ip tunnel change $" ROST_CURKEY "->name ttl $" ROST_CURKEY "->ttl",
+	"ip tunnel change $" ROST_CURKEY "->name ttl 0",
     },
 
     {
 	"interface[].unit[].tunnel.key",
 	tunnel_action,
-	"ip tunnel change $name key $key",
-	"ip tunnel change $name key 0",
+	"ip tunnel change $" ROST_CURKEY "->name key $" ROST_CURKEY "->key",
+	"ip tunnel change $" ROST_CURKEY "->name key 0",
     },
     
 
@@ -232,36 +234,24 @@ tunnel_action(clicon_handle h,
 {
     char *fmt;
     char *cmd = NULL;
-    int retval = -1;
-    size_t len;
-    cvec *vars = NULL;
-    char *lvec = NULL;
     struct tunnel_action *t;
     
     t = (struct tunnel_action *)arg;
     fmt = (op == LV_SET) ? t->set : t->del;
 
     /* Get variable list from database */
-    if (db_get_alloc(db, key, (void**)&lvec, &len) < 0 || len == 0)
-	goto done;
-    if ((vars = lvec2cvec (lvec, len)) == NULL)
-	goto done;
-    if ((cmd = lvmap_var_fmt(vars, fmt)) == NULL)
-	goto done;
-
+    if (clicon_option_str_set(h, ROST_CURKEY, key))
+	return -1;
+    cmd = clicon_db2txt_buf(h, db, fmt);
+    clicon_option_del(h, ROST_CURKEY);
+    if (cmd == NULL) {
+	clicon_err(OE_PLUGIN, 0, "Failed to format tunnel command");
+	return -1;
+    }
     clicon_debug(1, "Run: \"%s\"", cmd);
     clicon_proc_run(cmd, NULL, 0);
 
-    retval = 0;
-done:
-    if (cmd)
-	free(cmd);
-    if (lvec)
-	free(lvec);
-    if (vars)
-	cvec_free(vars);
-
-    return retval;
+    return 0;
 }
 
 
@@ -278,7 +268,7 @@ plugin_init(clicon_handle h)
     
     for (i = 0; tactions[i].key != NULL; i++) {
 	key = tactions[i].key;
-	if (dbdep(h, TRANS_CB_COMMIT, tactions[i].cb, &tactions[i], 1, key) == NULL) {
+	if (dbdep(h, 0, TRANS_CB_COMMIT, tactions[i].cb, &tactions[i], key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}
