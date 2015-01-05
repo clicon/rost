@@ -17,13 +17,13 @@
 # along wth ROST; see the file COPYING.  If not, see
 # <http://www.gnu.org/licenses/>.
 # 
-ip access-list standard $acl->name
+ip access-list standard $acl->name\n
 @IF($acl.remark->remark ? " remark $acl.remark->remark\n")
 @EACH($acl.line[], $line)
 @IF($line->src == (ipv4prefix)0.0.0.0/0)
- $line->action any
+ $line->action any\n
 @ELSE
- $line->action $line->src@IF($line->exact_match != (bool)false ? " exact-match\n" : "\n")
+ $line->action $line->src@IF($line->exact_match != (bool)false ? " exact-match")\n
 @END
 @END
-!
+!\n

@@ -19,9 +19,9 @@
 # along wth ROST; see the file COPYING.  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-router ospf
-@IF($router.ospf.router-id ? " router-id $router.ospf.routerid")
-@IF($router.ospf.abr-type ? " ospf abr-type $router.ospf->abr_type")
+router ospf\n
+@IF($router.ospf.router-id ? " router-id $router.ospf.routerid\n")
+@IF($router.ospf.abr-type ? " ospf abr-type $router.ospf->abr_type\n")
 @IF($router.ospf.log-adjacency-changes)
  log-adjacency-changes@IF($router.ospf.log-adjacency-changes->detail ? " detail")\n
 @END
@@ -29,7 +29,7 @@ router ospf
 @IF($router.ospf.auto-cost.reference-bandwidth ? " auto-cost reference-bandwidth $router.ospf.auto-cost.reference-bandwidth->bandwidth\n")
 @IF($router.ospf.timers.throttle.spf ? " timers throttle spf $router.ospf.timers.throttle.spf->delay $router.ospf.timers.throttle.spf->initial_hold $router.ospf.timers.throttle.spf->max_hold\n")
 @IF($router.ospf.max-metric.router-lsa.on-startup ? " max-metric router-lsa on-startup $router.ospf.max-metric.router-lsa.on-startup->on_startup\n")
-@IF($router.ospf.max-metric.router-lsa.on-shutdown ? " max-metric router-lsa on-shutdown $router.ospf.max-metric.router-lsa.on-shutdown->on_shutdown")
+@IF($router.ospf.max-metric.router-lsa.on-shutdown ? " max-metric router-lsa on-shutdown $router.ospf.max-metric.router-lsa.on-shutdown->on_shutdown\n")
 @IF($router.ospf.max-metric.router-lsa.administrative ? " max-metric router-lsa administrative\n")
 @IF($router.ospf.refresh-timer ? " refresh timer $router.ospf.refresh-timer->timer\n")
 @IF($router.ospf.redistribute.bgp)
@@ -96,5 +96,5 @@ router ospf
  default-information originate@IF($router.ospf.default-information.originate->always ? " $router.ospf.default-information.originate->always")@IF($router.ospf.default-information.originate->metric ? " metric $router.ospf.default-information.originate->metric")@IF($router.ospf.default-information.originate->metric_type ? " metric-type $router.ospf.default-information.originate->metric_type")@IF($router.ospf.default-information.originate->route_map ? " route-map $router.ospf.default-information.originate->route_map")\n"
 @END#DEFAULT-INFO ORIGINATE
 # CAPABILITY
-@IF($router.ospf.capability ? " capability opaque")
-!
+@IF($router.ospf.capability ? " capability opaque\n")
+!\n

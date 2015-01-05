@@ -17,7 +17,7 @@
 # along wth ROST; see the file COPYING.  If not, see
 # <http://www.gnu.org/licenses/>.
 # 
-ip access-list extended $acl->id
+ip access-list extended $acl->id\n
 @IF($acl.remark->remark ? " remark $acl.remark->remark\n")
 @EACH($acl.line[], $line)
 @IF($line->src == (ipv4addr)0.0.0.0)
@@ -26,9 +26,9 @@ ip access-list extended $acl->id
  $line->action $line->protocol @IF($line->srcmask == (ipv4addr)0.0.0.0 ? "host $line->src" : "$line->src $line->srcmask")
 @END
 @IF($line->dst==(ipv4addr)0.0.0.0)
- @IF($line->dstmask==(ipv4addr)255.255.255.255 ? "any\n" : "$line->dst $line->dstmask\n")
+ @IF($line->dstmask==(ipv4addr)255.255.255.255 ? "any" : "$line->dst $line->dstmask")\n
 @ELSE
- @IF($line->dstmask == (ipv4addr)0.0.0.0 ? "host $line->dst\n" : "$line->dst $line->dstmask\n")
+ @IF($line->dstmask == (ipv4addr)0.0.0.0 ? "host $line->dst" : "$line->dst $line->dstmask")\n
 @END
 @END
-!
+!\n

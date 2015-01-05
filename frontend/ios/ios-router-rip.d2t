@@ -19,15 +19,15 @@
 # along wth ROST; see the file COPYING.  If not, see
 # <http://www.gnu.org/licenses/>.
 # 
-router rip
+router rip\n
 @IF($router.rip.version->version ? " version $router.rip.version->version\n")
 @IF($router.rip.timers.basic->update ? " timers basic $router.rip.timers.basic->update $router.rip.timers.basic->timeout $router.rip.timers.basic->garbage\n")
 @IF($router.rip.default-information->status ? " default-information originate\n")
 @IF($router.rip.redistribute.bgp->metric != nil)# XXXX FIX ME
- redistribute bgp @IF($dist->metric ? " metric $dist->metric")@IF($dist->route_map ? " route-map $dist->route_map\n" : "\n")
+ redistribute bgp @IF($dist->metric ? " metric $dist->metric")@IF($dist->route_map ? " route-map $dist->route_map")\n
 @END
 @EACH($router.rip.offset-list[], $osl)
- offset-list $osl->acl $osl->direction $osl->metric@IF($osl->interface ? " $osl->interface\n" : "\n")
+ offset-list $osl->acl $osl->direction $osl->metric@IF($osl->interface ? " $osl->interface")\n
 @END
 @EACH($router.rip.network.prefix[], $pfx, " network \$pdx->prefix\n")
 @EACH($router.rip.network.interface[], $rif)
@@ -39,14 +39,14 @@ router rip
 @END
 @IF($router.rip.default-metric->metric ? " default-metric $router.rip.default-metric->metric\n")
 @EACH($router.rip.distribute-list[], $dl)
- distribute-list $dl->acl $dl->direction@IF($dl->interface ? " $dl->interface\n" : "\n")
+ distribute-list $dl->acl $dl->direction@IF($dl->interface ? " $dl->interface")\n
 @END
 @EACH($router.rip.distribute-list.prefix[], $pfx)
- distribute-list prefix $pfx->prefix $pfx->direction@IF($pfx->interface ? " $pfx->interface\n" : "\n")
+ distribute-list prefix $pfx->prefix $pfx->direction@IF($pfx->interface ? " $pfx->interface")\n
 @END
 @EACH($router.rip.route-map[], $rm, " route-map \$rm->route_map \$rm->direction \$rm->interface\n")
 @IF($router.rip.distance->distance ? " distance $router.rip.distance->distance\n")
 @EACH($router.rip.distance.prefix[], $pfx)
- distance $pfx->distance $pfx->prefix@IF($pfx->acl ? " $pfx->acl\n" : "\n")
+ distance $pfx->distance $pfx->prefix@IF($pfx->acl ? " $pfx->acl")\n
 @END
-!
+!\n

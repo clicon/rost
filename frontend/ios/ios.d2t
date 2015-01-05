@@ -27,8 +27,9 @@
 @END
 @IF($ipv4.domain->domain ? "ip domain name $ipv4.domain->domain\n")
 @EACH($ipv4.name-server[], $ns, "ip name-server $ns->address\n")
-!
-@IF($ipv4.forwarding->status ? "ip routing" : "no ip routing\n!\n")
+!\n
+@IF($ipv4.forwarding->status ? "ip routing" : "no ip routing")\n
+!\n
 @EACH($interface[], $if)
 @EACH($if.unit[], $iface, "@INCLUDE(\"${ROST_PLUGIN_DIR}/ios-interface.d2t\")")
 @END
@@ -42,13 +43,13 @@
 @IF($router.bgp->as)
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-router-bgp.d2t")
 @END
-@EACH($ipv4.route.static[], $rt, "ip route $rt->prefix route->nexthop $rt->distance")
+@EACH($ipv4.route.static[], $rt, "ip route $rt->prefix route->nexthop $rt->distance\n")
 @EACH($ipv4.route.static.null[], $rt)
-ip route $rt->prefix @IF($rt->reject ? "reject" : "blackhole") $rt->distance
+ip route $rt->prefix @IF($rt->reject ? "reject" : "blackhole") $rt->distance\n
 @END
-!
+!\n
 @EACH($ipv4.arp[], $arp, "arp $arp->address $arp->mac")
-!
+!\n
 @EACH($ipv4.access-list.standard[], $acl)
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-acl-standard.d2t")
 @END
@@ -58,40 +59,33 @@ ip route $rt->prefix @IF($rt->reject ? "reject" : "blackhole") $rt->distance
 @EACH($ipv4.access-list.standard.named[], $acl)
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-acl-standard-named.d2t")
 @END
-#@EACH($access-list[], $acl)
-#@IF($acl->remark)
-#access-list $acl->id remark $acl->remark
-#@ELSE
-#access-list $acl->id $acl->action $acl->proto $acl->srcaddr $acl->srcmask@IF($acl->dstaddr ? " $acl->dstaddr $acl#->dstmask") 
-#@END
-#@END
-!
+!\n
 @EACH($ipv4.prefix-list[], $pfx)
 @IF($pfx->description ? "ip prefix-list $pfx->name description $pfx->description\n")
 @EACH($pfx.line[], $pfxl)
-ip prefix-list $pfx->name@IF($pfxl->seq ? " seq $pfxl->seq") $pfxl->action $pfxl->prefix@IF($pfxl->ge ? " ge $pfxl->ge")@IF($pfxl->le ? " le $pfxl->le") 
+ip prefix-list $pfx->name@IF($pfxl->seq ? " seq $pfxl->seq") $pfxl->action $pfxl->prefix@IF($pfxl->ge ? " ge $pfxl->ge")@IF($pfxl->le ? " le $pfxl->le")\n
 @END
-!
+!\n
 @END
-@EACH($ipv4.as-path.access-list[], $asp, "ip as-path access-list \$asp->name \$asp->action \$asp->regexp")
-!
+@EACH($ipv4.as-path.access-list[], $asp, "ip as-path access-list \$asp->name \$asp->action \$asp->regexp\n")
+!\n
 @EACH($route-map[], $rm)
 @EACH($rm.line[], $rml)
-route-map $rml->name $rml->action $rml->line
+route-map $rml->name $rml->action $rml->line\n
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-route-map.d2t")
-!
+!\n
 @END
 @END
 @IF($logging.buffered->rows ? "logging buffered $logging.buffered->rows $logging.buffered->level\n")
 @IF($logging.trap->level ? "logging trap $logging.trap->level\n")
 @EACH($logging.host[], $lh, "logging host \$lh->host transport \$lh->protocol port \$lh->port\n")
-!
-@EACH($snmp.community.ro[], $ro, "snmp-server community \$ro->community ro\n")
-@EACH($snmp.community.rw[], $rw, "snmp-server community \$rw->community rw\n")
+!\n
+@EACH($snmp.community.ro[], $ro, "snmp-server community \$ro->community ro'\n")
+@EACH($snmp.community.rw[], $rw, "snmp-server community \$rw->community rw'\n")
 @IF($snmp.contact->contact ? "snmp-server contact $snmp.contact->contact\n")
 @IF($snmp.location->location ? "snmp-server location $snmp.location->location\n")
-!
+!\n
 @IF($ntp.logging->dummy ? "ntp logging\n")
 @EACH($ntp.server[], $serv, "ntp server \$serv->address\n")
 #@END
-!
+!\n

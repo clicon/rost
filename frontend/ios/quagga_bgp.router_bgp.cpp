@@ -22,16 +22,26 @@
 CLICON_MODE=STRINGIFY(IOS_BGP);
 
 /* NEIGHBOR */
-neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr show:A.B.C.D>("Neighbor address")) @IOS_BGP_NEIGHBOR, cli_merge(), ADMIN;
-no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") @IOS_BGP_NONEIGHBOR, cli_del(), ADMIN;
+neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr show:A.B.C.D>("Neighbor address")) @IOS_BGP_NEIGHBOR, cli_set(), ADMIN;
+no("Negate a command or set its defaults") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr show:A.B.C.D>("Neighbor address")) @IOS_BGP_NONEIGHBOR, cli_del(), ADMIN;
+/* NEIGHBOR ACTIVATE */
+neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr show:A.B.C.D>("Neighbor address")) activate("Enable the Address Family for this Neighbor"), cli_del("router.bgp.neighbor[].activate $!neighbor"), ADMIN;
+no("Negate a command or set its defaults") neighbor("Specify a neighbor router") (<neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address")|<neighbor:ipv4addr show:A.B.C.D>("Neighbor address")) activate("Enable the Address Family for this Neighbor"), cli_set("router.bgp.neighbor[].activate $!neighbor $activate=(bool)false"), ADMIN;
+
+/* PEER-GROUP */
+neighbor("Specify a neighbor router") <peergroup:string show:WORD>("Neighbor tag") peer-group("Member of the peer-group"), cli_set("router.bgp.peer-group[] $!peergroup"), ADMIN;
+neighbor("Specify a neighbor router") <peergroup:string expand_bgp_peergroup()>("Neighbor tag") @IOS_BGP_PEERGROUP, cli_set(), ADMIN;
+no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <peergroup:string show:WORD>("Neighbor tag") peer-group("Member of the peer-group"), cli_del_tree("router.bgp.peer-group[] $!peergroup"), ADMIN;
+no("Negate a command or set its defaults") neighbor("Specify a neighbor router") (<peergroup:string expand_bgp_peergroup()>("Neighbor tag")|<peergroup:string show:WORD>("Neighbor tag")) @IOS_BGP_PEERGROUP, cli_del(), ADMIN;
+
+/* PEER-GROUP ACTIVATE */
+neighbor("Specify a neighbor router") <peergroup:string expand_bgp_peergroup()>("Neighbor tag") activate("Enable the Address Family for this Neighbor"), cli_set("router.bgp.peer-group[].activate $!peergroup $activate=(bool)true"), ADMIN;
+no("Negate a command or set its defaults") neighbor("Specify a neighbor router") <peergroup:string expand_bgp_peergroup()>("Neighbor tag") activate("Enable the Address Family for this Neighbor"), cli_set("router.bgp.peer-group[].activate $!peergroup $activate=(bool)false"), ADMIN;
+
 
 /* AGGREGATE-ADDRESS <ipv4prefix> */
 aggregate-address("Configure BGP aggregate entries") <ipv4prefix>("Aggregate prefix"), cli_set("router.bgp.aggregate-address[] $!prefix"), ADMIN; {
-	as-set("Generate AS set path information"),  cli_set("router.bgp.aggregate-address[] $!prefix $as_set=(string)\"as-set\"")
-
- 
-
-, ADMIN;
+	as-set("Generate AS set path information"),  cli_set("router.bgp.aggregate-address[] $!prefix $as_set=(string)\"as-set\""), ADMIN;
 	summary-only("Filter more specific routes from updates"), cli_set("router.bgp.aggregate-address[] $!prefix $summary_only=(string)\"summary-only\""), ADMIN;
  	summary-only("Filter more specific routes from updates") as-set("Generate AS set path information"), cli_set("router.bgp.aggregate-address[] $!prefix $summary_only=(string)\"summary-only\" $as_set=(string)\"as-set\""), ADMIN;
 	as-set("Generate AS set path information") summary-only("Filter more specific routes from updates"), cli_set("router.bgp.aggregate-address[] $!prefix $summary_only=(string)\"summary-only\" $as_set=(string)\"as-set\""), ADMIN;

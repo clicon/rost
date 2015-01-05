@@ -19,7 +19,7 @@
 # along wth ROST; see the file COPYING.  If not, see
 # <http://www.gnu.org/licenses/>.
 # 
-router bgp $router.bgp->as
+router bgp $router.bgp->as\n
 @IF($router.bgp.router-id ? " bgp router-id $router.bgp.router-id->routerid\n")
 @IF($router.bgp.log-neighbor-changes ? " bgp log-neighbor-changes\n")
 @IF($router.bgp.always-compare-med ? " bgp always-compare-med\n")
@@ -59,8 +59,49 @@ router bgp $router.bgp->as
 @IF($router.bgp.redistribute.static)
  redistribute static@IF($router.bgp.redistribute.static->metric ? " metric $router.bgp.redistribute.static->metric")@IF($router.bgp.redistribute.static->route_map ? " route-map $router.bgp.redistribute.static->route_map")\n
 @END
+# PEER-GROUP
+@EACH($router.bgp.peer-group[], $peergroup)
+ neighbor $peergroup->peergroup peer-group\n
+@IF($peergroup.remote-as ? " neighbor $peergroup->peergroup remote-as $peergroup.remote-as->remote_as\n")
+@IF($peergroup.local-as)
+ neighbor $peergroup->peergroup local-as $peergroup.local-as->localas@IF($peergroup.local-as->no_prepend ? " $peergroup.local-as->no_prepend")\n
+@END
+@IF($peergroup.description ? " neighbor $peergroup->peergroup description $peergroup.description->description\n")
+@IF($peergroup.shutdown ? " neighbor $peergroup->peergroup shutdown\n")
+@IF($peergroup.password ? " neighbor $peergroup->peergroup password $peergroup.password->password\n")
+@IF($peergroup.passive ? " neighbor $peergroup->peergroup passive\n")
+@IF($peergroup.ebgp-multihop)
+ neighbor $peergroup->peergroup ebgp-multihop@IF($peergroup.ebgp-multihop->maxhops ? " $peergroup.ebgp-multihop->maxhops")\n
+@END
+@IF($peergroup.update-source ? " neighbor $peergroup->peergroup update-source $peergroup.update-source->source\n")
+@IF($peergroup.advertisement-interval ? " neighbor $peergroup->peergroup advertisement-interval $peergroup.advertisement-interval->interval\n")
+@IF($peergroup.timers ? " neighbor $peergroup->peergroup timers $peergroup.timers->keepalive $peergroup.timers->holdtime\n")
+@IF($peergroup.timers.connect ? " neighbor $peergroup->peergroup timers connect $peergroup.timers.connect->connect\n")
+@IF($peergroup.weight ? " neighbor $peergroup->peergroup weight $peergroup.weight->weight\n")
+@IF($peergroup.next-hop-self ? " neighbor $peergroup->peergroup next-hop-self\n")
+@IF($peergroup.maximum-prefix)
+ neighbor $peergroup->peergroup maximum-prefix@IF($peergroup->threshold != (uint8)0 ? " $peergroup->threshold")@IF($peergroup->restart != (uint16)0 ? " restart $peergroup->restart")@IF($peergroup->warning_only ? " warning-only")\n
+@END
+@IF($peergroup.remote-private-as ? " neighbor $peergroup->peergroup remote-private-as\n")
+@IF($peergroup.defasult-originate)
+ neighbor $peergroup->peergroup default-originate@IF($peergroup.default-originate->route_map ? " route-map $peergroup.default-originate->route_map")\n
+@END
+@IF($peergroup.soft-reconfiguration.inbound ? " neighbor $peergroup->peergroup soft-reconfiguration inbound\n")
+@IF($peergroup.allowas-in)
+ neighbor $peergroup->peergroup allowas-in@IF($peergroup.allowas-in->num_as ? " $peergroup.allowas-in->num_as")\n
+@END
+@IF($peergroup.prefix-list.in ? " neighbor $peergroup->peergroup prefix-list $peergroup.prefix-list.in->prefix_list in\n")
+@IF($peergroup.prefix-list.out ? " neighbor $peergroup->peergroup prefix-list $peergroup.prefix-list.out->prefix_list out\n")
+@IF($peergroup.distribute-list.in ? " neighbor $peergroup->peergroup distribute-list $peergroup.distribute-list.in->acl in\n")
+@IF($peergroup.distribute-list.out ? " neighbor $peergroup->peergroup distribute-list $peergroup.distribute-list.out->acl out\n")
+@IF($peergroup.route-map.in ? " neighbor $peergroup->peergroup route-map $peergroup.route-map.in->route_map in\n")
+@IF($peergroup.route-map.out ? " neighbor $peergroup->peergroup route-map $peergroup.route-map.out->route_map out\n")
+@IF($peergroup.filter-list.in ? " neighbor $peergroup->peergroup filter-list $peergroup.filter-list.in->acl in\n")
+@IF($peergroup.filter-list.out ? " neighbor $peergroup->peergroup filter-list $peergroup.filter-list.out->acl out\n")
+@IF($peergroup.activate->activate == (bool)false ? " no neighbor $peergroup->peergroup activate\n")
+@END#PEER-GROUP
 @EACH($router.bgp.neighbor[], $neigh)
-@IF($neigh.remote-as ? " neighbor $neigh->neighbor remote-as $neigh.remote-as->remote_as")
+@IF($neigh.remote-as ? " neighbor $neigh->neighbor remote-as $neigh.remote-as->remote_as\n")
 @IF($neigh.local-as)
  neighbor $neigh->neighbor local-as $neigh.local-as->localas@IF($neigh.local-as->no_prepend ? " $neigh.local-as->no_prepend")\n"
 @END
@@ -77,14 +118,16 @@ router bgp $router.bgp->as
 @IF($neigh.timers.connect ? " neighbor $neigh->neighbor timers connect $neigh.timers.connect->connect\n")
 @IF($neigh.weight ? " neighbor $neigh->neighbor weight $neigh.weight->weight\n")
 @IF($neigh.next-hop-self ? " neighbor $neigh->neighbor next-hop-self\n")
-
+@IF($peergroup.maximum-prefix)
+ neighbor $neigh->neigh maximum-prefix@IF($neigh->threshold != (uint8)0 ? " $neigh->threshold")@IF($neigh->restart != (uint16)0 ? " restart $neigh->restart")@IF($neigh->warning_only ? " warning-only")\n
+@END
 @IF($neigh.remote-private-as ? " neighbor $neigh->neighbor remote-private-as\n")
 @IF($neigh.defasult-originate)
  neighbor $neigh->neighbor default-originate@IF($neigh.default-originate->route_map ? " route-map $neigh.default-originate->route_map")\n
 @END
 @IF($neigh.soft-reconfiguration.inbound ? " neighbor $neigh->neighbor soft-reconfiguration inbound\n")
 @IF($neigh.allowas-in)
- neighbor $neigh->neighbor allowas-in@IF($neigh.allowas-in->num_as ? " $neigh.allowas-in->num_as\n" : "\n")
+ neighbor $neigh->neighbor allowas-in@IF($neigh.allowas-in->num_as ? " $neigh.allowas-in->num_as")\n
 @END
 @IF($neigh.prefix-list.in ? " neighbor $neigh->neighbor prefix-list $neigh.prefix-list.in->prefix_list in\n")
 @IF($neigh.prefix-list.out ? " neighbor $neigh->neighbor prefix-list $neigh.prefix-list.out->prefix_list out\n")
@@ -94,11 +137,11 @@ router bgp $router.bgp->as
 @IF($neigh.route-map.out ? " neighbor $neigh->neighbor route-map $neigh.route-map.out->route_map out\n")
 @IF($neigh.filter-list.in ? " neighbor $neigh->neighbor filter-list $neigh.filter-list.in->acl in\n")
 @IF($neigh.filter-list.out ? " neighbor $neigh->neighbor filter-list $neigh.filter-list.out->acl out\n")
-@IF($neigh.activate ? " neighbor $neigh->neighbor activate\n")
+@IF($neigh.activate->activate == (bool)false ? " no neighbor $neigh->neighbor activate\n")
 @END#NEIGHBOR
 @IF($router.bgp.distance.bgp ? " distance bgp $router.bgp.distance.bgp->external $router.bgp.distance.bgp->internal $router.bgp.distance.bgp->local\n")
 @EACH($router.bgp.distance[], $dist)
  distance $dist->distance $dist->prefix@IF($dist->acl ? " $dist->acl")\n
 @END
-!
+!\n
 

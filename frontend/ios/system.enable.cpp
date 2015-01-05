@@ -44,6 +44,7 @@ change("Make a change operation") user("Change user") <user:string expand_user()
 
 archive("Manage archive files") config("Archive the running config"), ios_cli_config_archive((int)0), ADMIN;
 configure("Enter configuration mode") replace("Replace the running-config with a new config file") <string expand_snapshot()>("Rollback number"), ios_cli_config_replace((int)0), ADMIN;
+configure("Enter configuration mode"), cli_ios_mode((int)IOS_MODE_CONFIG), ADMIN;
 configure("Enter configuration mode") terminal("Configure from the terminal"), cli_ios_mode((int)IOS_MODE_CONFIG), ADMIN;
 
 copy("Copy from one file to another") <url>("Source URL") <url>("Destination URL"), cli_copy_url_url((int)0), ADMIN;

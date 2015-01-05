@@ -32,7 +32,7 @@ tunnel("protocol-over-protocol tunneling") {
 	source("source of tunnel packets") <address:ipv4addr>("source ip address"), tunnel_set("interface[].unit[].tunnel.source $!name=ios_interface_cb() $!unit=ios_interface_cb() $source"), ADMIN;
 	destination("destination of tunnel") <address:ipv4addr>("destination ip address"), tunnel_set("interface[].unit[].tunnel.destination $!name=ios_interface_cb() $!unit=ios_interface_cb() $destination"), ADMIN;
 	key("security or selector key") <key:number>("Key"), tunnel_set("interface[].unit[].tunnel.key $!name=ios_interface_cb() $!unit=ios_interface_cb() $key"), ADMIN;
-	path-mtu-discovery("Enable Path MTU Discovery on tunnel"), cli_del("interface[].unit[].tunnel.nopmtu $!name=ios_interface_cb() $!unit=ios_interface_cb() $nopmtu"), ADMIN;
+	path-mtu-discovery("Enable Path MTU Discovery on tunnel"), cli_del("interface[].unit[].tunnel.nopmtu $!name=ios_interface_cb() $!unit=ios_interface_cb()"), ADMIN;
 	tos("set type of service byte") <tos:number range[1:99]>("TOS"), tunnel_set("interface[].unit[].tunnel.tos $!name=ios_interface_cb() $!unit=ios_interface_cb() $tos"), ADMIN;
 	ttl("set time to live") <ttl:number range[1:255]>("TTL"), tunnel_set("interface[].unit[].tunnel.ttl $!name=ios_interface_cb() $!unit=ios_interface_cb() $ttl"), ADMIN;
 }
@@ -44,7 +44,7 @@ no("Negate a command or set its defaults") {
 		source("source of tunnel packets") <address:ipv4addr>("source ip address"), cli_del("interface[].unit[].tunnel.source $!name=ios_interface_cb() $!unit=ios_interface_cb() $source"), ADMIN;
 		destination("destination of tunnel") <address:ipv4addr>("destination ip address"), cli_del("interface[].unit[].tunnel.destination $!name=ios_interface_cb() $!unit=ios_interface_cb() $destination"), ADMIN;
 		key("security or selector key") <key:number>("Key"), cli_del("interface[].unit[].tunnel.key $!name=ios_interface_cb() $!unit=ios_interface_cb() $key"), ADMIN;
-		path-mtu-discovery("Enable Path MTU Discovery on tunnel"), tunnel_set("interface[].unit[].tunnel.nopmtu $!name=ios_interface_cb() $!unit=ios_interface_cb() $nopmtu"), ADMIN;
+		path-mtu-discovery("Enable Path MTU Discovery on tunnel"), tunnel_set("interface[].unit[].tunnel.nopmtu $!name=ios_interface_cb() $!unit=ios_interface_cb() $nopmtu=(bool)true"), ADMIN;
 		tos("set type of service byte") <tos:number range[0:99]>("TOS"), cli_del("interface[].unit[].tunnel.tos $!name=ios_interface_cb() $!unit=ios_interface_cb() $tos"), ADMIN;
 		ttl("set time to live") <ttl:number range[1:255]>("TTL"), cli_del("interface[].unit[].tunnel.ttl $!name=ios_interface_cb() $!unit=ios_interface_cb() $ttl"), ADMIN;
 	}

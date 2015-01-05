@@ -21,9 +21,6 @@
 #include "ios_macros.h"
 CLICON_MODE=STRINGIFY(IOS_BGP_NEIGHBOR);
 
-/* NEIGHBOR ACTIVATE */
-activate("Enable the Address Family for this Neighbor"), cli_set("router.bgp.neighbor[].activate $!neighbor"), ADMIN;
-
 /* NEIGHBOR ADVERTISEMENT-INTERVAL */
 advertisement-interval("Minimum interval between sending BGP routing updates") <number range[0:600]>("Minimum interval between sending BGP routing updates"), cli_set("router.bgp.neighbor[].advertisement-interval $!neighbor $interval"), ADMIN;
 
@@ -60,6 +57,15 @@ expand_filter-list("Establish BGP filters") <string>("AS path access-list name")
 neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") local-as("Specify a local-as number") <uint32 range[1:4294967295]>("AS number used as local AS"),  cli_set("router.bgp.neighbor[].local-as $!neighbor $localas"), ADMIN;
 neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") local-as("Specify a local-as number") <uint32 range[1:4294967295]>("AS number used as local AS") no-prepend("Do not prepend local-as to updates from ebgp peers"), cli_set("router.bgp.neighbor[].local-as $!neighbor $localas $no_prepend=(string)\"no-prepend\""), expand_ADMIN;
 
+/* MAXIMUM-PREFIX */ 
+maximum-prefix("Maximum number of prefix accept from this peer") <uint32 range[1:4294967295]>("Maximum no. of prefix limit"), cli_set("router.bgp.neighbor[].maximum-prefix $!neighbor $maxprefix $threshold=(uint8)75 $restart=(uint16)0 $warning_only=(bool)false"); {
+  <uint8 range[1:100]>("Threshold value (%) at which to generate a warning msg"), cli_set("router.bgp.neighbor[].maximum-prefix $!neighbor $maxprefix $threshold $restart=(uint16)0 $warning_only=(bool)false"); {
+    restart("Restart bgp connection after limit is exceeded") <uint16 range[1:65535]>("Restart interval in minutes"), cli_set("router.bgp.neighbor[].maximum-prefix $!neighbor $maxprefix $threshold $restart_interval $warning_only=(bool)false");
+    warning-only("Only give warning message when limit is exceeded"), cli_set("router.bgp.neighbor[].maximum-prefix $!neighbor $maxprefix $threshold $restart_interval=(uint16)0 $warning_only=(bool)true");
+  }
+  restart("Restart bgp connection after limit is exceeded") <uint16 range[1:65535]>("Restart interval in minutes"), cli_set("router.bgp.neighbor[].maximum-prefix $!neighbor $maxprefix $threshold=(uint8)75 $restart_interval $warning_only=(bool)false");
+    warning-only("Only give warning message when limit is exceeded"), cli_set("router.bgp.neighbor[].maximum-prefix $!neighbor $maxprefix $threshold=(uint8)0 $restart_interval=(uint16)0 $warning_only=(bool)true");
+}
 
 /* NEIGHBOR NEXT-HOP-SELF */
 neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") next-hop-self("Disable the next hop calculation for this neighbor"), cli_set("router.bgp.neighbor[].next-hop-self $!neighbor"), ADMIN;
@@ -74,7 +80,7 @@ password("Set a password") <string>("The password"), cli_set("router.bgp.neighbo
 
 
 /* NEIGHBOR PEER-GROUP */
-peer-group("Member of the peer-group") <peergroup:string show:WORD>("peer-group name"), quagga::quagga_bgp_peergroup_set("router.bgp.neighbor[].peer-group $!neighbor $peergroup"), ADMIN;
+peer-group("Member of the peer-group") <peergroup:string show:WORD>("peer-group name"), cli_set("router.bgp.neighbor[].peer-group $!neighbor $peergroup"), ADMIN;
 
 /* NEIGHBOR REMOVE-PRIVATE-AS */
 remove-private-as("Remove private AS number from outbound updates"),  cli_set("router.bgp.neighbor[].remove-private-as $!neighbor"), ADMIN;
@@ -89,10 +95,10 @@ prefix-list("Filter updates to/from this neighbor") <string>("Name of a prefix l
 
 /* NEIGHBOR REMOTE-AS */
 #ifdef notyet
-neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") remote-as("Specify a BGP neighbor") <number range[1:65535]>("AS of remote neighbor"), cli_set("router.bgp.neighbor[].remote-as $!neighbor $remote_as"), ADMIN;
-neighbor("Specify a neighbor router") <neighbor:ipv4addr>("Neighbor address") remote-as("Specify a BGP neighbor") <number range[1:65535]>("AS of remote neighbor"), cli_set("router.bgp.neighbor[].remote-as $!neighbor $remote_as"), ADMIN;
+neighbor("Specify a neighbor router") <neighbor:ipv4addr expand_bgp_neighbor()>("Neighbor address") remote-as("Specify a BGP neighbor") <uint32 range[1:4294967295]>("AS of remote neighbor"), cli_set("router.bgp.neighbor[].remote-as $!neighbor $remote_as"), ADMIN;
+neighbor("Specify a neighbor router") <neighbor:ipv4addr>("Neighbor address") remote-as("Specify a BGP neighbor") <uint32 range[1:4294967295]>("AS of remote neighbor"), cli_set("router.bgp.neighbor[].remote-as $!neighbor $remote_as"), ADMIN;
 #endif
-remote-as("Specify a BGP neighbor") <number range[1:65535]>("AS of remote neighbor"), cli_set("router.bgp.neighbor[].remote-as $!neighbor $remote_as"), ADMIN;
+remote-as("Specify a BGP neighbor") <uint32 range[1:4294967295]>("AS of remote neighbor"), cli_set("router.bgp.neighbor[].remote-as $!neighbor $remote_as"), ADMIN;
 
 
 

@@ -19,43 +19,43 @@
 # along wth ROST; see the file COPYING.  If not, see
 # <http://www.gnu.org/licenses/>.
 # 
-interface $iface->name
-@if($iface.description->description ? " description $iface.description->description\n")
-@if($iface.dot1q->vlan ? " encapsulation dot1Q $iface.dot1q->vlan\n")
+interface $iface->name\n
+@IF($iface.description->description ? " description $iface.description->description\n")
+@IF($iface.dot1q->vlan ? " encapsulation dot1Q $iface.dot1q->vlan\n")
 #/*    {".tunnel.mode", " tunnel mode $mode", NULL, LVPRINT_CMD, NULL},*/
-@if($iface.tunnel.source->source ? " tunnel source $iface.tunnel.source->source\n")
-@if($iface.tunnel.destination->destination ? " tunnel destination $iface.tunnel.destination->destination\n")
-@if($iface.tunnel.tos->tos ? " tunnel tos $iface.tunnel.tos->tos\n")
-@if($iface.tunnel.key->key ? " tunnel key $iface.tunnel.key->key\n")
-@if($iface.tunnel.nopmtu->noptmu ? " no tunnel path-mtu-discovery\n")
-@if($iface.tunnel.ttl->ttl ? " tunnel ttl $iface.tunnel.ttl->ttl\n")
-@if($iface.tunnel.csum->csum ? " tunnel csum $iface.tunnel.csum->csum\n")
-@if($iface.inet.dhcp_client->enabled ? " ip address dhcp\n")
-@each($iface.inet.address[], $addr)
- ip address $addr->prefix
-@end
+@IF($iface.tunnel.source->source ? " tunnel source $iface.tunnel.source->source\n")
+@IF($iface.tunnel.destination->destination ? " tunnel destination $iface.tunnel.destination->destination\n")
+@IF($iface.tunnel.tos->tos ? " tunnel tos $iface.tunnel.tos->tos\n")
+@IF($iface.tunnel.key->key ? " tunnel key $iface.tunnel.key->key\n")
+@IF($iface.tunnel.nopmtu->nopmtu == (bool)true ? " no tunnel path-mtu-discovery\n")
+@IF($iface.tunnel.ttl->ttl ? " tunnel ttl $iface.tunnel.ttl->ttl\n")
+@IF($iface.tunnel.csum->csum ? " tunnel csum $iface.tunnel.csum->csum\n")
+@IF($iface.inet.dhcp_client->enabled ? " ip address dhcp\n")
+@EACH($iface.inet.address[], $addr)
+ ip address $addr->prefix\n
+@END
 # IPv6
-#@each($iface.ipv6.address[], $v6addr)
-# ipv6 address $v6addr->prefix
-#@end
-#@if($face.ipv6.nd.adv-interval-option->status" ?" ipv6 nd adv-interval-option")
+#@EACH($iface.ipv6.address[], $v6addr)
+# ipv6 address $v6addr->prefix\n
+#@END
+#@IF($face.ipv6.nd.adv-interval-option->status" ?" ipv6 nd adv-interval-option\n")
 # /IPv6
-@if($iface.tunnel.bandwidth->bandwidth ? " bandwidth $iface.tunnel.bandwidth->bandwidth\n")
-@if($iface.link-detect->link_detect ? " link-detect\n")
-@if($iface.shutdown->shutdown ? " shutdown\n")
-@if($iface.ipv4.rp_filter->status == (int)1 ? " ip verify unicast source reachable-via rx\n")
-@if($iface.ipv4.send_redirects->status == (int)0 ? " no ip redirects\n")
-@if($iface.ipv4.proxy_arp->status == (int)0 ? " no ip proxy-arp\n")
-@if($iface.ospf.cost->cost != nil ? " ip ospf cost $iface.ospf.cost->cost\n")
-@if($iface.ospf.network-type->network_type ? " ip ospf network-type $iface.ospf.network-type->network_type\n")
-@if($iface.ospf.priority->priority != nil ? " ip ospf priority $iface.ospf.priority->priority\n")
-@if($iface.rip.receive->version ? " ip rip receive version $iface.rip.receive->version\n")
-@if($iface.rip.send->version ? " ip rip send version $iface.rip.send->version\n")
-@if($iface.rip.split-horizon != nil)
-@if($iface.rip.split-horizon->split-horizon == (bool)false)
- no ip rip split-horizon
+@IF($iface.tunnel.bandwidth->bandwidth ? " bandwidth $iface.tunnel.bandwidth->bandwidth\n")
+@IF($iface.link-detect->link_detect ? " link-detect\n")
+@IF($iface.shutdown->shutdown ? " shutdown\n")
+@IF($iface.ipv4.rp_filter->status == (int)1 ? " ip verify unicast source reachable-via rx\n")
+@IF($iface.ipv4.send_redirects->status == (int)0 ? " no ip redirects\n")
+@IF($iface.ipv4.proxy_arp->status == (int)0 ? " no ip proxy-arp\n")
+@IF($iface.ospf.cost->cost != nil ? " ip ospf cost $iface.ospf.cost->cost\n")
+@IF($iface.ospf.network-type->network_type ? " ip ospf network-type $iface.ospf.network-type->network_type\n")
+@IF($iface.ospf.priority->priority != nil ? " ip ospf priority $iface.ospf.priority->priority\n")
+@IF($iface.rip.receive->version ? " ip rip receive version $iface.rip.receive->version\n")
+@IF($iface.rip.send->version ? " ip rip send version $iface.rip.send->version\n")
+@IF($iface.rip.split-horizon != nil)
+@IF($iface.rip.split-horizon->split-horizon == (bool)false)
+ no ip rip split-horizon\n
 @else
-@if($iface.rip.split-horizon->poison_reverse == (bool)true ? " ip rip split-horizon poisoned-reverse\n")
-@end
-@end
-!
+@IF($iface.rip.split-horizon->poison_reverse == (bool)true ? " ip rip split-horizon poisoned-reverse\n")
+@END
+@END
+!\n
