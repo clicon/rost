@@ -1,0 +1,989 @@
+diff -Naur quagga-0.99.23.1/bgpd/bgpd.c quagga-0.99.23.1-rost/bgpd/bgpd.c
+--- quagga-0.99.23.1/bgpd/bgpd.c	2014-08-26 02:56:53.000000000 +1000
++++ quagga-0.99.23.1-rost/bgpd/bgpd.c	2014-12-29 22:18:03.388625722 +1100
+@@ -1403,7 +1403,7 @@
+   SET_FLAG (group->conf->sflags, PEER_STATUS_GROUP);
+   listnode_add_sort (bgp->group, group);
+ 
+-  return 0;
++  return group;
+ }
+ 
+ static void 
+diff -Naur quagga-0.99.23.1/bgpd/bgp_main.c quagga-0.99.23.1-rost/bgpd/bgp_main.c
+--- quagga-0.99.23.1/bgpd/bgp_main.c	2014-08-26 02:56:53.000000000 +1000
++++ quagga-0.99.23.1-rost/bgpd/bgp_main.c	2014-12-23 21:53:53.000000000 +1100
+@@ -426,6 +426,10 @@
+   zprivs_init (&bgpd_privs);
+   cmd_init (1);
+   vty_init (master);
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_init (master);
++#endif /* SUPPORT_CONFIG_API */
+   memory_init ();
+ 
+   /* BGP related initialization.  */
+@@ -452,6 +456,11 @@
+   /* Make bgp vty socket. */
+   vty_serv_sock (vty_addr, vty_port, BGP_VTYSH_PATH);
+ 
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_serv_socket (NULL, 0, BGP_CONFAPI_PATH);
++#endif /* SUPPORT_CONFIG_API */
++
+   /* Print banner. */
+   zlog_notice ("BGPd %s starting: vty@%d, bgp@%s:%d", QUAGGA_VERSION,
+ 	       vty_port, 
+diff -Naur quagga-0.99.23.1/config.h.in quagga-0.99.23.1-rost/config.h.in
+--- quagga-0.99.23.1/config.h.in	2014-08-26 03:02:07.000000000 +1000
++++ quagga-0.99.23.1-rost/config.h.in	2014-12-23 22:03:50.000000000 +1100
+@@ -6,6 +6,9 @@
+ /* babeld vty socket */
+ #undef BABEL_VTYSH_PATH
+ 
++/* bgpd config api socket */
++#undef BGP_CONFAPI_PATH
++
+ /* bgpd vty socket */
+ #undef BGP_VTYSH_PATH
+ 
+@@ -18,6 +21,9 @@
+ /* Consumed Time Check */
+ #undef CONSUMED_TIME_CHECK
+ 
++/* daemon config api directory */
++#undef DAEMON_CONFAPI_DIR
++
+ /* daemon vty directory */
+ #undef DAEMON_VTY_DIR
+ 
+@@ -580,6 +586,9 @@
+ /* IRIX 6.5 */
+ #undef IRIX_65
+ 
++/* isisd config api socket */
++#undef ISIS_CONFAPI_PATH
++
+ /* selected method for isis, == one of the constants */
+ #undef ISIS_METHOD
+ 
+@@ -621,9 +630,15 @@
+ /* OpenBSD */
+ #undef OPEN_BSD
+ 
++/* ospf6d config api socket */
++#undef OSPF6_CONFAPI_PATH
++
+ /* ospf6d vty socket */
+ #undef OSPF6_VTYSH_PATH
+ 
++/* ospfd config api socket */
++#undef OSPF_CONFAPI_PATH
++
+ /* ospfd vty socket */
+ #undef OSPF_VTYSH_PATH
+ 
+@@ -690,9 +705,15 @@
+ /* Define as the return type of signal handlers (`int' or `void'). */
+ #undef RETSIGTYPE
+ 
++/* ripng config api socket */
++#undef RIPNG_CONFAPI_PATH
++
+ /* ripng vty socket */
+ #undef RIPNG_VTYSH_PATH
+ 
++/* rip config api socket */
++#undef RIP_CONFAPI_PATH
++
+ /* rip vty socket */
+ #undef RIP_VTYSH_PATH
+ 
+@@ -726,6 +747,9 @@
+ /* SunOS 5.8 up */
+ #undef SUNOS_59
+ 
++/* Configratation API */
++#undef SUPPORT_CONFIG_API
++
+ /* OSPFAPI */
+ #undef SUPPORT_OSPF_API
+ 
+@@ -784,6 +808,9 @@
+ # endif
+ #endif
+ 
++/* zebra config api socket */
++#undef ZEBRA_CONFAPI_PATH
++
+ /* zebra api socket */
+ #undef ZEBRA_SERV_PATH
+ 
+diff -Naur quagga-0.99.23.1/configure quagga-0.99.23.1-rost/configure
+--- quagga-0.99.23.1/configure	2014-08-26 03:02:06.000000000 +1000
++++ quagga-0.99.23.1-rost/configure	2014-12-23 22:03:38.000000000 +1100
+@@ -876,6 +876,7 @@
+ enable_ospfapi
+ enable_ospfclient
+ enable_ospf_te
++enable_confapi
+ enable_multipath
+ enable_user
+ enable_group
+@@ -1563,6 +1564,7 @@
+   --disable-ospfclient    do not build OSPFAPI client for OSPFAPI,
+                           (this is the default if --disable-ospfapi is set)
+   --disable-ospf-te       disable Traffic Engineering Extension to OSPF
++  --enable-confapi        Build the Quagga configration API
+   --enable-multipath=ARG  enable multipath function, ARG must be digit
+   --enable-user=user      user to run Quagga suite as (default quagga)
+   --enable-group=group    group to run Quagga suite as (default quagga)
+@@ -12501,6 +12503,11 @@
+   enableval=$enable_ospf_te;
+ fi
+ 
++# Check whether --enable-confapi was given.
++if test "${enable_confapi+set}" = set; then :
++  enableval=$enable_confapi;
++fi
++
+ # Check whether --enable-multipath was given.
+ if test "${enable_multipath+set}" = set; then :
+   enableval=$enable_multipath;
+@@ -14049,7 +14056,7 @@
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
++#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -14095,7 +14102,7 @@
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
++#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -14119,7 +14126,7 @@
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
++#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -14164,7 +14171,7 @@
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
++#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -14188,7 +14195,7 @@
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
++#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -17782,6 +17789,12 @@
+ fi
+ 
+ 
++if test "${enable_confapi}" = "yes"; then
++
++$as_echo "#define SUPPORT_CONFIG_API /**/" >>confdefs.h
++
++fi
++
+ case "${enable_ripngd}" in
+   "yes") RIPNGD="ripngd";;
+   "no" ) RIPNGD="";;
+@@ -21682,6 +21695,46 @@
+ _ACEOF
+ 
+ 
++cat >>confdefs.h <<_ACEOF
++#define ZEBRA_CONFAPI_PATH "$quagga_statedir/zebra.api"
++_ACEOF
++
++
++cat >>confdefs.h <<_ACEOF
++#define RIP_CONFAPI_PATH "$quagga_statedir/ripd.api"
++_ACEOF
++
++
++cat >>confdefs.h <<_ACEOF
++#define RIPNG_CONFAPI_PATH "$quagga_statedir/ripngd.api"
++_ACEOF
++
++
++cat >>confdefs.h <<_ACEOF
++#define BGP_CONFAPI_PATH "$quagga_statedir/bgpd.api"
++_ACEOF
++
++
++cat >>confdefs.h <<_ACEOF
++#define OSPF_CONFAPI_PATH "$quagga_statedir/ospfd.api"
++_ACEOF
++
++
++cat >>confdefs.h <<_ACEOF
++#define OSPF6_CONFAPI_PATH "$quagga_statedir/ospf6d.api"
++_ACEOF
++
++
++cat >>confdefs.h <<_ACEOF
++#define ISIS_CONFAPI_PATH "$quagga_statedir/isisd.api"
++_ACEOF
++
++
++cat >>confdefs.h <<_ACEOF
++#define DAEMON_CONFAPI_DIR "$quagga_statedir"
++_ACEOF
++
++
+ 
+ $as_echo "#define QUAGGA_NO_DEPRECATED_INTERFACES 1" >>confdefs.h
+ 
+diff -Naur quagga-0.99.23.1/configure.ac quagga-0.99.23.1-rost/configure.ac
+--- quagga-0.99.23.1/configure.ac	2014-08-26 02:56:53.000000000 +1000
++++ quagga-0.99.23.1-rost/configure.ac	2014-12-23 21:53:53.000000000 +1100
+@@ -243,6 +243,8 @@
+                           (this is the default if --disable-ospfapi is set)])
+ AC_ARG_ENABLE(ospf-te,
+   AC_HELP_STRING([--disable-ospf-te],[disable Traffic Engineering Extension to OSPF]))
++AC_ARG_ENABLE(confapi,
++[  --enable-confapi        Build the Quagga configration API])
+ AC_ARG_ENABLE(multipath,
+ [  --enable-multipath=ARG  enable multipath function, ARG must be digit])
+ AC_ARG_ENABLE(user,
+@@ -1329,6 +1331,10 @@
+ fi
+ AM_CONDITIONAL(OSPFCLIENT, test "x$OSPFCLIENT" = "xospfclient")
+ 
++if test "${enable_confapi}" = "yes"; then
++  AC_DEFINE(SUPPORT_CONFIG_API,,Configratation API)
++fi
++
+ case "${enable_ripngd}" in
+   "yes") RIPNGD="ripngd";;
+   "no" ) RIPNGD="";;
+@@ -1684,6 +1690,14 @@
+ AC_DEFINE_UNQUOTED(BABEL_VTYSH_PATH, "$quagga_statedir/babeld.vty",babeld vty socket)
+ AC_DEFINE_UNQUOTED(ISIS_VTYSH_PATH, "$quagga_statedir/isisd.vty",isisd vty socket)
+ AC_DEFINE_UNQUOTED(DAEMON_VTY_DIR, "$quagga_statedir",daemon vty directory)
++AC_DEFINE_UNQUOTED(ZEBRA_CONFAPI_PATH, "$quagga_statedir/zebra.api",zebra config api socket)
++AC_DEFINE_UNQUOTED(RIP_CONFAPI_PATH, "$quagga_statedir/ripd.api",rip config api socket)
++AC_DEFINE_UNQUOTED(RIPNG_CONFAPI_PATH, "$quagga_statedir/ripngd.api",ripng config api socket)
++AC_DEFINE_UNQUOTED(BGP_CONFAPI_PATH, "$quagga_statedir/bgpd.api",bgpd config api socket)
++AC_DEFINE_UNQUOTED(OSPF_CONFAPI_PATH, "$quagga_statedir/ospfd.api",ospfd config api socket)
++AC_DEFINE_UNQUOTED(OSPF6_CONFAPI_PATH, "$quagga_statedir/ospf6d.api",ospf6d config api socket)
++AC_DEFINE_UNQUOTED(ISIS_CONFAPI_PATH, "$quagga_statedir/isisd.api",isisd config api socket)
++AC_DEFINE_UNQUOTED(DAEMON_CONFAPI_DIR, "$quagga_statedir",daemon config api directory)
+ 
+ dnl -------------------------------
+ dnl Quagga sources should always be 
+diff -Naur quagga-0.99.23.1/lib/confapi.c quagga-0.99.23.1-rost/lib/confapi.c
+--- quagga-0.99.23.1/lib/confapi.c	1970-01-01 10:00:00.000000000 +1000
++++ quagga-0.99.23.1-rost/lib/confapi.c	2014-12-23 21:53:53.000000000 +1100
+@@ -0,0 +1,426 @@
++/* 
++ * Copyright (C) 2009 Olof Hagsand and Benny Holmgren
++ * Copyright (C) 1997, 98, 99 Kunihiro Ishiguro <kunihiro@zebra.org>
++ *
++ * This file is part of GNU Zebra.
++ *
++ * GNU Zebra is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the
++ * Free Software Foundation; either version 2, or (at your option) any
++ * later version.
++ *
++ * GNU Zebra is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with GNU Zebra; see the file COPYING.  If not, write to the Free
++ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++ * 02111-1307, USA.  
++ */
++
++#include <zebra.h>
++
++#ifdef SUPPORT_CONFIG_API
++
++#include <sys/un.h>
++
++#include "linklist.h"
++#include "prefix.h"
++#include "buffer.h"
++#include "memory.h"
++#include "network.h"
++#include "stream.h"
++#include "thread.h"
++#include "privs.h"
++#include "zclient.h"
++#include "vty.h"
++#include "command.h"
++
++#include "confapi.h"
++
++
++/* Master of the threads. */
++static struct thread_master *master;
++
++/* Event list of API. */
++enum event { CONFAPI_SERV, CONFAPI_READ, CONFAPI_WRITE };
++
++static void confapi_event (enum event event, int sock, struct vty *vty);
++
++
++
++/* Make new client. */
++static void
++confapi_client_create (int sock)
++{
++  struct vty *vty;
++
++  vty = vty_new ();
++  vty->fd = sock;
++  vty->type = VTY_API;
++  strcpy (vty->address, "ConfigAPI");
++  vty->node = ENABLE_NODE;
++  vty->fail = 0;
++  vty->cp = 0;
++  memset (vty->buf, 0, vty->max);
++  vty->length = 0;
++  memset (vty->hist, 0, sizeof (vty->hist));
++  vty->hp = 0;
++  vty->hindex = 0;
++  vty->status = VTY_NORMAL;
++  vty->v_timeout = 0;
++  vty->lines = 0;
++  vty->width = 0;
++  vty->iac = 0;
++  vty->iac_sb_in_progress = 0;
++  vty->sb_len = 0;
++
++
++  confapi_event (CONFAPI_READ, sock, vty);
++}
++
++/* Accept new connections. */
++static int
++confapi_accept (struct thread *thread)
++{
++  int accept_sock;
++  int client_sock;
++  struct sockaddr_in client;
++  socklen_t len;
++
++  accept_sock = THREAD_FD (thread);
++
++  /* Reregister myself. */
++  confapi_event (CONFAPI_SERV, accept_sock, NULL);
++
++  len = sizeof (struct sockaddr_in);
++  client_sock = accept (accept_sock, (struct sockaddr *) &client, &len);
++
++  if (client_sock < 0) {
++    zlog_warn ("Can't accept confapi socket: %s", safe_strerror (errno));
++    return -1;
++  }
++
++  /* Make client socket non-blocking.  */
++  set_nonblocking(client_sock);
++  
++  /* Create new zebra client. */
++  confapi_client_create (client_sock);
++
++  return 0;
++}
++
++/* API UNIX domain socket. */
++static int
++confapi_socket_un (const char *path)
++{
++  int ret;
++  int sock, len;
++  struct sockaddr_un serv;
++  mode_t old_mask;
++
++  /* First of all, unlink existing socket */
++  unlink (path);
++
++  /* Set umask */
++  old_mask = umask (0007);
++
++  /* Make UNIX domain socket. */
++  sock = socket (AF_UNIX, SOCK_STREAM, 0);
++  if (sock < 0) {
++    zlog_warn ("Can't create zserv unix socket: %s", safe_strerror (errno));
++    return -1;
++  }
++
++  /* Make server socket. */
++  memset (&serv, 0, sizeof (struct sockaddr_un));
++  serv.sun_family = AF_UNIX;
++  strncpy (serv.sun_path, path, strlen (path));
++#ifdef HAVE_STRUCT_SOCKADDR_UN_SUN_LEN
++  len = serv.sun_len = SUN_LEN(&serv);
++#else
++  len = sizeof (serv.sun_family) + strlen (serv.sun_path);
++#endif /* HAVE_STRUCT_SOCKADDR_UN_SUN_LEN */
++
++  ret = bind (sock, (struct sockaddr *) &serv, len);
++  if (ret < 0) {
++      zlog_warn ("Can't bind to unix socket %s: %s", 
++                 path, safe_strerror (errno));
++      close (sock);
++      return -1;
++  }
++
++  ret = listen (sock, 5);
++  if (ret < 0) {
++      zlog_warn ("Can't listen to unix socket %s: %s", 
++                 path, safe_strerror (errno));
++      close (sock);
++      return -1;
++  }
++
++  umask (old_mask);
++
++  confapi_event (CONFAPI_SERV, sock, NULL);
++
++  return 0;
++}
++
++/* FIXME: IPv6 ? */
++static void
++confapi_socket_in (const char *addr, unsigned short port)
++{
++  int ret;
++  int sock;
++  union sockunion su;
++
++  memset (&su, 0, sizeof (union sockunion));
++
++  /* If no address is given, asume IPv4 loopback */
++  if (addr == NULL) {
++    su.sa.sa_family = AF_INET;
++    su.sin.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
++#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
++    su->sin.sin_len = sizeof (struct sockaddr_in);
++#endif /* HAVE_STRUCT_SOCKADDR_IN_SIN_LEN */
++  } else {
++    if (str2sockunion (addr, &su)) {
++      zlog_warn ("Can't parse confapi socket address %s: %s", 
++		 addr, safe_strerror (errno));
++      return;
++    }
++  }
++  
++  sock = sockunion_stream_socket (&su);
++  if ( sock < 0 ) {
++    zlog_warn ("Can't create confapi stream socket: %s", 
++	       safe_strerror (errno));
++    return;
++  }
++  
++  /* This is server, so reuse address. */
++  sockopt_reuseaddr (sock);
++  sockopt_reuseport (sock);
++  
++  /* Bind socket to universal address and given port. */
++  ret = sockunion_bind (sock, &su, port, &su);
++  if (ret < 0) {
++    zlog_warn("can't bind socket");
++    close (sock);	/* Avoid sd leak. */
++    return;
++  }
++  
++  /* Listen socket under queue 3. */
++  ret = listen (sock, 3);
++  if (ret < 0) {
++    zlog (NULL, LOG_WARNING, "can't listen socket");
++    close (sock);	/* Avoid sd leak. */
++    return;
++  }
++  
++  confapi_event (CONFAPI_SERV, sock, NULL);
++}
++
++void
++confapi_serv_socket (const char *addr, unsigned short port, const char *path)
++{
++  /* If port is specified, use inet */
++  if (port)
++      confapi_socket_in (addr, port);
++  else
++      confapi_socket_un (path);
++}
++
++
++
++/* Close configuration client. */
++static void
++confapi_client_close (struct vty *vty)
++{
++  vty_close (vty);
++}
++
++static int
++confapi_execute (struct thread *thread, const char *buf)
++{
++  struct buffer *tmpbuf;
++  struct vty *vty;
++  char *savebuf, *output, tmpstr[512];
++  vector vline;
++  int ret;
++  
++  vty = THREAD_ARG (thread);
++
++  vline = cmd_make_strvec (buf);
++  if (vline == NULL)
++    return -1;
++
++  /* Save existing buffer so that we know where to insert the new output */
++  savebuf = buffer_getstr (vty->obuf);
++
++  /* Execute configuration command : this is strict match */
++  ret = cmd_execute_command_strict (vline, vty, NULL);
++  cmd_free_strvec (vline);
++
++  /* Get new buffer after command execution */
++  output = buffer_getstr (vty->obuf);
++
++  /* Create new buffer */
++  tmpbuf = buffer_new(0);	/* Use default buffer size. */
++
++  /* First put saved buffer back */
++  buffer_putstr (tmpbuf, savebuf);
++
++  /* Now, insert return code and length before output */
++  snprintf (tmpstr, sizeof(tmpstr)-1, "%d#%d#%d\n", 
++	    CONFAPI_VERSION, ret, strlen(output) - strlen(savebuf));
++  buffer_putstr (tmpbuf, tmpstr);
++
++  /* Append new output */
++  buffer_putstr (tmpbuf, output + strlen (savebuf));
++
++  /* Clean up */
++  XFREE(MTYPE_TMP, savebuf);
++  XFREE(MTYPE_TMP, output);
++  buffer_free (vty->obuf);
++
++  /* Assign new buffer to vty out buffer */
++  vty->obuf = tmpbuf;
++  return ret;
++}
++
++/* Handler of config api service request. */
++static int
++confapi_client_read (struct thread *thread)
++{
++  int sock;
++  int nbytes;
++  struct vty *vty;
++  char buf[CONFAPI_MAX_PACKET_SIZ], *cmdstart, *cp;
++
++  /* Get thread data.  Reset reading thread because I'm running. */
++  sock = THREAD_FD (thread);
++  vty = THREAD_ARG (thread);
++  vty->t_read = NULL;
++
++  /* Read raw data from socket */
++  nbytes = read (vty->fd, buf, CONFAPI_MAX_PACKET_SIZ -1);
++  if (nbytes <= 0) {
++    if (nbytes < 0) {
++      if (ERRNO_IO_RETRY(errno)) {
++	confapi_event (CONFAPI_READ, sock, vty);
++	return 0;
++      }
++      zlog_warn("%s: read error on confapi client fd %d, closing: %s",
++		__func__, vty->fd, safe_strerror(errno));
++    }
++    buffer_reset(vty->obuf);
++    confapi_client_close(vty);
++    return -1;
++  }
++
++  
++  buf[nbytes] = '\0';
++  cmdstart = cp = buf;
++  while (*cp != '\0') {
++    
++    if (*cp == '\n') {  /* New command completed */
++      *cp = '\0';
++      if (*(cp-1) == '\r')
++	*(cp-1) = '\0';
++ 
++      /* vty command buffer large enough ? */
++      while (vty->max <= (int)(strlen (vty->buf) + strlen (cmdstart) +1)) {
++	vty->max *= 2;
++	vty->buf = XREALLOC (MTYPE_VTY, vty->buf, vty->max);
++      }
++	
++      /* Append new command to vty buffer which is normally empty unless
++	 part of command was stored from previous read. */
++      strlcat (vty->buf, cmdstart, vty->max);
++      
++      /* Execute command */
++      confapi_execute (thread, vty->buf);
++      /* Clear vty buffer */
++      memset (vty->buf, 0, vty->max);
++
++      cmdstart = cp+1;
++    }
++    
++    cp++;
++  }
++
++  /* Save non-completed command (or an empty string if none) for later. */
++  strlcpy (vty->buf, cmdstart, vty->max);
++
++
++  /* Re-set read thread and write thread of we executed something */
++  confapi_event (CONFAPI_READ, sock, vty);
++  if ( ! buffer_empty (vty->obuf) )
++    confapi_event (CONFAPI_WRITE, sock, vty);
++
++  return 0;
++}
++
++static int
++confapi_flush(struct vty *vty)
++{
++  switch (buffer_flush_available(vty->obuf, vty->fd)) {
++
++  case BUFFER_PENDING:
++    confapi_event(CONFAPI_WRITE, vty->fd, vty);
++    break;
++
++  case BUFFER_ERROR:
++    zlog_warn("%s: write error to fd %d, closing", __func__, vty->fd);
++    buffer_reset(vty->obuf);
++    confapi_client_close(vty);
++    return -1;
++    break;
++
++  case BUFFER_EMPTY:
++    break;
++
++  }
++
++  return 0;
++}
++
++static int
++confapi_client_write (struct thread *thread)
++{
++  struct vty *vty = THREAD_ARG (thread);
++
++  vty->t_write = NULL;
++  confapi_flush(vty);
++  return 0;
++}
++
++static void
++confapi_event (enum event event, int sock, struct vty *vty)
++{
++  switch (event)
++    {
++    case CONFAPI_SERV:
++      thread_add_read (master, confapi_accept, vty, sock);
++      break;
++    case CONFAPI_READ:
++      vty->t_read = 
++	thread_add_read (master, confapi_client_read, vty, sock);
++      break;
++    case CONFAPI_WRITE:
++      vty->t_write = 
++	thread_add_write (master, confapi_client_write, vty, sock);
++      break;
++    }
++}
++
++void
++confapi_init (struct thread_master *master_thread)
++{
++  master = master_thread;
++}
++
++
++#endif /* SUPPORT_CONFIG_API */
+diff -Naur quagga-0.99.23.1/lib/confapi.h quagga-0.99.23.1-rost/lib/confapi.h
+--- quagga-0.99.23.1/lib/confapi.h	1970-01-01 10:00:00.000000000 +1000
++++ quagga-0.99.23.1-rost/lib/confapi.h	2014-12-23 21:53:53.000000000 +1100
+@@ -0,0 +1,35 @@
++/* Zebra config API header.
++ * Copyright (C) 2009 Olof Hagsand and Benny Holmgren
++ * Copyright (C) 1997, 98 Kunihiro Ishiguro
++ *
++ * This file is part of GNU Zebra.
++ *
++ * GNU Zebra is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the
++ * Free Software Foundation; either version 2, or (at your option) any
++ * later version.
++ *
++ * GNU Zebra is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with GNU Zebra; see the file COPYING.  If not, write to the Free
++ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++ * 02111-1307, USA.  
++ */
++
++#ifndef _CONFAPI_H
++#define _CONFAPI_H
++
++/* Config API protocol version number */
++#define CONFAPI_VERSION			2
++
++/* For input/output buffer to configuration API. */
++#define CONFAPI_MAX_PACKET_SIZ          4096
++
++extern void confapi_init (struct thread_master *);
++extern void confapi_serv_socket (const char *, unsigned short, const char *);
++
++#endif /* _CONFAPI_H */
+diff -Naur quagga-0.99.23.1/lib/Makefile.am quagga-0.99.23.1-rost/lib/Makefile.am
+--- quagga-0.99.23.1/lib/Makefile.am	2014-08-26 02:56:53.000000000 +1000
++++ quagga-0.99.23.1-rost/lib/Makefile.am	2014-12-23 21:53:53.000000000 +1100
+@@ -12,7 +12,7 @@
+ 	sockunion.c prefix.c thread.c if.c memory.c buffer.c table.c hash.c \
+ 	filter.c routemap.c distribute.c stream.c str.c log.c plist.c \
+ 	zclient.c sockopt.c smux.c agentx.c snmp.c md5.c if_rmap.c keychain.c privs.c \
+-	sigevent.c pqueue.c jhash.c memtypes.c workqueue.c
++	sigevent.c pqueue.c jhash.c memtypes.c workqueue.c confapi.c
+ 
+ BUILT_SOURCES = memtypes.h route_types.h gitversion.h
+ 
+@@ -27,7 +27,7 @@
+ 	str.h stream.h table.h thread.h vector.h version.h vty.h zebra.h \
+ 	plist.h zclient.h sockopt.h smux.h md5.h if_rmap.h keychain.h \
+ 	privs.h sigevent.h pqueue.h jhash.h zassert.h memtypes.h \
+-	workqueue.h route_types.h libospf.h
++	workqueue.h route_types.h libospf.h confapi.h
+ 
+ EXTRA_DIST = \
+ 	regex.c regex-gnu.h \
+diff -Naur quagga-0.99.23.1/lib/Makefile.in quagga-0.99.23.1-rost/lib/Makefile.in
+--- quagga-0.99.23.1/lib/Makefile.in	2014-08-26 03:02:09.000000000 +1000
++++ quagga-0.99.23.1-rost/lib/Makefile.in	2014-12-23 22:10:07.000000000 +1100
+@@ -130,7 +130,7 @@
+ 	table.lo hash.lo filter.lo routemap.lo distribute.lo stream.lo \
+ 	str.lo log.lo plist.lo zclient.lo sockopt.lo smux.lo agentx.lo \
+ 	snmp.lo md5.lo if_rmap.lo keychain.lo privs.lo sigevent.lo \
+-	pqueue.lo jhash.lo memtypes.lo workqueue.lo
++	pqueue.lo jhash.lo memtypes.lo workqueue.lo confapi.lo
+ libzebra_la_OBJECTS = $(am_libzebra_la_OBJECTS)
+ AM_V_lt = $(am__v_lt_@AM_V@)
+ am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+@@ -381,7 +381,7 @@
+ 	sockunion.c prefix.c thread.c if.c memory.c buffer.c table.c hash.c \
+ 	filter.c routemap.c distribute.c stream.c str.c log.c plist.c \
+ 	zclient.c sockopt.c smux.c agentx.c snmp.c md5.c if_rmap.c keychain.c privs.c \
+-	sigevent.c pqueue.c jhash.c memtypes.c workqueue.c
++	sigevent.c pqueue.c jhash.c memtypes.c workqueue.c confapi.c
+ 
+ BUILT_SOURCES = memtypes.h route_types.h gitversion.h
+ libzebra_la_DEPENDENCIES = @LIB_REGEX@
+@@ -393,7 +393,7 @@
+ 	str.h stream.h table.h thread.h vector.h version.h vty.h zebra.h \
+ 	plist.h zclient.h sockopt.h smux.h md5.h if_rmap.h keychain.h \
+ 	privs.h sigevent.h pqueue.h jhash.h zassert.h memtypes.h \
+-	workqueue.h route_types.h libospf.h
++	workqueue.h route_types.h libospf.h confapi.h
+ 
+ EXTRA_DIST = \
+ 	regex.c regex-gnu.h \
+@@ -489,6 +489,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buffer.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checksum.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/confapi.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/daemon.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/distribute.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filter.Plo@am__quote@
+diff -Naur quagga-0.99.23.1/lib/vty.h quagga-0.99.23.1-rost/lib/vty.h
+--- quagga-0.99.23.1/lib/vty.h	2014-08-26 02:56:53.000000000 +1000
++++ quagga-0.99.23.1-rost/lib/vty.h	2014-12-23 21:53:53.000000000 +1100
+@@ -35,7 +35,7 @@
+   int fd;
+ 
+   /* Is this vty connect to file or not */
+-  enum {VTY_TERM, VTY_FILE, VTY_SHELL, VTY_SHELL_SERV} type;
++  enum {VTY_TERM, VTY_FILE, VTY_SHELL, VTY_SHELL_SERV, VTY_API} type;
+ 
+   /* Node status of this vty */
+   int node;
+diff -Naur quagga-0.99.23.1/Makefile.in quagga-0.99.23.1-rost/Makefile.in
+--- quagga-0.99.23.1/Makefile.in	2014-08-26 03:02:08.000000000 +1000
++++ quagga-0.99.23.1-rost/Makefile.in	2014-12-23 22:10:07.000000000 +1100
+@@ -83,7 +83,7 @@
+ 	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
+ 	$(top_srcdir)/configure $(am__configure_deps) \
+ 	$(srcdir)/config.h.in COPYING COPYING.LIB TODO compile \
+-	config.guess config.sub install-sh missing ltmain.sh
++	config.guess config.sub depcomp install-sh missing ltmain.sh
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ am__aclocal_m4_deps = $(top_srcdir)/m4/ax_sys_weak_alias.m4 \
+ 	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+diff -Naur quagga-0.99.23.1/ospf6d/ospf6_main.c quagga-0.99.23.1-rost/ospf6d/ospf6_main.c
+--- quagga-0.99.23.1/ospf6d/ospf6_main.c	2014-08-26 02:56:53.000000000 +1000
++++ quagga-0.99.23.1-rost/ospf6d/ospf6_main.c	2014-12-23 21:53:53.000000000 +1100
+@@ -317,6 +317,10 @@
+   signal_init (master, array_size(ospf6_signals), ospf6_signals);
+   cmd_init (1);
+   vty_init (master);
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_init (master);
++#endif /* SUPPORT_CONFIG_API */
+   memory_init ();
+   if_init ();
+   access_list_init ();
+@@ -346,6 +350,11 @@
+     vty_port = OSPF6_VTY_PORT;
+   vty_serv_sock (vty_addr, vty_port, OSPF6_VTYSH_PATH);
+ 
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_serv_socket (NULL, 0, OSPF6_CONFAPI_PATH);
++#endif /* SUPPORT_CONFIG_API */
++
+   /* Print start message */
+   zlog_notice ("OSPF6d (Quagga-%s ospf6d-%s) starts: vty@%d",
+                QUAGGA_VERSION, OSPF6_DAEMON_VERSION,vty_port);
+diff -Naur quagga-0.99.23.1/ospfd/ospf_main.c quagga-0.99.23.1-rost/ospfd/ospf_main.c
+--- quagga-0.99.23.1/ospfd/ospf_main.c	2014-08-26 02:56:53.000000000 +1000
++++ quagga-0.99.23.1-rost/ospfd/ospf_main.c	2014-12-23 21:53:53.000000000 +1100
+@@ -289,6 +289,10 @@
+   cmd_init (1);
+   debug_init ();
+   vty_init (master);
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_init (master);
++#endif /* SUPPORT_CONFIG_API */
+   memory_init ();
+ 
+   access_list_init ();
+@@ -330,6 +334,11 @@
+   /* Create VTY socket */
+   vty_serv_sock (vty_addr, vty_port, OSPF_VTYSH_PATH);
+ 
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_serv_socket (NULL, 0, OSPF_CONFAPI_PATH);
++#endif /* SUPPORT_CONFIG_API */
++
+   /* Print banner. */
+   zlog_notice ("OSPFd %s starting: vty@%d", QUAGGA_VERSION, vty_port);
+ 
+diff -Naur quagga-0.99.23.1/ripd/rip_main.c quagga-0.99.23.1-rost/ripd/rip_main.c
+--- quagga-0.99.23.1/ripd/rip_main.c	2014-08-26 02:56:53.000000000 +1000
++++ quagga-0.99.23.1-rost/ripd/rip_main.c	2014-12-23 21:53:53.000000000 +1100
+@@ -33,6 +33,9 @@
+ #include "privs.h"
+ #include "sigevent.h"
+ #include "zclient.h"
++#ifdef SUPPORT_CONFIG_API
++#include "confapi.h"
++#endif /* SUPPORT_CONFIG_API */
+ 
+ #include "ripd/ripd.h"
+ 
+@@ -278,6 +281,10 @@
+   signal_init (master, array_size(ripd_signals), ripd_signals);
+   cmd_init (1);
+   vty_init (master);
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_init (master);
++#endif /* SUPPORT_CONFIG_API */
+   memory_init ();
+   keychain_init ();
+ 
+@@ -307,6 +314,11 @@
+   /* Create VTY's socket */
+   vty_serv_sock (vty_addr, vty_port, RIP_VTYSH_PATH);
+ 
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_serv_socket (NULL, 0, RIP_CONFAPI_PATH);
++#endif /* SUPPORT_CONFIG_API */
++
+   /* Print banner. */
+   zlog_notice ("RIPd %s starting: vty@%d", QUAGGA_VERSION, vty_port);
+ 
+diff -Naur quagga-0.99.23.1/ripngd/ripng_main.c quagga-0.99.23.1-rost/ripngd/ripng_main.c
+--- quagga-0.99.23.1/ripngd/ripng_main.c	2014-08-26 02:56:53.000000000 +1000
++++ quagga-0.99.23.1-rost/ripngd/ripng_main.c	2014-12-23 21:53:53.000000000 +1100
+@@ -275,6 +275,10 @@
+   signal_init (master, array_size(ripng_signals), ripng_signals);
+   cmd_init (1);
+   vty_init (master);
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_init (master);
++#endif /* SUPPORT_CONFIG_API */
+   memory_init ();
+ 
+   /* RIPngd inits. */
+@@ -299,6 +303,11 @@
+   /* Create VTY socket */
+   vty_serv_sock (vty_addr, vty_port, RIPNG_VTYSH_PATH);
+ 
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_serv_socket (NULL, 0, RIPNG_CONFAPI_PATH);
++#endif /* SUPPORT_CONFIG_API */
++
+   /* Process id file create. */
+   pid_output (pid_file);
+ 
+diff -Naur quagga-0.99.23.1/zebra/main.c quagga-0.99.23.1-rost/zebra/main.c
+--- quagga-0.99.23.1/zebra/main.c	2014-08-26 02:56:53.000000000 +1000
++++ quagga-0.99.23.1-rost/zebra/main.c	2014-12-23 21:53:53.000000000 +1100
+@@ -317,6 +317,10 @@
+   signal_init (zebrad.master, array_size(zebra_signals), zebra_signals);
+   cmd_init (1);
+   vty_init (zebrad.master);
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_init (zebrad.master);
++#endif /* SUPPORT_CONFIG_API */
+   memory_init ();
+ 
+   /* Zebra related initialize. */
+@@ -403,6 +407,11 @@
+   /* Make vty server socket. */
+   vty_serv_sock (vty_addr, vty_port, ZEBRA_VTYSH_PATH);
+ 
++#ifdef SUPPORT_CONFIG_API
++  /* Create configuration API socket */
++  confapi_serv_socket (NULL, 0, ZEBRA_CONFAPI_PATH);
++#endif /* SUPPORT_CONFIG_API */
++
+   /* Print banner. */
+   zlog_notice ("Zebra %s starting: vty@%d", QUAGGA_VERSION, vty_port);
+ 
