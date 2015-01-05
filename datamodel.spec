@@ -176,6 +176,7 @@ router.bgp.neighbor[].timers                         $!neighbor:ipv4addr $keepal
 router.bgp.neighbor[].timers.connect                 $!neighbor:ipv4addr $connect:int32
 router.bgp.neighbor[].weight                         $!neighbor:ipv4addr $weight:int32
 router.bgp.neighbor[].next-hop-self                  $!neighbor:ipv4addr
+router.bgp.neighbor[].maximum-prefix                 $!neighbor:ipv4addr $maxprefix:uint32 $threshold:uint8 $restart:uint16 $warning_only:bool
 router.bgp.neighbor[].remove-private-as              $!neighbor:ipv4addr
 router.bgp.neighbor[].default-originate              $!neighbor:ipv4addr $route_map
 router.bgp.neighbor[].soft-reconfiguration.inbound   $!neighbor:ipv4addr
@@ -188,7 +189,7 @@ router.bgp.neighbor[].distribute-list.in             $!neighbor:ipv4addr $acl
 router.bgp.neighbor[].distribute-list.out            $!neighbor:ipv4addr $acl
 router.bgp.neighbor[].filter-list.in                 $!neighbor:ipv4addr $acl
 router.bgp.neighbor[].filter-list.out                $!neighbor:ipv4addr $acl
-router.bgp.neighbor[].activate                       $!neighbor:ipv4addr
+router.bgp.neighbor[].activate                       $!neighbor:ipv4addr $activate:bool
 router.bgp.peer-group[]                              $!peergroup:string
 router.bgp.peer-group[].remote-as                    $!peergroup:string $remote_as:int32
 router.bgp.peer-group[].local-as                     $!peergroup:string $localas:int32 $no_prepend
@@ -215,7 +216,7 @@ router.bgp.peer-group[].distribute-list.in           $!peergroup:string $acl
 router.bgp.peer-group[].distribute-list.out          $!peergroup:string $acl
 router.bgp.peer-group[].filter-list.in               $!peergroup:string $acl
 router.bgp.peer-group[].filter-list.out              $!peergroup:string $acl
-router.bgp.peer-group[].activate                     $!peergroup:string
+router.bgp.peer-group[].activate                     $!peergroup:string $active:bool
 router.bgp.distance.bgp                              $external:int32 $internal:int32 $local:int32
 router.bgp.distance[]                                $!prefix:ipv4prefix $distance $acl
 
