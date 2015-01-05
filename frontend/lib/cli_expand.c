@@ -67,6 +67,13 @@ expand_bgp_neighbor(clicon_handle h, char *name, cvec *vars, cg_var *arg, int *n
 }
 
 int
+expand_bgp_peergroup(clicon_handle h, char *name, cvec *vars, cg_var *arg, int *nr, char ***commands, char ***helptexts)
+{
+    return expand_db_variable(h, clicon_candidate_db(h), "router.bgp.peer-group[]", "peergroup", nr, commands);
+}
+
+
+int
 expand_interface(clicon_handle h, char *name, cvec *vars, cg_var *arg, int *nr, char ***commands, char ***helptexts)
 {
     return expand_db_variable(h, clicon_candidate_db(h), "interface[]", "name", nr, commands);
