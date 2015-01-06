@@ -50,7 +50,6 @@
 static int
 vlan_commit(clicon_handle h,
 	    char *db,
-	    trans_cb_type tt, 
 	    lv_op_t op,
 	    char *key,
 	    void *arg)
@@ -136,7 +135,7 @@ plugin_init(clicon_handle h)
     int retval = -1;
 
     key = "interface[].unit[]";
-    if (dbdep(h, 0, TRANS_CB_COMMIT, vlan_commit, (void *)NULL, key) == NULL) {
+    if (dbdep(h, 0, vlan_commit, (void *)NULL, key) == NULL) {
 	clicon_debug(1, "Failed to create dependency '%s'", key);
 	goto done;
     }

@@ -38,7 +38,7 @@
 #include <clicon/clicon_backend.h>
 
 /* Callback declarations */
-static int system_hostname_commit(clicon_handle h, char *, trans_cb_type, lv_op_t, char *, void *);
+static int system_hostname_commit(clicon_handle h, char *, lv_op_t, char *, void *);
 
 /* Map of key-callback pairs for system */
 struct {
@@ -63,7 +63,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; system_depmap[i].key != NULL; i++) {
 	key = system_depmap[i].key;
-	if (dbdep(h, 0, TRANS_CB_COMMIT, system_depmap[i].cb, (void *)NULL, key) == NULL){
+	if (dbdep(h, 0, system_depmap[i].cb, (void *)NULL, key) == NULL){
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}
@@ -112,8 +112,8 @@ plugin_reset(clicon_handle h, char *db)
  * Hostname commit callback. 
  */
 static int
-system_hostname_commit(clicon_handle h, char *db,
-		       trans_cb_type tt, 
+system_hostname_commit(clicon_handle h,
+		       char *db,
 		       lv_op_t op,
 		       char *key,
 		       void *arg)

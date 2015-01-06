@@ -1397,7 +1397,6 @@ catch:
 /* Commit callback */
 int
 quagga_commit(clicon_handle h, char *db,
-	      trans_cb_type tt, 
 	      lv_op_t op,
 	      char *key,
 	      void *arg)
@@ -1442,7 +1441,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; qactions[i].key; i++) {
 	key = qactions[i].key;
-	if (dbdep(h, 0, TRANS_CB_COMMIT, quagga_commit, (void *)&qactions[i], key)==NULL){
+	if (dbdep(h, 0, quagga_commit, (void *)&qactions[i], key)==NULL){
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

@@ -71,8 +71,8 @@ static char *snmpd_conf_fmt =
  * db once everything is done as if will then contain the new config.
  */
 int
-snmp_commit(clicon_handle h, char *db,
-	    trans_cb_type tt, 
+snmp_commit(clicon_handle h, 
+	    char *db,
 	    lv_op_t op,
 	    char *key,
 	    void *arg)
@@ -155,7 +155,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; snmpd_keys[i]; i++) {
 	key = snmpd_keys[i];
-	if (dbdep(h, 0, TRANS_CB_COMMIT, snmp_commit, (void *)NULL, key) == NULL) {
+	if (dbdep(h, 0, snmp_commit, (void *)NULL, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

@@ -44,9 +44,9 @@
 #include "auth.h"
 
 /* Calback declarations */
-static int auth_login_user_uid(clicon_handle, char *, trans_cb_type, lv_op_t, char *, void *);
-static int auth_login_user_auth_passwd(clicon_handle, char *,trans_cb_type, lv_op_t, char *, void *);
-static int auth_login_user_class(clicon_handle, char *, trans_cb_type, lv_op_t, char *, void *);
+static int auth_login_user_uid(clicon_handle, char *, lv_op_t, char *, void *);
+static int auth_login_user_auth_passwd(clicon_handle, char *, lv_op_t, char *, void *);
+static int auth_login_user_class(clicon_handle, char *, lv_op_t, char *, void *);
 
 /* emulator variable */
 static int rost_emulator = 0;
@@ -76,7 +76,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; auth_depmap[i].key != NULL; i++) {
 	key = auth_depmap[i].key;
-	if (dbdep(h, 0, TRANS_CB_COMMIT, auth_depmap[i].cb, (void *)NULL, key) == NULL){
+	if (dbdep(h, 0, auth_depmap[i].cb, (void *)NULL, key) == NULL){
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}
@@ -115,13 +115,13 @@ plugin_reset(clicon_handle h, char *db)
 
     if (db_lv_op(dbspec, db, LV_SET, "system.login.user[].uid $!user=(string)\"admin\" $uid=(int)1001", NULL) < 0)
 	goto done;
-    if (auth_login_user_uid(h, db,  TRANS_CB_COMMIT, LV_SET, 
+    if (auth_login_user_uid(h, db,  LV_SET, 
 			      "system.login.user.0.uid", NULL) < 0)
 	goto done;
 
     if (db_lv_op(dbspec, db, LV_SET, "system.login.user[].class $!user=(string)\"admin\" $class=(string)\"superuser\"", NULL) < 0)
 	goto done;
-    if (auth_login_user_class(h, db,  TRANS_CB_COMMIT, LV_SET, 
+    if (auth_login_user_class(h, db, LV_SET, 
 			      "system.login.user.0.class", NULL) < 0)
 	goto done;
 
@@ -434,7 +434,7 @@ quit:
  * User UID commit callback
  */
 static int
-auth_login_user_uid(clicon_handle h, char *db, trans_cb_type tt, 
+auth_login_user_uid(clicon_handle h, char *db, 
 		    lv_op_t op, char *key,  void *arg)
 {
     cg_var *user = NULL;
@@ -480,7 +480,7 @@ catch:
  * User password commit callback
  */
 static int
-auth_login_user_auth_passwd(clicon_handle h, char *db, trans_cb_type tt, 
+auth_login_user_auth_passwd(clicon_handle h, char *db,
 			    lv_op_t op, char *key,  void *arg)
 {
     int retval = -1;
@@ -527,7 +527,7 @@ catch:
  * User UID commit callback
  */
 static int
-auth_login_user_class(clicon_handle h, char *db,  trans_cb_type tt, 
+auth_login_user_class(clicon_handle h, char *db, 
 		      lv_op_t op, char *key,  void *arg)
 {
     int retval = -1;

@@ -80,7 +80,7 @@ struct {
  * Interface commit callback. 
  */
 int
-interface_commit(clicon_handle h, char *db, trans_cb_type tt, lv_op_t op, char *key, void *arg)
+interface_commit(clicon_handle h, char *db, lv_op_t op, char *key, void *arg)
 {
     cg_var *cgv;
 
@@ -106,7 +106,6 @@ interface_commit(clicon_handle h, char *db, trans_cb_type tt, lv_op_t op, char *
 int
 interface_ipv4flg_commit(clicon_handle h,
 			 char *db, 
-			 trans_cb_type tt, 
 			 lv_op_t op,
 			 char *key,
 			 void *arg)
@@ -154,14 +153,14 @@ plugin_init(clicon_handle h)
     int retval = -1;
 
     key = "interface[].unit[]";
-    if (dbdep(h, 0, TRANS_CB_COMMIT, interface_commit, (void *)NULL, key) == NULL) {
+    if (dbdep(h, 0, interface_commit, (void *)NULL, key) == NULL) {
 	clicon_debug(1, "interface: Failed to create dependency '%s'", key);
 	goto done;
     }
     clicon_debug(1, "interface: Created dependency '%s'", key);
     for (i = 0; iface_flags[i].key; i++) {
 	key = iface_flags[i].key;
-	if (dbdep(h, 0, TRANS_CB_COMMIT, interface_ipv4flg_commit,
+	if (dbdep(h, 0, interface_ipv4flg_commit,
 		  (void *)iface_flags[i].procfmt, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;

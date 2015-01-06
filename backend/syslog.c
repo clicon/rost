@@ -109,8 +109,8 @@ static int syslog_create_db();
  * db once everything is done as if will then contain the new config.
  */
 int
-syslog_commit(clicon_handle h, char *db,
-	      trans_cb_type tt, 
+syslog_commit(clicon_handle h,
+	      char *db,
 	      lv_op_t op,
 	      char *key,
 	      void *arg)
@@ -182,7 +182,7 @@ plugin_init(clicon_handle h)
 
     for (i = 0; syslog_keys[i]; i++) {
 	key = syslog_keys[i];
-	if (dbdep(h, 0, TRANS_CB_COMMIT, syslog_commit, (void *)NULL, key) == NULL) {
+	if (dbdep(h, 0, syslog_commit, (void *)NULL, key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

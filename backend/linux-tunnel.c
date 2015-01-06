@@ -50,8 +50,8 @@
 /* local */
 #include "linux-tunnel.h"
 
-static int tunnel_new(clicon_handle, char *, trans_cb_type, lv_op_t, char *key, void *arg);
-static int tunnel_action(clicon_handle, char *, trans_cb_type, lv_op_t, char *key, void *arg);
+static int tunnel_new(clicon_handle, char *, lv_op_t, char *key, void *arg);
+static int tunnel_action(clicon_handle, char *, lv_op_t, char *key, void *arg);
 
 #define ROST_CURKEY	"ROST_CURKEY"
 
@@ -128,7 +128,6 @@ static struct tunnel_action tactions[] = {
 static int
 tunnel_new(clicon_handle h,
 	   char *db,
-	   trans_cb_type tt, 
 	   lv_op_t op,
 	   char *key,
 	   void *arg)
@@ -227,7 +226,6 @@ catch:
 static int
 tunnel_action(clicon_handle h,
 	      char *db,
-	      trans_cb_type tt, 
 	      lv_op_t op,
 	      char *key,
 	      void *arg)
@@ -268,7 +266,7 @@ plugin_init(clicon_handle h)
     
     for (i = 0; tactions[i].key != NULL; i++) {
 	key = tactions[i].key;
-	if (dbdep(h, 0, TRANS_CB_COMMIT, tactions[i].cb, &tactions[i], key) == NULL) {
+	if (dbdep(h, 0, tactions[i].cb, &tactions[i], key) == NULL) {
 	    clicon_debug(1, "Failed to create dependency '%s'", key);
 	    goto done;
 	}

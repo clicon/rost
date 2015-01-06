@@ -76,8 +76,8 @@ static struct lvmap dhcpcd_conf_fmts[] = {
  * db once everything is done as if will then contain the new config.
  */
 int
-dhcpcd_commit(clicon_handle h, char *db,
-	      trans_cb_type tt, 
+dhcpcd_commit(clicon_handle h,
+	      char *db,
 	      lv_op_t op,
 	      char *key,
 	      void *arg)
@@ -122,7 +122,7 @@ plugin_init(clicon_handle h)
     int retval = -1;
     char *key = "interface[].unit[].inet.dhcp_client";
 
-    if (dbdep(h, 0, TRANS_CB_COMMIT, dhcpcd_commit, (void *)NULL, key)==NULL) {
+    if (dbdep(h, 0, dhcpcd_commit, (void *)NULL, key)==NULL) {
 	clicon_debug(1, "failed to create dependency '%s'", key);
 	goto done;
     }
