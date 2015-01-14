@@ -77,6 +77,9 @@ passive("Don't send open messages to this neighbor"), cli_set("router.bgp.peer-g
 password("Set a password") <string>("The password"), cli_set("router.bgp.peer-group[].password $!peergroup $password"), ADMIN;
 
 
+/* PEER-GROUP */
+peer-group("Member of the peer-group"), cli_set("router.bgp.peer-group[] $!peergroup"), ADMIN;
+
 /* REMOVE-PRIVATE-AS */
 remove-private-as("Remove private AS number from outbound updates"),  cli_set("router.bgp.peer-group[].remove-private-as $!peergroup"), ADMIN;
 

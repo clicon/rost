@@ -404,7 +404,7 @@ cli_ios_mode(clicon_handle h, cvec *vars, cg_var *arg)
 	break;
 	
     case IOS_MODE_OSPF:
-	if(cv_parse("router.ospf $instance=(int)0", cgvs) < 0) {
+	if(cv_parse("router.ospf $instance=(int32)0", cgvs) < 0) {
 	    perror("cv_parse");
 	    cli_mode.mode = IOS_MODE_CONFIG;
 	    break;

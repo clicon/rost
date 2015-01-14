@@ -80,7 +80,7 @@ router bgp $router.bgp->as\n
 @IF($peergroup.weight ? " neighbor $peergroup->peergroup weight $peergroup.weight->weight\n")
 @IF($peergroup.next-hop-self ? " neighbor $peergroup->peergroup next-hop-self\n")
 @IF($peergroup.maximum-prefix)
- neighbor $peergroup->peergroup maximum-prefix@IF($peergroup->threshold != (uint8)0 ? " $peergroup->threshold")@IF($peergroup->restart != (uint16)0 ? " restart $peergroup->restart")@IF($peergroup->warning_only ? " warning-only")\n
+ neighbor $peergroup->peergroup maximum-prefix $peergroup->maxprefix@IF($peergroup->threshold != (uint8)75 ? " $peergroup->threshold")@IF($peergroup->restart != (uint16)0 ? " restart $peergroup->restart")@IF($peergroup->warning_only ? " warning-only")\n
 @END
 @IF($peergroup.remote-private-as ? " neighbor $peergroup->peergroup remote-private-as\n")
 @IF($peergroup.defasult-originate)
@@ -118,11 +118,11 @@ router bgp $router.bgp->as\n
 @IF($neigh.timers.connect ? " neighbor $neigh->neighbor timers connect $neigh.timers.connect->connect\n")
 @IF($neigh.weight ? " neighbor $neigh->neighbor weight $neigh.weight->weight\n")
 @IF($neigh.next-hop-self ? " neighbor $neigh->neighbor next-hop-self\n")
-@IF($peergroup.maximum-prefix)
- neighbor $neigh->neigh maximum-prefix@IF($neigh->threshold != (uint8)0 ? " $neigh->threshold")@IF($neigh->restart != (uint16)0 ? " restart $neigh->restart")@IF($neigh->warning_only ? " warning-only")\n
+@IF($neigh.maximum-prefix)
+ neighbor $neigh->neighbor maximum-prefix $neigh->maxprefix@IF($neigh->threshold != (uint8)75 ? " $neigh->threshold")@IF($neigh->restart != (uint16)0 ? " restart $neigh->restart")@IF($neigh->warning_only ? " warning-only")\n
 @END
 @IF($neigh.remote-private-as ? " neighbor $neigh->neighbor remote-private-as\n")
-@IF($neigh.defasult-originate)
+@IF($neigh.default-originate)
  neighbor $neigh->neighbor default-originate@IF($neigh.default-originate->route_map ? " route-map $neigh.default-originate->route_map")\n
 @END
 @IF($neigh.soft-reconfiguration.inbound ? " neighbor $neigh->neighbor soft-reconfiguration inbound\n")
@@ -144,4 +144,3 @@ router bgp $router.bgp->as\n
  distance $dist->distance $dist->prefix@IF($dist->acl ? " $dist->acl")\n
 @END
 !\n
-

@@ -48,8 +48,8 @@ username("Establish User Name Authentication") <user:string expand_user()>("User
 no("Negate a command or set its defaults") username("Establish User Name Authentication") <user:string>("User name") uid("User identifier") <uid:number>, cli_del("system.login.user[].uid $!user $uid"),ADMIN;
 
 /* ARP */
-arp("Set a static ARP entry") <ipv4addr>("IP address of ARP entry") <macaddr>("48-bit hardware address of ARP entry"), cli_set("ipv4.arp[] $!address $!mac"), ADMIN;
-no("Negate a command or set its defaults") arp("Set a static ARP entry") <ipv4addr>("IP address of ARP entry") <macaddr>("48-bit hardware address of ARP entry"), cli_del("ipv4.arp[] $!address $!mac"), ADMIN;
+ip("Interface Internet Protocol config commands") arp("Set a static ARP entry") <ipv4addr>("IP address of ARP entry") <macaddr>("48-bit hardware address of ARP entry"), cli_set("ipv4.arp[] $!address $!mac"), ADMIN;
+no("Negate a command or set its defaults") ip("Interface Internet Protocol config commands") arp("Set a static ARP entry") <ipv4addr>("IP address of ARP entry") <macaddr>("48-bit hardware address of ARP entry"), cli_del("ipv4.arp[] $!address $!mac"), ADMIN;
 
 /* HOSTNAME */
 hostname("Set system host name") <string>("Name of system"), cli_set("system.hostname $hostname"), ADMIN;

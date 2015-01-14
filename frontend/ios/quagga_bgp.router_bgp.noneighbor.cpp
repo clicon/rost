@@ -21,9 +21,6 @@
 #include "ios_macros.h"
 CLICON_MODE=STRINGIFY(IOS_BGP_NONEIGHBOR);
 
-/* NO NEIGHBOR ACTIVATE */
-activate("Enable the Address Family for this Neighbor"), cli_del("router.bgp.neighbor[].activate $!neighbor"), ADMIN;
-
 /* NO NEIGHBOR ADVERTISEMENT-INTERVAL */
 advertisement-interval("Minimum interval between sending BGP routing updates") <number range[0:600]>("Minimum interval between sending BGP routing updates"), cli_del("router.bgp.neighbor[].advertisement-interval $!neighbor"), ADMIN;
 advertisement-interval("Minimum interval between sending BGP routing updates"), cli_del("router.bgp.neighbor[].advertisement-interval $!neighbor"), ADMIN;

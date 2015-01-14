@@ -121,8 +121,8 @@ static struct qaction qactions[] = {
 
     {
 	"interface[].unit[].ospf.network-type",
-	"interface $" ROST_CURKEY "->name\\n ip ospf network-type $" ROST_CURKEY "->network_type",
-	"interface $" ROST_CURKEY "->name\\n no ip ospf network-type $" ROST_CURKEY "->network_type",
+	"interface $" ROST_CURKEY "->name\\n ip ospf network $" ROST_CURKEY "->network_type",
+	"interface $" ROST_CURKEY "->name\\n no ip ospf network $" ROST_CURKEY "->network_type",
 	OSPF_API_SOCK
     },
 
@@ -401,7 +401,7 @@ static struct qaction qactions[] = {
     
     {
       "router.bgp.neighbor[].maximum-prefix",
-      "router bgp $router.bgp->as\\n neighbor $" ROST_CURKEY "->neighbor maximum-prefix@IF($" ROST_CURKEY "->threshold != 0 ? \" $" ROST_CURKEY "->threshold\")@IF($" ROST_CURKEY "->restart != 0 ? \" restart $" ROST_CURKEY "->restart\")@IF($" ROST_CURKEY "->warning_only ? \" warning-only\")",
+      "router bgp $router.bgp->as\\n neighbor $" ROST_CURKEY "->neighbor maximum-prefix@IF($" ROST_CURKEY "->threshold != (uint8)0 ? \" $" ROST_CURKEY "->threshold\")@IF($" ROST_CURKEY "->restart != (uint16)0 ? \" restart $" ROST_CURKEY "->restart\")@IF($" ROST_CURKEY "->warning_only ? \" warning-only\")",
       "router bgp $router.bgp->as\\n no neighbor $" ROST_CURKEY "->neighbor maximum-prefix",
       BGP_API_SOCK
     },
@@ -1147,6 +1147,13 @@ static struct qaction qactions[] = {
 	"ip prefix-list $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->prefix @IF($" ROST_CURKEY "->ge ? \" ge $" ROST_CURKEY "->ge\")@IF($" ROST_CURKEY "->le ? \" le $" ROST_CURKEY "->le\")",
 	"no ip prefix-list $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->prefix @IF($" ROST_CURKEY "->ge ? \" ge $" ROST_CURKEY "->ge\")@IF($" ROST_CURKEY "->le ? \" le $" ROST_CURKEY "->le\")",
 	ALL_API_SOCK 
+    },
+
+    {
+	"ipv4.as-path.access-list[]",
+	"ip as-path access-list $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->regexp",
+	"no ip as-path access-list $" ROST_CURKEY "->name $" ROST_CURKEY "->action $" ROST_CURKEY "->regexp",
+	BGP_API_SOCK 
     },
 
     {

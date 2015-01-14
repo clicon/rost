@@ -26,29 +26,30 @@
 @IF($user.class->class ? "username $user->user class $user.class->class\n")
 @END
 @IF($ipv4.domain->domain ? "ip domain name $ipv4.domain->domain\n")
-@EACH($ipv4.name-server[], $ns, "ip name-server $ns->address\n")
+@EACH($ipv4.name-server[], $ns, "ip name-server \$ns->address\n")
 !\n
 @IF($ipv4.forwarding->status ? "ip routing" : "no ip routing")\n
 !\n
 @EACH($interface[], $if)
 @EACH($if.unit[], $iface, "@INCLUDE(\"${ROST_PLUGIN_DIR}/ios-interface.d2t\")")
 @END
-@IF($router.router-id->routerid ? "router-id $route.router-id->ruterid\n!\n")
+@IF($router.router-id->routerid ? "router-id $router-id->routerid\n")
+!\n
 @IF($router.rip->instance != nil)
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-router-rip.d2t")
 @END
-@IF($router.ospf->instance)
+@IF($router.ospf->instance != nil)
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-router-ospf.d2t")
 @END
 @IF($router.bgp->as)
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-router-bgp.d2t")
 @END
-@EACH($ipv4.route.static[], $rt, "ip route $rt->prefix route->nexthop $rt->distance\n")
+@EACH($ipv4.route.static[], $rt, "ip route \$rt->prefix \$rt->nexthop \$rt->distance\n")
 @EACH($ipv4.route.static.null[], $rt)
 ip route $rt->prefix @IF($rt->reject ? "reject" : "blackhole") $rt->distance\n
 @END
 !\n
-@EACH($ipv4.arp[], $arp, "arp $arp->address $arp->mac")
+@EACH($ipv4.arp[], $arp, "ip arp \$arp->address \$arp->mac\n")
 !\n
 @EACH($ipv4.access-list.standard[], $acl)
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-acl-standard.d2t")
@@ -61,9 +62,12 @@ ip route $rt->prefix @IF($rt->reject ? "reject" : "blackhole") $rt->distance\n
 @END
 !\n
 @EACH($ipv4.prefix-list[], $pfx)
-@IF($pfx->description ? "ip prefix-list $pfx->name description $pfx->description\n")
+@IF($pfx->description ? "ip prefix-list \$pfx->name description \$pfx->description\n")
 @EACH($pfx.line[], $pfxl)
-ip prefix-list $pfx->name@IF($pfxl->seq ? " seq $pfxl->seq") $pfxl->action $pfxl->prefix@IF($pfxl->ge ? " ge $pfxl->ge")@IF($pfxl->le ? " le $pfxl->le")\n
+ip prefix-list $pfx->name@IF($pfxl->seq ? " seq $pfxl->seq") $pfxl->action 
+@IF($pfxl->prefix == (ipv4prefix)0.0.0.0/0 ? "any" : "$pfxl->prefix")
+@IF($pfxl->ge ? " ge $pfxl->ge")@IF($pfxl->le ? " le $pfxl->le")
+\n
 @END
 !\n
 @END
