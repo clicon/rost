@@ -649,7 +649,7 @@ ios_cli_config_archive(clicon_handle h, cvec *vars, cg_var *arg)
 
     if ((s = clicon_sock(h)) == NULL)
 	return -1;
-    return cli_proto_save(s, clicon_running_db(h), 1/*snapshot*/, NULL);
+    return clicon_proto_save(s, clicon_running_db(h), 1/*snapshot*/, NULL);
 }
 
 
@@ -675,12 +675,12 @@ ios_cli_config_replace(clicon_handle h, cvec *vars, cg_var *arg)
 		filename, strerror(errno));
 	return -1;
     }
-    if (cli_proto_load(s, 0, dbname, filename) < 0)
+    if (clicon_proto_load(s, 0, dbname, filename) < 0)
 	return -1;
     if (clicon_autocommit(h)){
 	if ((s = clicon_sock(h)) == NULL)
 	    return -1;
-	if (cli_proto_commit(s, running, dbname, 0, 0) < 0)
+	if (clicon_proto_commit(s, running, dbname, 0, 0) < 0)
 	    return -1;
     }
 #else
@@ -859,5 +859,5 @@ cli_validate(clicon_handle h, cvec *vars, cg_var *arg)
 
     if ((s = clicon_sock(h)) == NULL)
 	return -1;
-    return cli_proto_validate(s, clicon_candidate_db(h));
+    return clicon_proto_validate(s, clicon_candidate_db(h));
 }
