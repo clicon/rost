@@ -80,7 +80,7 @@ struct {
  * Interface commit callback. 
  */
 int
-interface_commit(clicon_handle h, char *db, lv_op_t op, char *key, void *arg)
+interface_commit(clicon_handle h, lv_op_t op, commit_data d)		
 {
     cg_var *cgv;
 
@@ -89,13 +89,12 @@ interface_commit(clicon_handle h, char *db, lv_op_t op, char *key, void *arg)
     
     /* Get interface name, and store in global 'newif' variable
        for processing in postcommit callback */
-    cgv = dbvar2cv (db, key, "name");
+    cgv = cvec_find(commit_vec2(d), "name");
     if (cgv == NULL) {
 	clicon_err(OE_DB, errno , "Failed get interface name from database");
 	return -1;
     }
     newif = strdup(cv_string_get(cgv));
-    cv_free(cgv);
 
     return 0;
 }
@@ -104,18 +103,26 @@ interface_commit(clicon_handle h, char *db, lv_op_t op, char *key, void *arg)
  * IPv4 interface flags commit callback. 
  */
 int
-interface_ipv4flg_commit(clicon_handle h,
-			 char *db, 
-			 lv_op_t op,
-			 char *key,
-			 void *arg)
+interface_ipv4flg_commit(clicon_handle h, lv_op_t op, commit_data d)
 {
     int     retval = -1;
     char   *path = NULL;
     cg_var *status = NULL;
     FILE   *f = NULL;
+    cvec   *vec;
+    cg_var *ifname;
 
-    if ((path = lvmap_fmt(db, (char *)arg, key)) == NULL)
+    if (op !=  LV_SET)
+        return 0;
+
+    vec = commit_vec2(d); /* Always LV_SET */
+    if ((ifname  = cvec_find(vec, "name")) == NULL) {
+        clicon_err(OE_PLUGIN, 0, "No interface name specified");
+	return -1;
+    }
+
+    path = clicon_strsub((char *)commit_arg(d), "$name", cv_string_get(ifname));
+    if (path == NULL)
 	goto catch;
 
     if ((f = fopen(path, "w")) == NULL) {
@@ -123,7 +130,7 @@ interface_ipv4flg_commit(clicon_handle h,
 	goto catch;
     }
 
-    if ((status = dbvar2cv (db, key, "status")) == NULL)
+    if ((status = cvec_find(vec, "status")) == NULL)
 	goto catch;
     
     fprintf(f, "%d", cv_int_get(status));
@@ -132,9 +139,6 @@ interface_ipv4flg_commit(clicon_handle h,
 catch:
     if (f)
 	fclose(f);
-    if (status) 
-	cv_reset(status);
-
     if (path)
 	free(path);
     return retval;

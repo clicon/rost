@@ -71,11 +71,7 @@ static char *snmpd_conf_fmt =
  * db once everything is done as if will then contain the new config.
  */
 int
-snmp_commit(clicon_handle h, 
-	    char *db,
-	    lv_op_t op,
-	    char *key,
-	    void *arg)
+snmp_commit(clicon_handle h, lv_op_t op, commit_data d)
 {
     snmp_reload = 1; /* Mark NTP config as changed */
     return 0;

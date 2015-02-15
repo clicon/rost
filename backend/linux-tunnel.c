@@ -50,8 +50,8 @@
 /* local */
 #include "linux-tunnel.h"
 
-static int tunnel_new(clicon_handle, char *, lv_op_t, char *key, void *arg);
-static int tunnel_action(clicon_handle, char *, lv_op_t, char *key, void *arg);
+static int tunnel_new(clicon_handle, lv_op_t, commit_data);
+static int tunnel_action(clicon_handle, lv_op_t, commit_data);
 
 #define ROST_CURKEY	"ROST_CURKEY"
 
@@ -126,11 +126,7 @@ static struct tunnel_action tactions[] = {
  * Commit callback. 
  */
 static int
-tunnel_new(clicon_handle h,
-	   char *db,
-	   lv_op_t op,
-	   char *key,
-	   void *arg)
+tunnel_new(clicon_handle h, lv_op_t op, commit_data d)
 {
     int retval = -1;
     cg_var *cgv = NULL;
@@ -141,18 +137,25 @@ tunnel_new(clicon_handle h,
     struct in_addr lo;
     char *modekey;
     char *num;
-    
+    cvec *vec;
+    char *key;
+
+    if (op == LV_DELETE) {
+	vec = commit_vec1(d);
+	key = commit_key1(d);
+    }
+    else {
+	vec = commit_vec2(d); 
+	key = commit_key2(d);
+    }
+
     /* Get interface name */
-    cgv = dbvar2cv (db, key, "name");
+    cgv = cvec_find(vec, "name");
     if (cgv == NULL) {
 	clicon_err(OE_DB, errno , "Failed get interface name from database");
 	goto catch;
     }
-    if ((ifname = strdup(cv_string_get(cgv))) == NULL) {
-	clicon_err(OE_UNIX, errno , "strdup");
-	goto catch;
-    }
-    cv_free(cgv);
+    ifname = cv_string_get(cgv);
     
     /* Is this a tunnel interface? */
     if ((matchlen = clicon_strmatch(ifname, LINUX_TUNNEL_IFRX_FULL, NULL)) < 0)
@@ -163,25 +166,24 @@ tunnel_new(clicon_handle h,
 	goto catch;
     }
     
-    /* Get interface name */
-    modekey = chunk_sprintf(__FUNCTION__, "%s.tunnel.mode", key);
-    if (modekey == NULL) {
-	clicon_err(OE_UNIX, errno , "chunk");
-	goto catch;
-    }
-    cgv = dbvar2cv (db, modekey, "mode");
-    if (cgv == NULL) {
-	clicon_err(OE_DB, errno , "Failed get tunnel mode from database");
-	goto catch;
-    }
-    if ((mode = strdup(cv_string_get(cgv))) == NULL) {
-	clicon_err(OE_UNIX, errno , "strdup");
-	goto catch;
-    }
-    cv_free(cgv);
-    
-
     if (op == LV_SET) {
+        /* Get interface name */
+        modekey = chunk_sprintf(__FUNCTION__, "%s.tunnel.mode", key);
+	if (modekey == NULL) {
+	    clicon_err(OE_UNIX, errno , "chunk");
+	    goto catch;
+	}
+	if ((cgv = clicon_dbgetvar(commit_db2(d), modekey, "mode")) == NULL) {
+	    clicon_err(OE_DB, errno, "Failed get tunnel mode from database");
+	    goto catch;
+	}
+	mode = strdup(cv_string_get(cgv));
+	cv_free(cgv);
+	if (mode == NULL) {
+	    clicon_err(OE_UNIX, errno , "strdup");
+	    goto catch;
+	}
+	
 	lo.s_addr = INADDR_LOOPBACK;
 	num = &ifname[strlen(ifname)-1];
 	while(isdigit(*(num-1)))
@@ -211,12 +213,9 @@ tunnel_new(clicon_handle h,
     retval = 0;
     
 catch:
-    if (ifname)
-	free(ifname);
-    if (mode)
-	free(mode);
     unchunk_group(__FUNCTION__);
-    
+    free(mode);
+
     return retval;
 }
 
@@ -224,18 +223,18 @@ catch:
  * Commit callback. 
  */
 static int
-tunnel_action(clicon_handle h,
-	      char *db,
-	      lv_op_t op,
-	      char *key,
-	      void *arg)
+tunnel_action(clicon_handle h, lv_op_t op, commit_data d)
 {
     char *fmt;
     char *cmd = NULL;
     struct tunnel_action *t;
-    
-    t = (struct tunnel_action *)arg;
+    char *key;
+    char *db;
+
+    t = (struct tunnel_action *)commit_arg(d);
     fmt = (op == LV_SET) ? t->set : t->del;
+    key = (op == LV_SET) ? commit_key2(d) : commit_key1(d);
+    db = (op == LV_SET) ? commit_db2(d) : commit_db1(d);
 
     /* Get variable list from database */
     if (clicon_option_str_set(h, ROST_CURKEY, key))
@@ -248,6 +247,7 @@ tunnel_action(clicon_handle h,
     }
     clicon_debug(1, "Run: \"%s\"", cmd);
     clicon_proc_run(cmd, NULL, 0);
+    free(cmd);
 
     return 0;
 }

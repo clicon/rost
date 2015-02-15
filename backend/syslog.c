@@ -109,12 +109,12 @@ static int syslog_create_db();
  * db once everything is done as if will then contain the new config.
  */
 int
-syslog_commit(clicon_handle h,
-	      char *db,
-	      lv_op_t op,
-	      char *key,
-	      void *arg)
+syslog_commit(clicon_handle h, lv_op_t op, commit_data d)
 {
+    char *key;
+
+    key = op==LV_DELETE ? commit_key1(d) : commit_key2(d);
+
     syslog_reload = 1; /* Mark syslog config as changed */
     if (strcmp(key, "logging.buffered") == 0)
 	syslog_trigger = 1; /* Need to update table insert trigger */

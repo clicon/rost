@@ -43,10 +43,14 @@
 //#include "system.h"
 #include "auth.h"
 
+/* Support fiunctions */
+static int auth_addel_user(lv_op_t op, char* user, int uid);
+static int auth_passwd(lv_op_t op, char *user, char *passwd);
+static int auth_class(lv_op_t op, char *user, char *class);
 /* Calback declarations */
-static int auth_login_user_uid(clicon_handle, char *, lv_op_t, char *, void *);
-static int auth_login_user_auth_passwd(clicon_handle, char *, lv_op_t, char *, void *);
-static int auth_login_user_class(clicon_handle, char *, lv_op_t, char *, void *);
+static int auth_login_user_uid(clicon_handle, lv_op_t, commit_data);
+static int auth_login_user_auth_passwd(clicon_handle, lv_op_t, commit_data);
+static int auth_login_user_class(clicon_handle, lv_op_t, commit_data);
 
 /* emulator variable */
 static int rost_emulator = 0;
@@ -115,15 +119,13 @@ plugin_reset(clicon_handle h, char *db)
 
     if (db_lv_op(dbspec, db, LV_SET, "system.login.user[].uid $!user=(string)\"admin\" $uid=(int)1001", NULL) < 0)
 	goto done;
-    if (auth_login_user_uid(h, db,  LV_SET, 
-			      "system.login.user.0.uid", NULL) < 0)
-	goto done;
-
+    if (auth_addel_user(LV_SET, "admin", 1001) < 0)
+        goto done;
+      
     if (db_lv_op(dbspec, db, LV_SET, "system.login.user[].class $!user=(string)\"admin\" $class=(string)\"superuser\"", NULL) < 0)
-	goto done;
-    if (auth_login_user_class(h, db, LV_SET, 
-			      "system.login.user.0.class", NULL) < 0)
-	goto done;
+        goto done;
+    if (auth_class(LV_SET, "admin", "superuser") < 0)
+        goto done;
 
     
 #if 0
@@ -132,8 +134,8 @@ plugin_reset(clicon_handle h, char *db)
 #endif
 
     retval = 0;
-done:
-
+ done:
+	  
     return retval;
 #else /* notyet */
     return 0;
@@ -428,51 +430,132 @@ quit:
     return retval;
 }
 
-
-
-/*
- * User UID commit callback
- */
 static int
-auth_login_user_uid(clicon_handle h, char *db, 
-		    lv_op_t op, char *key,  void *arg)
+auth_addel_user(lv_op_t op, char *user, int uid)
 {
-    cg_var *user = NULL;
-    cg_var *uid = NULL;
     int retval = -1;
 
-    uid = dbvar2cv (db, key, "uid");
-    if (uid == NULL) 
-	goto catch;
-    
-    user = dbvar2cv (db, key, "user");
-    if (user == NULL) 
-	goto catch;
-    
     clicon_log(rost_emulator?LOG_NOTICE:LOG_DEBUG, "%s: user %s uid %d",
-	       __FUNCTION__,  cv_string_get(user), cv_int_get(uid));
+	       __FUNCTION__,  user, uid);
     if (!rost_emulator) {
 	if (op == LV_SET) {
-	    if (auth_user_exist(cv_string_get(user), NULL) == 0) {
-		if (auth_user_add(cv_string_get(user), cv_int_get(uid)) < 0)
+	    if (auth_user_exist(user, NULL) == 0) {
+		if (auth_user_add(user, uid) < 0)
 		    goto catch;
 	    }
 	} else if (op == LV_DELETE) {
-	    if (auth_user_exist(cv_string_get(user), NULL)) {
-		if (auth_user_delete(cv_string_get(user)) < 0)
+	    if (auth_user_exist(user, NULL)) {
+		if (auth_user_delete(user) < 0)
 		    goto catch;
 	    }	    
 	}
     }
     retval = 0;
+ catch:
+    return retval;
+}
+
+
+static int
+auth_passwd(lv_op_t op, char *user, char *passwd)
+{
+    int retval = -1;
     
+    clicon_log(rost_emulator?LOG_NOTICE:LOG_DEBUG, "%s: user %s %s",
+	       __FUNCTION__, user, passwd);
+
+    if (!rost_emulator) {
+	if (auth_user_exist(user, NULL) == 0) {
+	    if (auth_user_add(user, -1) < 0)
+		goto catch;
+	}
+	if(auth_user_passwd(user, passwd));
+	    goto catch;
+    }
+    retval = 0;
+
 catch:
-    if (uid) 
-	cv_free(uid);
-    if (user) 
-	cv_free(user);
 
     return retval;
+}
+
+static int
+auth_class(lv_op_t op, char *user, char *class)
+{
+    clicon_log(rost_emulator?LOG_NOTICE:LOG_DEBUG, "%s: user %s class %s",
+	       __FUNCTION__,  user, class ? class : "none");
+    if (rost_emulator)
+        return 0;
+    
+    if (auth_user_exist(user, NULL) == 0){
+	if (auth_user_add(user, -1) < 0)
+	    return -1;
+    }
+    
+    /* Clear all groups. */
+    if (auth_user_group_mod(user, -1, 0) < 0)
+        return -1;
+    
+    /* If DEL, we're done */
+    if (op == LV_DELETE)
+        return 0;
+
+    if (strcmp(class, "none") == 0) {
+	/* Do nothing */ ;
+    }	
+    else if (strcmp(class, "readonly") == 0) {
+	if (auth_user_group_mod(user, SHOW_GID, 1) < 0)
+	    return -1;
+	if (auth_user_group_mod(user, QUAGGA_GID, 1) < 0) /* XXX: See bug 8 */
+	    return -1;
+    }	
+    else if (strcmp(class, "superuser") == 0){
+	if (auth_user_group_mod(user, SHOW_GID, 1) < 0)
+	    return -1;
+	if (auth_user_group_mod(user, PING_GID, 1) < 0)
+	    return -1;
+	if (auth_user_group_mod(user, ADMIN_GID, 1) < 0)
+	    return -1;
+	if (auth_user_group_mod(user, QUAGGA_GID, 1) < 0) 
+	    return -1;
+	if (auth_user_group_mod(user, WHEEL_GID, 1) < 0) 
+	    return -1;
+    }
+    else{
+	clicon_err(OE_UNIX, 0, "group_append: No such class: %s", class);
+	return -1;
+    }
+
+    return 0;
+}
+
+/*
+ * User UID commit callback
+ */
+static int
+auth_login_user_uid(clicon_handle h, lv_op_t op, commit_data d)
+{
+    cvec *vec;
+    cg_var *user = NULL;
+    cg_var *uid = NULL;
+
+    if (op == LV_DELETE)
+	vec = commit_vec1(d);
+    else
+	vec = commit_vec2(d); 
+
+    uid = cvec_find(vec, "uid");
+    if (uid == NULL) {
+        clicon_err(OE_PLUGIN, 0, "No UID specified");
+	return -1;
+    }
+    user = cvec_find(vec, "user");
+    if (user == NULL) {
+        clicon_err(OE_PLUGIN, 0, "No user specified");
+	return -1;
+    }
+
+   return auth_addel_user(op, cv_string_get(user), cv_int_get(uid));
 }
 
 
@@ -480,125 +563,64 @@ catch:
  * User password commit callback
  */
 static int
-auth_login_user_auth_passwd(clicon_handle h, char *db,
-			    lv_op_t op, char *key,  void *arg)
+auth_login_user_auth_passwd(clicon_handle h, lv_op_t op, commit_data d)
 {
-    int retval = -1;
+    cvec *vec;
     cg_var *user = NULL;
     cg_var *passwd = NULL;
 
-    user = dbvar2cv (db, key, "user");
-    if (user == NULL) 
-	goto catch;
+    if (op == LV_DELETE)
+	vec = commit_vec1(d);
+    else
+	vec = commit_vec2(d); 
+
+    user = cvec_find(vec, "user");
+    if (user == NULL) {
+        clicon_err(OE_PLUGIN, 0, "No user specified");
+	return -1;
+    }
     
     if (op == LV_SET) {
-	passwd = dbvar2cv (db, key, "password");
-	if (passwd == NULL) 
-	    goto catch;
-    }	
-    
-    clicon_log(rost_emulator?LOG_NOTICE:LOG_DEBUG, "%s: user %s %s",
-	       __FUNCTION__, cv_string_get(user),
-	       ((op==LV_SET) ? cv_string_get(passwd) : "")
-	);
-
-    if (!rost_emulator) {
-	if (auth_user_exist(cv_string_get(user), NULL) == 0) {
-	    if (auth_user_add(cv_string_get(user), -1) < 0)
-		goto catch;
-	}
-	if(auth_user_passwd(cv_string_get(user),
-			    (op==LV_SET) ? cv_string_get(passwd) : "") < 0)
-	    goto catch;
+        passwd = cvec_find(vec, "password");
+	if (passwd == NULL) {
+	    clicon_err(OE_PLUGIN, 0, "No password specified");
+	    return -1;
+	}	
     }
-    retval = 0;
-
-catch:
-    if (user) 
-	cv_free(user);
-    if (passwd) 
-	cv_free(passwd);
-
-
-    return retval;
+    
+    return auth_passwd(op, cv_string_get(user), 
+		       passwd ? cv_string_get(passwd) : "");
 }
 
 /*
  * User UID commit callback
  */
 static int
-auth_login_user_class(clicon_handle h, char *db, 
-		      lv_op_t op, char *key,  void *arg)
+auth_login_user_class(clicon_handle h, lv_op_t op, commit_data d)
 {
-    int retval = -1;
+    cvec *vec;
     cg_var *user = NULL;
     cg_var *class = NULL;
 
-    user = dbvar2cv (db, key, "user");
-    if (user == NULL) 
-	goto catch;
+    if (op == LV_DELETE)
+	vec = commit_vec1(d);
+    else
+	vec = commit_vec2(d); 
+
+    user = cvec_find(vec, "user");
+    if (user == NULL) {
+        clicon_err(OE_PLUGIN, 0, "No user specified");
+	return -1;
+    }
     
     if (op == LV_SET) {
-	class = dbvar2cv (db, key, "class");
-	if (class == NULL) 
-	    goto catch;
+        class = cvec_find(vec, "class");
+	if (class == NULL) {
+	    clicon_err(OE_PLUGIN, 0, "No class specified");
+	    return -1;
+	}
     }	
 
-    clicon_log(rost_emulator?LOG_NOTICE:LOG_DEBUG, "%s: user %s class %s",
-	       __FUNCTION__,  cv_string_get(user), 
-	       class ? cv_string_get(class) : "none");
-    if (rost_emulator) {
-	retval = 0;
-	goto catch;
-    }
-    
-    if (auth_user_exist(cv_string_get(user), NULL) == 0){
-	if (auth_user_add(cv_string_get(user), -1) < 0)
-	    goto catch;
-    }
-    
-    /* Clear all groups. */
-    if (auth_user_group_mod(cv_string_get(user), -1, 0) < 0)
-	goto catch;
-    
-    /* If DEL, we're done */
-    if (op == LV_DELETE) {
-	retval = 0;
-	goto catch;
-    }
-
-    if (strcmp(cv_string_get(class), "none") == 0) {
-	/* Do nothing */ ;
-    }	
-    else if (strcmp(cv_string_get(class), "readonly") == 0) {
-	if (auth_user_group_mod(cv_string_get(user), SHOW_GID, 1) < 0)
-	    goto catch;
-	if (auth_user_group_mod(cv_string_get(user), QUAGGA_GID, 1) < 0) /* XXX: See bug 8 */
-	    goto catch;
-    }	
-    else if (strcmp(cv_string_get(class), "superuser") == 0){
-	if (auth_user_group_mod(cv_string_get(user), SHOW_GID, 1) < 0)
-	    goto catch;
-	if (auth_user_group_mod(cv_string_get(user), PING_GID, 1) < 0)
-	    goto catch;
-	if (auth_user_group_mod(cv_string_get(user), ADMIN_GID, 1) < 0)
-	    goto catch;
-	if (auth_user_group_mod(cv_string_get(user), QUAGGA_GID, 1) < 0) 
-	    goto catch;
-	if (auth_user_group_mod(cv_string_get(user), WHEEL_GID, 1) < 0) 
-	    goto catch;
-    }
-    else{
-	clicon_err(OE_UNIX, 0, "group_append: No such class: %s", cv_string_get(class));
-	goto catch;
-    }
-
-    retval = 0; 
-
-catch:
-    if (user) 
-	cv_free(user);
-    if (class) 
-	cv_free(class);
-    return retval;
+    return auth_class(op, cv_string_get(user), 
+		      class ? cv_string_get(class) : "none");
 }

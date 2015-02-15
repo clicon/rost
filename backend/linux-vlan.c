@@ -48,11 +48,7 @@
  * Commit callback. 
  */
 static int
-vlan_commit(clicon_handle h,
-	    char *db,
-	    lv_op_t op,
-	    char *key,
-	    void *arg)
+vlan_commit(clicon_handle h, lv_op_t op, commit_data d)
 {
     int retval = -1;
     cg_var *cgv = NULL;
@@ -60,9 +56,15 @@ vlan_commit(clicon_handle h,
     char *ifname;
     char *dot;
     char *cmd, *cmd2;
+    cvec *vec;
+
+    if (op == LV_DELETE)
+        vec = commit_vec1(d);
+    else
+        vec = commit_vec2(d);
 
     /* Get interface name */
-    cgv = dbvar2cv (db, key, "name");
+    cgv = cvec_find(vec, "name");
     if (cgv == NULL) {
 	clicon_err(OE_DB, errno , "Failed get interface name from database");
 	goto catch;
@@ -117,8 +119,6 @@ vlan_commit(clicon_handle h,
     retval = 0;
     
 catch:
-    if (cgv) 
-	cv_free(cgv);
     unchunk_group(__FUNCTION__);
     
     return retval;

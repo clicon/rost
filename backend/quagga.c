@@ -1403,15 +1403,27 @@ catch:
 
 /* Commit callback */
 int
-quagga_commit(clicon_handle h, char *db,
-	      lv_op_t op,
-	      char *key,
-	      void *arg)
+quagga_commit(clicon_handle h, lv_op_t op, commit_data d)
 {
     int retval = -1;
     char *cmd;
-    struct qaction *qa = (struct qaction *)arg;
-    char *qfmt = (op == LV_SET) ? qa->cmd : qa->nocmd;
+    struct qaction *qa;
+    char *qfmt;
+    char *db;
+    char *key;
+
+    qa = (struct qaction *)commit_arg(d);
+
+    if (op == LV_DELETE) {
+      qfmt = qa->nocmd;
+      db = commit_db1(d);
+      key = commit_key1(d);
+    }
+    else {
+      qfmt = qa->cmd;
+      db = commit_db2(d);
+      key = commit_key2(d);
+    }
 
     if (qfmt == NULL) /* Nothing to do */
 	return 0;

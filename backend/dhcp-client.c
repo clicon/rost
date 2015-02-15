@@ -61,33 +61,26 @@ static int dhcpcd_rebind;
     "noipv4ll\n"
 #endif
 
-#if 0
-/* lvmap formats for db to config-file transforms */
-static struct lvmap dhcpcd_conf_fmts[] = {
-    {"dhcp.client.interface[]", "interface $name", NULL, LVPRINT_CMD},
-//    {"dhcp.client.", "logconfig\t" NTP_LOGGING "\n", NULL, LVPRINT_CMD},
-  {NULL, NULL, NULL}
-};
-#endif
-
 /*
  * Commit callback. 
  * We do nothing here but simply create the config based on the current 
  * db once everything is done as if will then contain the new config.
  */
 int
-dhcpcd_commit(clicon_handle h,
-	      char *db,
-	      lv_op_t op,
-	      char *key,
-	      void *arg)
+dhcpcd_commit(clicon_handle h, lv_op_t op, commit_data d)
 {
     int retval = -1;
     char *cmd = NULL;
     cg_var *cgv = NULL;
+    cvec *vec;
+
+    if (op == LV_DELETE)
+	vec = commit_vec1(d);
+    else
+	vec = commit_vec2(d); 
 
     /* Get interface name */
-    cgv = dbvar2cv (db, key, "name");
+    cgv = cvec_find(vec, "name");
     if (cgv == NULL) {
 	clicon_err(OE_DB, errno , "Failed get interface name from database");
 	goto catch;
@@ -106,8 +99,6 @@ dhcpcd_commit(clicon_handle h,
     retval = 0;
 
 catch:
-    if (cgv) 
-	cv_free(cgv);
     unchunk_group(__FUNCTION__);
     return retval;
 }
