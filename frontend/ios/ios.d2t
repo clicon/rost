@@ -73,13 +73,8 @@ ip prefix-list $pfx->name@IF($pfxl->seq ? " seq $pfxl->seq") $pfxl->action
 @END
 @EACH($ipv4.as-path.access-list[], $asp, "ip as-path access-list \$asp->name \$asp->action \$asp->regexp\n")
 !\n
-@EACH($route-map[], $rm)
-@EACH($rm.line[], $rml)
-route-map $rml->name $rml->action $rml->line\n
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-route-map.d2t")
 !\n
-@END
-@END
 @IF($logging.buffered->rows ? "logging buffered $logging.buffered->rows $logging.buffered->level\n")
 @IF($logging.trap->level ? "logging trap $logging.trap->level\n")
 @EACH($logging.host[], $lh, "logging host \$lh->host transport \$lh->protocol port \$lh->port\n")
