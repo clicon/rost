@@ -80,11 +80,11 @@ struct {
  * Interface commit callback. 
  */
 int
-interface_commit(clicon_handle h, lv_op_t op, commit_data d)		
+interface_commit(clicon_handle h, commit_op op, commit_data d)		
 {
     cg_var *cgv;
 
-    if (op != LV_SET)
+    if (op != CO_ADD)
 	return 0;
     
     /* Get interface name, and store in global 'newif' variable
@@ -103,7 +103,7 @@ interface_commit(clicon_handle h, lv_op_t op, commit_data d)
  * IPv4 interface flags commit callback. 
  */
 int
-interface_ipv4flg_commit(clicon_handle h, lv_op_t op, commit_data d)
+interface_ipv4flg_commit(clicon_handle h, commit_op op, commit_data d)
 {
     int     retval = -1;
     char   *path = NULL;
@@ -112,10 +112,10 @@ interface_ipv4flg_commit(clicon_handle h, lv_op_t op, commit_data d)
     cvec   *vec;
     cg_var *ifname;
 
-    if (op !=  LV_SET)
+    if (op !=  CO_ADD)
         return 0;
 
-    vec = commit_vec2(d); /* Always LV_SET */
+    vec = commit_vec2(d); /* Always CO_ADD */
     if ((ifname  = cvec_find(vec, "name")) == NULL) {
         clicon_err(OE_PLUGIN, 0, "No interface name specified");
 	return -1;
@@ -244,7 +244,7 @@ load_if_prefix(clicon_handle h, char *db, char *ifname)
 	clicon_err(OE_UNIX, errno, "chunk");
 	goto err;
     }
-    if (db_lv_op(dbspec, db, LV_SET, cmd, NULL) < 0)
+    if (db_lv_op(dbspec, db, CO_ADD, cmd, NULL) < 0)
 	goto err;
 
     /* Set interface status to up. 
@@ -311,7 +311,7 @@ set_if_ipv4defaults(clicon_handle h, char *db, char *ifname)
 	unchunk(procpath);
 	
 	/* Set DB valie */
-	if (db_lv_op(dbspec, db, LV_SET, dbkey, NULL) < 0)
+	if (db_lv_op(dbspec, db, CO_ADD, dbkey, NULL) < 0)
 	    goto err;
 	unchunk(dbkey);
     }

@@ -528,7 +528,7 @@ cli_ios_show_running(clicon_handle h, struct lvmap *lmap)
     if (file_cp(clicon_running_db(h), db))
 	goto catch;
     dbspec = clicon_dbspec_key(h);
-    if(db_lv_op(dbspec, db, LV_SET, "system.boot $dummy=(int)0", NULL) < 0)
+    if(db_lv_op(dbspec, db, CO_ADD, "system.boot $dummy=(int)0", NULL) < 0)
 	goto catch;
     cli_show_lvmap(db, lmap);
     errno = 0;

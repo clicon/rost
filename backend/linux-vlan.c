@@ -48,7 +48,7 @@
  * Commit callback. 
  */
 static int
-vlan_commit(clicon_handle h, lv_op_t op, commit_data d)
+vlan_commit(clicon_handle h, commit_op op, commit_data d)
 {
     int retval = -1;
     cg_var *cgv = NULL;
@@ -58,7 +58,7 @@ vlan_commit(clicon_handle h, lv_op_t op, commit_data d)
     char *cmd, *cmd2;
     cvec *vec;
 
-    if (op == LV_DELETE)
+    if (op == CO_DELETE)
         vec = commit_vec1(d);
     else
         vec = commit_vec2(d);
@@ -93,7 +93,7 @@ vlan_commit(clicon_handle h, lv_op_t op, commit_data d)
 	goto catch;
     }
 
-    if (op == LV_SET) {
+    if (op == CO_ADD) {
 	cmd = chunk_sprintf(__FUNCTION__,
 			    "ip link add link %s name %s.%s type vlan id %s",
 			    ifname, ifname, dot+1, dot+1);

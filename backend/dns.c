@@ -54,7 +54,7 @@ static char *resolv_fmt =
  * db once everything is done as if will then contain the new config.
  */
 static int
-dns_commit(clicon_handle h, lv_op_t op, commit_data d)
+dns_commit(clicon_handle h, commit_op op, commit_data d)
 {
     dns_reload = 1; /* Mark DNS config as changed */
     return 0;

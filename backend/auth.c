@@ -44,13 +44,13 @@
 #include "auth.h"
 
 /* Support fiunctions */
-static int auth_addel_user(lv_op_t op, char* user, int uid);
-static int auth_passwd(lv_op_t op, char *user, char *passwd);
-static int auth_class(lv_op_t op, char *user, char *class);
+static int auth_addel_user(commit_op op, char* user, int uid);
+static int auth_passwd(commit_op op, char *user, char *passwd);
+static int auth_class(commit_op op, char *user, char *class);
 /* Calback declarations */
-static int auth_login_user_uid(clicon_handle, lv_op_t, commit_data);
-static int auth_login_user_auth_passwd(clicon_handle, lv_op_t, commit_data);
-static int auth_login_user_class(clicon_handle, lv_op_t, commit_data);
+static int auth_login_user_uid(clicon_handle, commit_op, commit_data);
+static int auth_login_user_auth_passwd(clicon_handle, commit_op, commit_data);
+static int auth_login_user_class(clicon_handle, commit_op, commit_data);
 
 /* emulator variable */
 static int rost_emulator = 0;
@@ -113,23 +113,23 @@ plugin_reset(clicon_handle h, char *db)
     dbspec_key *dbspec = clicon_dbspec_key(h);
 
 #if 0 /* Keep until we know admin works, then remove */
-    if (db_lv_op(dbspec, db, LV_SET, "system.login.user[].class $!user=(string)\"root\" $class=(string)\"superuser\"", 0, NULL) < 0)
+    if (db_lv_op(dbspec, db, CO_ADD, "system.login.user[].class $!user=(string)\"root\" $class=(string)\"superuser\"", 0, NULL) < 0)
 	goto done;
 #endif
 
-    if (db_lv_op(dbspec, db, LV_SET, "system.login.user[].uid $!user=(string)\"admin\" $uid=(int)1001", NULL) < 0)
+    if (db_lv_op(dbspec, db, CO_ADD, "system.login.user[].uid $!user=(string)\"admin\" $uid=(int)1001", NULL) < 0)
 	goto done;
-    if (auth_addel_user(LV_SET, "admin", 1001) < 0)
+    if (auth_addel_user(CO_ADD, "admin", 1001) < 0)
         goto done;
       
-    if (db_lv_op(dbspec, db, LV_SET, "system.login.user[].class $!user=(string)\"admin\" $class=(string)\"superuser\"", NULL) < 0)
+    if (db_lv_op(dbspec, db, CO_ADD, "system.login.user[].class $!user=(string)\"admin\" $class=(string)\"superuser\"", NULL) < 0)
         goto done;
-    if (auth_class(LV_SET, "admin", "superuser") < 0)
+    if (auth_class(CO_ADD, "admin", "superuser") < 0)
         goto done;
 
     
 #if 0
-    if (db_lv_op(dbspec, db, LV_SET, "system.login.user[].authentication.password $!user=(string)\"admin\" $password=(string)\"\"", NULL) < 0)
+    if (db_lv_op(dbspec, db, CO_ADD, "system.login.user[].authentication.password $!user=(string)\"admin\" $password=(string)\"\"", NULL) < 0)
 	goto done;
 #endif
 
@@ -205,7 +205,7 @@ transaction_end(clicon_handle h)
 		    clicon_err(OE_DB, errno, "chunk_sprintf");
 		    goto done;
 		}
-		db_lv_op(dbname, LV_SET, key, NULL);
+		db_lv_op(dbname, CO_ADD, key, NULL);
 	    }
 	}
 	user=NULL;
@@ -431,19 +431,19 @@ quit:
 }
 
 static int
-auth_addel_user(lv_op_t op, char *user, int uid)
+auth_addel_user(commit_op op, char *user, int uid)
 {
     int retval = -1;
 
     clicon_log(rost_emulator?LOG_NOTICE:LOG_DEBUG, "%s: user %s uid %d",
 	       __FUNCTION__,  user, uid);
     if (!rost_emulator) {
-	if (op == LV_SET) {
+	if (op == CO_ADD) {
 	    if (auth_user_exist(user, NULL) == 0) {
 		if (auth_user_add(user, uid) < 0)
 		    goto catch;
 	    }
-	} else if (op == LV_DELETE) {
+	} else if (op == CO_DELETE) {
 	    if (auth_user_exist(user, NULL)) {
 		if (auth_user_delete(user) < 0)
 		    goto catch;
@@ -457,7 +457,7 @@ auth_addel_user(lv_op_t op, char *user, int uid)
 
 
 static int
-auth_passwd(lv_op_t op, char *user, char *passwd)
+auth_passwd(commit_op op, char *user, char *passwd)
 {
     int retval = -1;
     
@@ -480,7 +480,7 @@ catch:
 }
 
 static int
-auth_class(lv_op_t op, char *user, char *class)
+auth_class(commit_op op, char *user, char *class)
 {
     clicon_log(rost_emulator?LOG_NOTICE:LOG_DEBUG, "%s: user %s class %s",
 	       __FUNCTION__,  user, class ? class : "none");
@@ -497,7 +497,7 @@ auth_class(lv_op_t op, char *user, char *class)
         return -1;
     
     /* If DEL, we're done */
-    if (op == LV_DELETE)
+    if (op == CO_DELETE)
         return 0;
 
     if (strcmp(class, "none") == 0) {
@@ -533,13 +533,13 @@ auth_class(lv_op_t op, char *user, char *class)
  * User UID commit callback
  */
 static int
-auth_login_user_uid(clicon_handle h, lv_op_t op, commit_data d)
+auth_login_user_uid(clicon_handle h, commit_op op, commit_data d)
 {
     cvec *vec;
     cg_var *user = NULL;
     cg_var *uid = NULL;
 
-    if (op == LV_DELETE)
+    if (op == CO_DELETE)
 	vec = commit_vec1(d);
     else
 	vec = commit_vec2(d); 
@@ -563,13 +563,13 @@ auth_login_user_uid(clicon_handle h, lv_op_t op, commit_data d)
  * User password commit callback
  */
 static int
-auth_login_user_auth_passwd(clicon_handle h, lv_op_t op, commit_data d)
+auth_login_user_auth_passwd(clicon_handle h, commit_op op, commit_data d)
 {
     cvec *vec;
     cg_var *user = NULL;
     cg_var *passwd = NULL;
 
-    if (op == LV_DELETE)
+    if (op == CO_DELETE)
 	vec = commit_vec1(d);
     else
 	vec = commit_vec2(d); 
@@ -580,7 +580,7 @@ auth_login_user_auth_passwd(clicon_handle h, lv_op_t op, commit_data d)
 	return -1;
     }
     
-    if (op == LV_SET) {
+    if (op == CO_ADD) {
         passwd = cvec_find(vec, "password");
 	if (passwd == NULL) {
 	    clicon_err(OE_PLUGIN, 0, "No password specified");
@@ -596,13 +596,13 @@ auth_login_user_auth_passwd(clicon_handle h, lv_op_t op, commit_data d)
  * User UID commit callback
  */
 static int
-auth_login_user_class(clicon_handle h, lv_op_t op, commit_data d)
+auth_login_user_class(clicon_handle h, commit_op op, commit_data d)
 {
     cvec *vec;
     cg_var *user = NULL;
     cg_var *class = NULL;
 
-    if (op == LV_DELETE)
+    if (op == CO_DELETE)
 	vec = commit_vec1(d);
     else
 	vec = commit_vec2(d); 
@@ -613,7 +613,7 @@ auth_login_user_class(clicon_handle h, lv_op_t op, commit_data d)
 	return -1;
     }
     
-    if (op == LV_SET) {
+    if (op == CO_ADD) {
         class = cvec_find(vec, "class");
 	if (class == NULL) {
 	    clicon_err(OE_PLUGIN, 0, "No class specified");

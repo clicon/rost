@@ -1403,7 +1403,7 @@ catch:
 
 /* Commit callback */
 int
-quagga_commit(clicon_handle h, lv_op_t op, commit_data d)
+quagga_commit(clicon_handle h, commit_op op, commit_data d)
 {
     int retval = -1;
     char *cmd;
@@ -1414,7 +1414,7 @@ quagga_commit(clicon_handle h, lv_op_t op, commit_data d)
 
     qa = (struct qaction *)commit_arg(d);
 
-    if (op == LV_DELETE) {
+    if (op == CO_DELETE) {
       qfmt = qa->nocmd;
       db = commit_db1(d);
       key = commit_key1(d);

@@ -38,7 +38,7 @@
 #include <clicon/clicon_backend.h>
 
 /* Callback declarations */
-static int system_hostname_commit(clicon_handle h, lv_op_t, commit_data);
+static int system_hostname_commit(clicon_handle h, commit_op, commit_data);
 
 /* Map of key-callback pairs for system */
 struct {
@@ -99,7 +99,7 @@ plugin_reset(clicon_handle h, char *db)
 			"system.hostname $hostname=\"%s\"", 
 			hostname);
     /* (1) Default hostname*/
-    if (db_lv_op(clicon_dbspec_key(h), db, LV_SET, fmt, NULL) < 0)
+    if (db_lv_op(clicon_dbspec_key(h), db, CO_ADD, fmt, NULL) < 0)
 	goto done;
     retval = 0;
   done:
@@ -112,14 +112,14 @@ plugin_reset(clicon_handle h, char *db)
  * Hostname commit callback. 
  */
 static int
-system_hostname_commit(clicon_handle h, lv_op_t op, commit_data d)
+system_hostname_commit(clicon_handle h, commit_op op, commit_data d)
 {
     int ret;
     cg_var *cgv;
     char *hostname;
     
     /* Get configured hostname from db */
-    if (op == LV_SET)
+    if (op == CO_ADD)
         cgv = clicon_dbgetvar(commit_db2(d), "system.hostname", "hostname");
     else
 	cgv = NULL;

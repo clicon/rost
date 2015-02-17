@@ -50,8 +50,8 @@
 /* local */
 #include "linux-tunnel.h"
 
-static int tunnel_new(clicon_handle, lv_op_t, commit_data);
-static int tunnel_action(clicon_handle, lv_op_t, commit_data);
+static int tunnel_new(clicon_handle, commit_op, commit_data);
+static int tunnel_action(clicon_handle, commit_op, commit_data);
 
 #define ROST_CURKEY	"ROST_CURKEY"
 
@@ -126,7 +126,7 @@ static struct tunnel_action tactions[] = {
  * Commit callback. 
  */
 static int
-tunnel_new(clicon_handle h, lv_op_t op, commit_data d)
+tunnel_new(clicon_handle h, commit_op op, commit_data d)
 {
     int retval = -1;
     cg_var *cgv = NULL;
@@ -140,7 +140,7 @@ tunnel_new(clicon_handle h, lv_op_t op, commit_data d)
     cvec *vec;
     char *key;
 
-    if (op == LV_DELETE) {
+    if (op == CO_DELETE) {
 	vec = commit_vec1(d);
 	key = commit_key1(d);
     }
@@ -166,7 +166,7 @@ tunnel_new(clicon_handle h, lv_op_t op, commit_data d)
 	goto catch;
     }
     
-    if (op == LV_SET) {
+    if (op == CO_ADD) {
         /* Get interface name */
         modekey = chunk_sprintf(__FUNCTION__, "%s.tunnel.mode", key);
 	if (modekey == NULL) {
@@ -223,7 +223,7 @@ catch:
  * Commit callback. 
  */
 static int
-tunnel_action(clicon_handle h, lv_op_t op, commit_data d)
+tunnel_action(clicon_handle h, commit_op op, commit_data d)
 {
     char *fmt;
     char *cmd = NULL;
@@ -232,9 +232,9 @@ tunnel_action(clicon_handle h, lv_op_t op, commit_data d)
     char *db;
 
     t = (struct tunnel_action *)commit_arg(d);
-    fmt = (op == LV_SET) ? t->set : t->del;
-    key = (op == LV_SET) ? commit_key2(d) : commit_key1(d);
-    db = (op == LV_SET) ? commit_db2(d) : commit_db1(d);
+    fmt = (op == CO_ADD) ? t->set : t->del;
+    key = (op == CO_ADD) ? commit_key2(d) : commit_key1(d);
+    db = (op == CO_ADD) ? commit_db2(d) : commit_db1(d);
 
     /* Get variable list from database */
     if (clicon_option_str_set(h, ROST_CURKEY, key))

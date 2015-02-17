@@ -67,14 +67,14 @@ static int dhcpcd_rebind;
  * db once everything is done as if will then contain the new config.
  */
 int
-dhcpcd_commit(clicon_handle h, lv_op_t op, commit_data d)
+dhcpcd_commit(clicon_handle h, commit_op op, commit_data d)
 {
     int retval = -1;
     char *cmd = NULL;
     cg_var *cgv = NULL;
     cvec *vec;
 
-    if (op == LV_DELETE)
+    if (op == CO_DELETE)
 	vec = commit_vec1(d);
     else
 	vec = commit_vec2(d); 
@@ -86,7 +86,7 @@ dhcpcd_commit(clicon_handle h, lv_op_t op, commit_data d)
 	goto catch;
     }
 
-    if (op == LV_SET)
+    if (op == CO_ADD)
 	cmd = chunk_sprintf (__FUNCTION__, DHCPCD_START_CMD, cv_string_get(cgv));
     else
 	cmd = chunk_sprintf (__FUNCTION__, DHCPCD_STOP_CMD, cv_string_get(cgv));
