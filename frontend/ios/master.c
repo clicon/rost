@@ -77,7 +77,7 @@ cli_mode_num(const char *name)
 {
     int i;
 
-    for (i = IOS_MODE_BASE; i < IOS_MODE_MAX-1; i++)
+    for (i = IOS_MODE_BASE; i < IOS_MODE_MAX; i++)
 	if (strcmp(name, ios_tree[i].im_stxmode)==0)
 	    return ios_tree[i].im_mode;
     
