@@ -172,7 +172,7 @@ ios_routemap_cb(cvec *vars, cg_var *cv, cg_var *arg)
 	return 0;
     }
     
-    if (!strcmp (name, "line")) {
+    if (!strcmp (name, "line") || !strcmp (name, "_SEQ")) {
 	cv_type_set(cv, CGV_INT);
 	cv_int_set(cv, (int)cli_mode.u.route_map.seq);
 	return 0;
@@ -472,9 +472,9 @@ cli_ios_mode(clicon_handle h, cvec *vars, cg_var *arg)
 	cli_mode.mode = IOS_MODE_ROUTE_MAP;
 	unchunk (vec);
 	if (cli_mode.u.route_map.permit)
-	    key = "route-map[].line[] $!name $!line $action=(string)\"permit\"";
+	    key = "route-map[].line[] $!name $!line $_SEQ=$line $action=(string)\"permit\"";
 	else
-	    key = "route-map[].line[] $!name $!line $action=(string)\"deny\"";
+	    key = "route-map[].line[] $!name $!line $_SEQ=$line $action=(string)\"deny\"";
 	if(cv_parse(key, cgvs) < 0) {
 	    perror("cv_parse");
 	    cli_mode.mode = IOS_MODE_CONFIG;

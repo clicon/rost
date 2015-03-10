@@ -59,9 +59,9 @@ vlan_commit(clicon_handle h, commit_op op, commit_data d)
     cvec *vec;
 
     if (op == CO_DELETE)
-        vec = commit_vec1(d);
+        vec = commit_source_vec(d);
     else
-        vec = commit_vec2(d);
+        vec = commit_target_vec(d);
 
     /* Get interface name */
     cgv = cvec_find(vec, "name");

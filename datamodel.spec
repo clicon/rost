@@ -114,31 +114,31 @@ interface[].unit[].rip.split-horizon                 $!name:string $!unit:int32 
 
 # route-map
 route-map[]                                          $!name
-route-map[].line[]                                   $!name $!line:int32 $action 
-route-map[].line[].call                              $!name $!line:int32 $action $route-map
-route-map[].line[].description                       $!name $!line:int32 $action $description
-route-map[].line[].match.as-path                     $!name $!line:int32 $action $as_path
-route-map[].line[].match.interface                   $!name $!line:int32 $action $interface:string
-route-map[].line[].match.ip.address                  $!name $!line:int32 $action $acl
-route-map[].line[].match.ip.address.prefix-list      $!name $!line:int32 $action $prefix_list
-route-map[].line[].match.ip.next-hop                 $!name $!line:int32 $action $acl
-route-map[].line[].match.ip.next-hop.prefix-list     $!name $!line:int32 $action $prefix_list
-route-map[].line[].match.ip.route-source             $!name $!line:int32 $action $acl
-route-map[].line[].match.ip.route-source.prefix-list $!name $!line:int32 $action $prefix_list
-route-map[].line[].match.metric                      $!name $!line:int32 $action $metric:int32
-route-map[].line[].on-match                          $!name $!line:int32 $action $op $goto:int32
-route-map[].line[].set.as-path.exclude               $!name $!line:int32 $action $as_path
-route-map[].line[].set.as-path.prepend               $!name $!line:int32 $action $as_path
-route-map[].line[].set.ip.next-hop                   $!name $!line:int32 $action $nexthop:ipv4addr
-route-map[].line[].set.local-preference              $!name $!line:int32 $action $localpref:int32
-route-map[].line[].set.metric                        $!name $!line:int32 $action $metric:int32
-route-map[].line[].set.metric-type                   $!name $!line:int32 $action $metric_type
-route-map[].line[].set.origin                        $!name $!line:int32 $action $origin
-route-map[].line[].set.originator-id                 $!name $!line:int32 $action $originator_id
-route-map[].line[].set.pathlimit.ttl                 $!name $!line:int32 $action $ttl:int32
-route-map[].line[].set.tag                           $!name $!line:int32 $action $route_tag
-route-map[].line[].set.weight                        $!name $!line:int32 $action $weight:int32
-route-map[].line[].continue                          $!name $!line:int32 $action $goto:int32
+route-map[].line[]                                   $!name $!line:int32 $_SEQ:int32 $action 
+route-map[].line[].call                              $!name $!line:int32 $_SEQ:int32 $action $route-map
+route-map[].line[].description                       $!name $!line:int32 $_SEQ:int32 $action $description
+route-map[].line[].match.as-path                     $!name $!line:int32 $_SEQ:int32 $action $as_path
+route-map[].line[].match.interface                   $!name $!line:int32 $_SEQ:int32 $action $interface:string
+route-map[].line[].match.ip.address                  $!name $!line:int32 $_SEQ:int32 $action $acl
+route-map[].line[].match.ip.address.prefix-list      $!name $!line:int32 $_SEQ:int32 $action $prefix_list
+route-map[].line[].match.ip.next-hop                 $!name $!line:int32 $_SEQ:int32 $action $acl
+route-map[].line[].match.ip.next-hop.prefix-list     $!name $!line:int32 $_SEQ:int32 $action $prefix_list
+route-map[].line[].match.ip.route-source             $!name $!line:int32 $_SEQ:int32 $action $acl
+route-map[].line[].match.ip.route-source.prefix-list $!name $!line:int32 $_SEQ:int32 $action $prefix_list
+route-map[].line[].match.metric                      $!name $!line:int32 $_SEQ:int32 $action $metric:int32
+route-map[].line[].on-match                          $!name $!line:int32 $_SEQ:int32 $action $op $goto:int32
+route-map[].line[].set.as-path.exclude               $!name $!line:int32 $_SEQ:int32 $action $as_path
+route-map[].line[].set.as-path.prepend               $!name $!line:int32 $_SEQ:int32 $action $as_path
+route-map[].line[].set.ip.next-hop                   $!name $!line:int32 $_SEQ:int32 $action $nexthop:ipv4addr
+route-map[].line[].set.local-preference              $!name $!line:int32 $_SEQ:int32 $action $localpref:int32
+route-map[].line[].set.metric                        $!name $!line:int32 $_SEQ:int32 $action $metric:int32
+route-map[].line[].set.metric-type                   $!name $!line:int32 $_SEQ:int32 $action $metric_type
+route-map[].line[].set.origin                        $!name $!line:int32 $_SEQ:int32 $action $origin
+route-map[].line[].set.originator-id                 $!name $!line:int32 $_SEQ:int32 $action $originator_id
+route-map[].line[].set.pathlimit.ttl                 $!name $!line:int32 $_SEQ:int32 $action $ttl:int32
+route-map[].line[].set.tag                           $!name $!line:int32 $_SEQ:int32 $action $route_tag
+route-map[].line[].set.weight                        $!name $!line:int32 $_SEQ:int32 $action $weight:int32
+route-map[].line[].continue                          $!name $!line:int32 $_SEQ:int32 $action $goto:int32
 
 # router.router-id
 router.router-id                                     $routerid:ipv4addr
@@ -148,7 +148,7 @@ router.bgp                                           $as:int32
 router.bgp.router-id                                 $routerid:ipv4addr
 router.bgp.log-neighbor-changes                      $status:int32
 router.bgp.always-compare-med                        $status:int32
-router.bgp.default.local-preference                  $local_preference:int32
+router.bgp.default.local-preference                  $local-preference:uint32
 router.bgp.enforce-first-as                          $status:int32
 router.bgp.deterministic-med                         $status:int32
 router.bgp.graceful-restart                          $stalepath_time:int32

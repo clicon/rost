@@ -141,12 +141,12 @@ tunnel_new(clicon_handle h, commit_op op, commit_data d)
     char *key;
 
     if (op == CO_DELETE) {
-	vec = commit_vec1(d);
-	key = commit_key1(d);
+	vec = commit_source_vec(d);
+	key = commit_source_key(d);
     }
     else {
-	vec = commit_vec2(d); 
-	key = commit_key2(d);
+	vec = commit_target_vec(d); 
+	key = commit_target_key(d);
     }
 
     /* Get interface name */
@@ -173,7 +173,7 @@ tunnel_new(clicon_handle h, commit_op op, commit_data d)
 	    clicon_err(OE_UNIX, errno , "chunk");
 	    goto catch;
 	}
-	if ((cgv = clicon_dbgetvar(commit_db2(d), modekey, "mode")) == NULL) {
+	if ((cgv = clicon_dbgetvar(commit_target_db(d), modekey, "mode")) == NULL) {
 	    clicon_err(OE_DB, errno, "Failed get tunnel mode from database");
 	    goto catch;
 	}
@@ -233,8 +233,8 @@ tunnel_action(clicon_handle h, commit_op op, commit_data d)
 
     t = (struct tunnel_action *)commit_arg(d);
     fmt = (op == CO_ADD) ? t->set : t->del;
-    key = (op == CO_ADD) ? commit_key2(d) : commit_key1(d);
-    db = (op == CO_ADD) ? commit_db2(d) : commit_db1(d);
+    key = (op == CO_ADD) ? commit_target_key(d) : commit_source_key(d);
+    db = (op == CO_ADD) ? commit_target_db(d) : commit_source_db(d);
 
     /* Get variable list from database */
     if (clicon_option_str_set(h, ROST_CURKEY, key))

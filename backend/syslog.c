@@ -113,7 +113,7 @@ syslog_commit(clicon_handle h, commit_op op, commit_data d)
 {
     char *key;
 
-    key = op==CO_DELETE ? commit_key1(d) : commit_key2(d);
+    key = op==CO_DELETE ? commit_source_key(d) : commit_target_key(d);
 
     syslog_reload = 1; /* Mark syslog config as changed */
     if (strcmp(key, "logging.buffered") == 0)

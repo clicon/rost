@@ -120,7 +120,7 @@ system_hostname_commit(clicon_handle h, commit_op op, commit_data d)
     
     /* Get configured hostname from db */
     if (op == CO_ADD)
-        cgv = clicon_dbgetvar(commit_db2(d), "system.hostname", "hostname");
+        cgv = clicon_dbgetvar(commit_target_db(d), "system.hostname", "hostname");
     else
 	cgv = NULL;
 

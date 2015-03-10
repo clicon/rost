@@ -89,7 +89,7 @@ no("Negate a command or set its defaults") bgp("BGP specific commands") dampenin
 bgp("BGP specific commands") default("Configure BGP defaults") ipv4-unicast("Activate ipv4-unicast for a peer by default"), cli_set("router.bgp.default $ipv4_unicast=(string)\"ipv4-unicast\""), ADMIN;
 no("Negate a command or set its defaults") bgp("BGP specific commands") default("Configure BGP defaults") ipv4-unicast("Activate ipv4-unicast for a peer by default"),  cli_set("router.bgp.default $ipv4_unicast=(string)\"ipv4-unicast\""), ADMIN;
 #endif /* notyet */
-bgp("BGP specific commands") default("Configure BGP defaults") local-preference("local preference (higher=more preferred)") <uint32 range[0:4294967295]>("Configure default local preference value"), cli_set("router.bgp.default.local-preference $local_preference"), ADMIN;
+bgp("BGP specific commands") default("Configure BGP defaults") local-preference("local preference (higher=more preferred)") <uint32 range[0:4294967295]>("Configure default local preference value"), cli_set("router.bgp.default.local-preference $local-preference"), ADMIN;
 no("Negate a command or set its defaults") bgp("BGP specific commands") default("Configure BGP defaults") local-preference("local preference (higher=more preferred)"), cli_del("router.bgp.default.local-preference"), ADMIN;
 no("Negate a command or set its defaults") bgp("BGP specific commands") default("Configure BGP defaults") local-preference("local preference (higher=more preferred)") <uint32 range[0:4294967295]>("Configure default local preference value"), cli_del("router.bgp.default.local-preference"), ADMIN;
 

@@ -540,9 +540,9 @@ auth_login_user_uid(clicon_handle h, commit_op op, commit_data d)
     cg_var *uid = NULL;
 
     if (op == CO_DELETE)
-	vec = commit_vec1(d);
+	vec = commit_source_vec(d);
     else
-	vec = commit_vec2(d); 
+	vec = commit_target_vec(d); 
 
     uid = cvec_find(vec, "uid");
     if (uid == NULL) {
@@ -570,9 +570,9 @@ auth_login_user_auth_passwd(clicon_handle h, commit_op op, commit_data d)
     cg_var *passwd = NULL;
 
     if (op == CO_DELETE)
-	vec = commit_vec1(d);
+	vec = commit_source_vec(d);
     else
-	vec = commit_vec2(d); 
+	vec = commit_target_vec(d); 
 
     user = cvec_find(vec, "user");
     if (user == NULL) {
@@ -603,9 +603,9 @@ auth_login_user_class(clicon_handle h, commit_op op, commit_data d)
     cg_var *class = NULL;
 
     if (op == CO_DELETE)
-	vec = commit_vec1(d);
+	vec = commit_source_vec(d);
     else
-	vec = commit_vec2(d); 
+	vec = commit_target_vec(d); 
 
     user = cvec_find(vec, "user");
     if (user == NULL) {

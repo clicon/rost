@@ -191,8 +191,8 @@ static struct qaction qactions[] = {
 
     {
 	"router.bgp.default.local-preference",
-	"router bgp $router.bgp->as\\n bgp default local-preference $" ROST_CURKEY "->local_preference",
-	"router bgp $router.bgp->as\\n no bgp default local-preference $" ROST_CURKEY "->local_preference",
+	"router bgp $router.bgp->as\\n bgp default local-preference $" ROST_CURKEY "->local-preference",
+	"router bgp $router.bgp->as\\n no bgp default local-preference $" ROST_CURKEY "->local-preference",
 	BGP_API_SOCK
     },
 
@@ -1416,13 +1416,13 @@ quagga_commit(clicon_handle h, commit_op op, commit_data d)
 
     if (op == CO_DELETE) {
       qfmt = qa->nocmd;
-      db = commit_db1(d);
-      key = commit_key1(d);
+      db = commit_source_db(d);
+      key = commit_source_key(d);
     }
     else {
       qfmt = qa->cmd;
-      db = commit_db2(d);
-      key = commit_key2(d);
+      db = commit_target_db(d);
+      key = commit_target_key(d);
     }
 
     if (qfmt == NULL) /* Nothing to do */

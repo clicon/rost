@@ -23,7 +23,7 @@ router bgp $router.bgp->as\n
 @IF($router.bgp.router-id ? " bgp router-id $router.bgp.router-id->routerid\n")
 @IF($router.bgp.log-neighbor-changes ? " bgp log-neighbor-changes\n")
 @IF($router.bgp.always-compare-med ? " bgp always-compare-med\n")
-@IF($router.bgp.default.local-preference ? " bgp default local-preference $router.bgp.default.local-preference->local_preference\n")
+@IF($router.bgp.default.local-preference ? " bgp default local-preference $router.bgp.default.local-preference->local-preference\n")
 @IF($router.bgp.enforce-first-as ? " bgp enforce-first-as\n")
 @IF($router.bgp.deterministic-med ? " bgp deterministic-med\n")
 @IF($router.bgp.graceful-restart)

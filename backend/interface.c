@@ -89,7 +89,7 @@ interface_commit(clicon_handle h, commit_op op, commit_data d)
     
     /* Get interface name, and store in global 'newif' variable
        for processing in postcommit callback */
-    cgv = cvec_find(commit_vec2(d), "name");
+    cgv = cvec_find(commit_target_vec(d), "name");
     if (cgv == NULL) {
 	clicon_err(OE_DB, errno , "Failed get interface name from database");
 	return -1;
@@ -115,7 +115,7 @@ interface_ipv4flg_commit(clicon_handle h, commit_op op, commit_data d)
     if (op !=  CO_ADD)
         return 0;
 
-    vec = commit_vec2(d); /* Always CO_ADD */
+    vec = commit_target_vec(d); /* Always CO_ADD */
     if ((ifname  = cvec_find(vec, "name")) == NULL) {
         clicon_err(OE_PLUGIN, 0, "No interface name specified");
 	return -1;
