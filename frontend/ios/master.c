@@ -507,46 +507,8 @@ cli_ios_mode_up(clicon_handle h, cvec *vars, cg_var *arg)
     return 0;
 }
 
-#if depreciated
 int
-cli_ios_show_running(clicon_handle h, struct lvmap *lmap)
-{
-    int fd = -1;
-    FILE *f = NULL;
-    char db[] = "/tmp/curdbXXXXXX";
-    dbspec_key *dbspec;
-    /*
-     * XXX Hack. Copy db, add system.boot key and print it. 
-     */
-  
-    if ((fd = mkstemp(db)) < 0 || (f = fdopen(fd, "w")) == NULL)
-	goto catch;
-    fclose(f);
-    f = NULL;
-    fd = -1;
-  
-    if (file_cp(clicon_running_db(h), db))
-	goto catch;
-    dbspec = clicon_dbspec_key(h);
-    if(db_lv_op(dbspec, db, CO_ADD, "system.boot $dummy=(int)0", NULL) < 0)
-	goto catch;
-    cli_show_lvmap(db, lmap);
-    errno = 0;
-  
-catch:
-    if(errno)
-	fprintf(stderr, "%s\n", strerror(errno));
-    if (f)
-	fclose(f);
-    else if (fd >= 0)
-	close (fd);
-    unlink(db);
-  
-    return 0;
-}
-#else
-int
-cli_ios_show_running(clicon_handle h, struct lvmap *lmap)
+cli_ios_show_running(clicon_handle h)
 {
     char *out;
     char d2t[MAXPATHLEN+1];
@@ -559,42 +521,13 @@ cli_ios_show_running(clicon_handle h, struct lvmap *lmap)
     }
     return 0;
 }
-#endif /* depreciated */
 
 
-#if depreciated
 /*
- * Print config stored in an XML file as per the formatting specified
- * in the lvmap.
+ * Print config stored in an XML file as per the formatting specified.
  */
 int
-cli_ios_show_config(clicon_handle h, char *file, struct lvmap *lmap)
-{
-    char *db;
-
-    if ((db = clicon_tmpfile(__FUNCTION__)) == NULL)
-	return -1;
-
-    if (db_init(db) < 0)
-	return -1;
-
-    if (load_xml_to_db(file, clicon_dbspec_key(h), db) < 0) {
-	unchunk(db);
-	return -1;
-    }
-
-    cli_show_lvmap(db, lmap);
-    unlink(db);
-    unchunk(db);
-    return 0;
-}
-#else /* depreciated */
-/*
- * Print config stored in an XML file as per the formatting specified
- * in the lvmap.
- */
-int
-cli_ios_show_config(clicon_handle h, char *file, struct lvmap *lmap)
+cli_ios_show_config(clicon_handle h, char *file)
 {
     char *db;
     char *out;
@@ -622,7 +555,6 @@ cli_ios_show_config(clicon_handle h, char *file, struct lvmap *lmap)
 
     return 0;
 }
-#endif /* depreciated */
 
 
 
@@ -691,68 +623,6 @@ ios_cli_config_replace(clicon_handle h, cvec *vars, cg_var *arg)
 
 
 /*
- * XXXX To be replaced with clicon's cli_show_diff()
- */
-int
-ios_cli_show_diff(clicon_handle h, char *db1, char *db2, struct lvmap *lmap)
-{
-    int ret;
-    int  retval = -1;
-    char *cmd;
-    char *tmp1 = NULL;
-    char *tmp2 = NULL;
-    FILE *f1 = NULL;
-    FILE *f2 = NULL;
-
-    /* dump db1 to file */
-    if ((tmp1 = clicon_tmpfile(__FUNCTION__)) == NULL)
-	goto quit;
-    if ((f1 = fopen(tmp1, "w")) == NULL){
-	clicon_err(OE_UNIX, errno, "fopen");
-	goto quit;
-    }
-    ret = lvmap_print(f1, db1, lmap, NULL);
-    fclose(f1);
-    if (ret < 0)
-	goto quit;
-
-    /* dump db2 to file */
-    if ((tmp2 = clicon_tmpfile(__FUNCTION__)) == NULL)
-	goto quit;
-    if ((f2 = fopen(tmp2, "w")) == NULL){
-	clicon_err(OE_UNIX, errno, "fopen");
-	goto quit;
-    }
-    ret = lvmap_print(f2, db2, lmap, NULL);
-    fclose(f2);
-    if (ret < 0)
-	goto quit;
-
-    /* diff candidate with snapshot */
-    cmd = chunk_sprintf(__FUNCTION__,
-			"/usr/bin/diff -dU 1 %s %s | grep -v @@ | sed 1,2d", 
-			tmp1, tmp2);
-    if (cmd == NULL) {
-	clicon_err(OE_UNIX, errno, "chunk");
-	goto quit;
-    }
-    if (system(cmd) < 0)
-	goto quit;
-    
-    retval = 0;
-quit:
-    
-    if (tmp1)
-	unlink(tmp1);
-    if (tmp2)
-	unlink(tmp2);
-    unchunk_group(__FUNCTION__);
-    return retval;
-}
-
-
-
-/*
  * ios archive functionality - show difference
  * Alternatives: 
  *    1. diff two files: dump candidate to file and diff them
@@ -760,13 +630,16 @@ quit:
  *       load the configuration will be active.
  */
 int
-ios_cli_show_archive_diff(clicon_handle h, char *file, struct lvmap *lmap)
+ios_cli_show_archive_diff(clicon_handle h, char *file)
 {
     char *archive;
     char *tmp = NULL;
     int  retval = -1;
-    struct stat sb;
-
+    struct stat st;
+    char d2t[MAXPATHLEN+1];
+    char *d2tfmt = NULL;
+    FILE *f = NULL;
+    
     /* Get snapshot file */
     archive = 
 	chunk_sprintf(__FUNCTION__, "%s/%s", clicon_archive_dir(h), file);
@@ -774,7 +647,7 @@ ios_cli_show_archive_diff(clicon_handle h, char *file, struct lvmap *lmap)
 	perror("chunk");
 	return -1;
     }
-    if (stat(archive, &sb) < 0){
+    if (stat(archive, &st) < 0){
 	perror("stat");
 	goto quit;
     }
@@ -785,14 +658,33 @@ ios_cli_show_archive_diff(clicon_handle h, char *file, struct lvmap *lmap)
     if (load_xml_to_db(archive, clicon_dbspec_key(h), tmp) < 0)
 	goto quit;
 
+    snprintf(d2t, MAXPATHLEN, "%s/ios.d2t", clicon_clispec_dir(h));
+    if (stat(d2t, &st) < 0){
+	perror("stat");
+	goto quit;
+    }
+    if ((d2tfmt = chunk(st.st_size+1, __FUNCTION__)) == NULL) {
+	perror("chunk");
+	goto quit;
+    }
+    if ((f = fopen(d2t, "r")) == NULL) {
+	clicon_err(OE_UNIX, errno, "fopen");
+	goto quit;
+    } 
+    if ((fread(d2tfmt,  sizeof(char), st.st_size, f)) != st.st_size) {
+      	clicon_err(OE_UNIX, errno, "fread");
+	goto quit;
+    } 
+    fclose(f);
+    f = NULL;
 
-    retval = ios_cli_show_diff(h, tmp, clicon_candidate_db(h), lmap);
+    retval = cli_show_diff(h, tmp, clicon_candidate_db(h), d2tfmt);
 
-  quit:
+quit:
+    
     if (tmp)
 	unlink(tmp);
     unchunk_group(__FUNCTION__);
-
     return retval;
 }
 
