@@ -272,10 +272,15 @@ cli_copy (clicon_handle h, cg_var *from_url, cg_var *to_url, int override)
       save = NULL;
 //      to_cv->var_urlpath--; /* Move back to '/' */ /* XXX */
       chmod (cv_urlpath_get(to_cv), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+#if CLICON_3_1
+      if (clicon_rpc_copy(h, cv_urlpath_get(to_cv), dest) < 0)
+	  goto catch;
+#else
       if ((s = clicon_sock(h)) == NULL)
 	  goto catch;
       if (clicon_proto_copy(s, cv_urlpath_get(to_cv), dest) < 0)
 	  goto catch;
+#endif
   }
 
 #ifdef notyet
@@ -453,6 +458,13 @@ cli_copy_startup_running(clicon_handle h, cvec *vars, cg_var *arg)
     char *s;
 
     /* will autocommit to current */
+#if CLICON_3_1
+    if (clicon_rpc_load(h, 1, dbname, clicon_startup_config(h)) < 0)
+	return -1;
+    if (clicon_autocommit(h))
+	if (clicon_rpc_commit(h, running_db, dbname, 0, 0) < 0)
+	    return -1;
+#else
     if ((s = clicon_sock(h)) == NULL)
 	return -1;
     if (clicon_proto_load(s, 1, dbname, clicon_startup_config(h)) < 0)
@@ -460,6 +472,7 @@ cli_copy_startup_running(clicon_handle h, cvec *vars, cg_var *arg)
     if (clicon_autocommit(h))
 	if (clicon_proto_commit(s, running_db, dbname, 0, 0) < 0)
 	    return -1;
+#endif
     return 0;
 }
 
@@ -500,7 +513,11 @@ cli_copy_url_startup(clicon_handle h, cvec *vars, cg_var *arg)
       goto catch;
 
 
+#if CLICON_3_1
+  if (clicon_rpc_copy(h, tmp, clicon_startup_config(h)) < 0){
+#else
   if (clicon_proto_copy(s, tmp, clicon_startup_config(h)) < 0){
+#endif
     fprintf(stderr, "Error when copying file: %s\n", 
 	    strerror(errno));
     goto catch;
@@ -511,7 +528,11 @@ cli_copy_url_startup(clicon_handle h, cvec *vars, cg_var *arg)
   /* Fall through */
  catch:
   if (tmp)
+#if CLICON_3_1
+      clicon_rpc_rm(h, tmp);
+#else
       clicon_proto_rm(s, tmp);
+#endif
   if (cv)
       cv_free(cv);
   unchunk_group(__FUNCTION__);
@@ -555,10 +576,18 @@ cli_copy_url_running(clicon_handle h, cvec *vars, cg_var *arg)
       goto catch;
   if ((res = cli_copy(h, cv1, cv, 1)) < 0)
       goto catch;
+#if CLICON_3_1
+  if (clicon_rpc_load(h, override, dbname, tmp) < 0)
+#else
   if (clicon_proto_load(s, override, dbname, tmp) < 0)
+#endif
       goto catch;
   if (clicon_autocommit(h))
+#if CLICON_3_1
+      if (clicon_rpc_commit(h, running_db, dbname, 0, 0) < 0)
+#else
       if (clicon_proto_commit(s, running_db, dbname, 0, 0) < 0)
+#endif
 	  goto catch;
   res = 0;
   /* Fall through */
@@ -608,7 +637,11 @@ cli_copy_db_url(clicon_handle h, cvec *vars, cg_var *arg)
     goto catch;
   }
   
+#if CLICON_3_1
+  if (clicon_rpc_save(h, dbname, 0, tmp) < 0)
+#else
   if (clicon_proto_save(s, dbname, 0, tmp) < 0)
+#endif
       goto catch;
 
   if ((cv = cv_new(CGV_URL)) == NULL){
@@ -626,7 +659,11 @@ cli_copy_db_url(clicon_handle h, cvec *vars, cg_var *arg)
   /* Fall through */
  catch:
   if (tmp)
+#if CLICON_3_1
+      clicon_rpc_rm(h, tmp);
+#else
       clicon_proto_rm(s, tmp);
+#endif
   if (cv)
       cv_free(cv);
   unchunk_group(__FUNCTION__);
@@ -682,7 +719,11 @@ cli_copy_running_startup(clicon_handle h, cvec *vars, cg_var *arg)
 	return -1;
     if ((c = clicon_startup_config(h)) == NULL)
 	return -1;
+#if CLICON_3_1
+    return clicon_rpc_save(h, clicon_running_db(h), 0, c);
+#else
     return clicon_proto_save(s, clicon_running_db(h), 0, c);
+#endif
 }
 
 
@@ -911,7 +952,11 @@ cli_file_del (clicon_handle h, cvec *vars, cg_var *arg)
       !strncmp(path, ROST_CONFIG_DIR, strlen(ROST_CONFIG_DIR))){
       if ((s = clicon_sock(h)) == NULL)
 	  goto catch;
+#if CLICON_3_1
+      ret = clicon_rpc_rm(h, path);
+#else
       ret = clicon_proto_rm(s, path);
+#endif
   }
   else 
     ret = unlink(path);

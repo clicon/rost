@@ -57,6 +57,12 @@ ethtool_client_gset(clicon_handle h, char *ifname, const char *label)
     struct clicon_msg  *msg;
     char                *s;
 
+    if (clicon_rpc_call(h, 0, "ethtool", "ethtool_gset", 
+			strlen(ifname), ifname, 
+			(char **)&tmp, &eclen,
+			label) < 0)
+	goto done;
+#if 0
     msg = clicon_msg_call_encode(0, "ethtool", "ethtool_gset", 
 			      strlen(ifname), ifname, __FUNCTION__);
     if (msg == NULL)
@@ -65,7 +71,7 @@ ethtool_client_gset(clicon_handle h, char *ifname, const char *label)
 	goto done;
     if (clicon_rpc_connect(msg, s, (char **)&tmp, &eclen, label) < 0)
 	goto done;
-
+#endif
     ec = tmp;
     ec->cmd = ntohl(tmp->cmd);
     ec->supported = ntohl(tmp->supported);
@@ -91,6 +97,13 @@ ethtool_client_getlink(clicon_handle h, char *ifname, uint8_t *link)
     struct clicon_msg *msg;
     char              *s;
 
+#if CLICON_3_1
+    if (clicon_rpc_call(h, 0, "ethtool", "ethtool_getlink", 
+			strlen(ifname), ifname, 
+			(char **)&ret, &len,
+			__FUNCTION__) < 0)
+	goto done;
+#else
     msg = clicon_msg_call_encode(0, "ethtool", "ethtool_getlink", 
 				strlen(ifname), ifname, __FUNCTION__);
     if (msg == NULL)
@@ -99,7 +112,7 @@ ethtool_client_getlink(clicon_handle h, char *ifname, uint8_t *link)
 	goto done;
     if (clicon_rpc_connect(msg, s, (char **)&ret, &len, __FUNCTION__) < 0)
 	goto done;
-
+#endif
     *link = (uint8_t)*ret;
     retval = 0;
 done:
@@ -117,6 +130,13 @@ ethtool_client_gstats(clicon_handle h, char *ifname, const char *label)
     char                *s;
     int                 i;
     
+#if CLICON_3_1
+    if (clicon_rpc_call(h, 0, "ethtool", "ethtool_gstats", 
+			strlen(ifname), ifname, 
+			(char **)&tmp, &etslen,
+			label) < 0)
+	goto done;
+#else
     msg = clicon_msg_call_encode(0, "ethtool", "ethtool_gstats", 
 				strlen(ifname), ifname, __FUNCTION__);
     if (msg == NULL)
@@ -126,7 +146,7 @@ ethtool_client_gstats(clicon_handle h, char *ifname, const char *label)
 	goto done;
     if (clicon_rpc_connect(msg, s, (char **)&tmp, &etslen, label) < 0)
 	goto done;
-
+#endif
     ets = tmp;
     for (i = 0; i < ets->ets_nstats; i++)
 	ets->ets_stat[i].etse_value = htonll(tmp->ets_stat[i].etse_value);
