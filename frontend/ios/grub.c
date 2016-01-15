@@ -77,12 +77,17 @@ cli_modify_boot(clicon_handle h, char *img, struct grub_conf *(*grub_mod)())
 
   /* copy file to grub location, using config daemon is required */
   if (geteuid() != 0) {
+#if CLICON_3_1
+      if (clicon_rpc_copy(h, file, GRUB_DIR "/menu.lst") < 0)
+	  goto catch;
+#else
     msg = clicon_msg_copy_encode(file, GRUB_DIR "/menu.lst", __FUNCTION__);
     if (msg == NULL)
       goto catch;
     if (clicon_rpc_connect(msg, clicon_sock(h), 
 			   NULL, 0, __FUNCTION__) < 0)
       goto catch;
+#endif
   }
   else { /* root */
     if (file_cp(file, GRUB_DIR "/menu.lst") < 0) {
