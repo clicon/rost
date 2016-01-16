@@ -146,7 +146,6 @@ cli_copy (clicon_handle h, cg_var *from_url, cg_var *to_url, int override)
   struct sigaction old, new;
 #endif
   struct stat st;
-  char       *s;
 
   if ((from_cv = cv_new(CGV_URL)) == NULL){
       cli_output(stderr, "%s: %s\n", __FUNCTION__, strerror(errno));
@@ -276,10 +275,13 @@ cli_copy (clicon_handle h, cg_var *from_url, cg_var *to_url, int override)
       if (clicon_rpc_copy(h, cv_urlpath_get(to_cv), dest) < 0)
 	  goto catch;
 #else
-      if ((s = clicon_sock(h)) == NULL)
-	  goto catch;
-      if (clicon_proto_copy(s, cv_urlpath_get(to_cv), dest) < 0)
-	  goto catch;
+      {
+	char       *s;
+	if ((s = clicon_sock(h)) == NULL)
+	    goto catch;
+	if (clicon_proto_copy(s, cv_urlpath_get(to_cv), dest) < 0)
+	    goto catch;
+      }
 #endif
   }
 
@@ -455,7 +457,6 @@ cli_copy_startup_running(clicon_handle h, cvec *vars, cg_var *arg)
 {
     char *dbname = clicon_candidate_db(h);
     char *running_db   = clicon_running_db(h);
-    char *s;
 
     /* will autocommit to current */
 #if CLICON_VERSION_MAJOR >= 3 && CLICON_VERSION_MINOR >= 1
@@ -465,6 +466,8 @@ cli_copy_startup_running(clicon_handle h, cvec *vars, cg_var *arg)
 	if (clicon_rpc_commit(h, running_db, dbname, 0, 0) < 0)
 	    return -1;
 #else
+    char *s;
+
     if ((s = clicon_sock(h)) == NULL)
 	return -1;
     if (clicon_proto_load(s, 1, dbname, clicon_startup_config(h)) < 0)

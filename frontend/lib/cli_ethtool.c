@@ -54,15 +54,17 @@ ethtool_client_gset(clicon_handle h, char *ifname, const char *label)
 {
     uint16_t            eclen;
     struct ethtool_cmd *tmp, *ec = NULL;
-    struct clicon_msg  *msg;
-    char                *s;
 
+#if CLICON_VERSION_MAJOR >= 3 && CLICON_VERSION_MINOR >= 1
     if (clicon_rpc_call(h, 0, "ethtool", "ethtool_gset", 
-			strlen(ifname), ifname, 
+			 ifname, strlen(ifname),
 			(char **)&tmp, &eclen,
 			label) < 0)
 	goto done;
-#if 0
+#else 
+    struct clicon_msg  *msg;
+    char                *s;
+
     msg = clicon_msg_call_encode(0, "ethtool", "ethtool_gset", 
 			      strlen(ifname), ifname, __FUNCTION__);
     if (msg == NULL)
@@ -94,16 +96,17 @@ ethtool_client_getlink(clicon_handle h, char *ifname, uint8_t *link)
     int               retval = -1;
     char             *ret;
     uint16_t          len;
-    struct clicon_msg *msg;
-    char              *s;
 
-#if CLICON_3_1
+#if CLICON_VERSION_MAJOR >= 3 && CLICON_VERSION_MINOR >= 1
     if (clicon_rpc_call(h, 0, "ethtool", "ethtool_getlink", 
-			strlen(ifname), ifname, 
+			 ifname, strlen(ifname),
 			(char **)&ret, &len,
 			__FUNCTION__) < 0)
 	goto done;
 #else
+    struct clicon_msg *msg;
+    char              *s;
+
     msg = clicon_msg_call_encode(0, "ethtool", "ethtool_getlink", 
 				strlen(ifname), ifname, __FUNCTION__);
     if (msg == NULL)
@@ -125,18 +128,19 @@ struct rost_etstats *
 ethtool_client_gstats(clicon_handle h, char *ifname, const char *label)
 {
     uint16_t            etslen;
-    struct clicon_msg  *msg;
     struct rost_etstats *tmp, *ets = NULL;
-    char                *s;
     int                 i;
     
-#if CLICON_3_1
+#if CLICON_VERSION_MAJOR >= 3 && CLICON_VERSION_MINOR >= 1
     if (clicon_rpc_call(h, 0, "ethtool", "ethtool_gstats", 
-			strlen(ifname), ifname, 
+			ifname, strlen(ifname), 
 			(char **)&tmp, &etslen,
 			label) < 0)
 	goto done;
 #else
+    struct clicon_msg  *msg;
+    char                *s;
+
     msg = clicon_msg_call_encode(0, "ethtool", "ethtool_gstats", 
 				strlen(ifname), ifname, __FUNCTION__);
     if (msg == NULL)
