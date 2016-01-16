@@ -577,11 +577,15 @@ show_hostname(clicon_handle h, cvec *vars, cg_var *arg)
 int
 ios_cli_config_archive(clicon_handle h, cvec *vars, cg_var *arg)
 {
+#if CLICON_VERSION_MAJOR >= 3 && CLICON_VERSION_MINOR >= 1
+    return clicon_rpc_save(h, clicon_running_db(h), 1/*snapshot*/, NULL);
+#else
     char *s;
 
     if ((s = clicon_sock(h)) == NULL)
 	return -1;
     return clicon_proto_save(s, clicon_running_db(h), 1/*snapshot*/, NULL);
+#endif
 }
 
 
@@ -607,13 +611,21 @@ ios_cli_config_replace(clicon_handle h, cvec *vars, cg_var *arg)
 		filename, strerror(errno));
 	return -1;
     }
+#if CLICON_VERSION_MAJOR >= 3 && CLICON_VERSION_MINOR >= 1
+    if (clicon_rpc_load(h, 0, dbname, filename) < 0)
+#else
+    if ((s = clicon_sock(h)) == NULL)
+	return -1;
     if (clicon_proto_load(s, 0, dbname, filename) < 0)
+#endif
 	return -1;
     if (clicon_autocommit(h)){
-	if ((s = clicon_sock(h)) == NULL)
-	    return -1;
+#if CLICON_VERSION_MAJOR >= 3 && CLICON_VERSION_MINOR >= 1
+	if (clicon_rpc_commit(h, running, dbname, 0, 0) < 0)
+#else
 	if (clicon_proto_commit(s, running, dbname, 0, 0) < 0)
-	    return -1;
+#endif
+	  return -1;
     }
 #else
     cli_output(stdout, "Not implemented\n");
@@ -747,9 +759,12 @@ cli_test_log(clicon_handle h, cvec *vars, cg_var *arg)
 int
 cli_validate(clicon_handle h, cvec *vars, cg_var *arg)
 {
+#if CLICON_VERSION_MAJOR >= 3 && CLICON_VERSION_MINOR >= 1
+    return clicon_rpc_validate(h, clicon_candidate_db(h));
+#else
     char *s;
-
     if ((s = clicon_sock(h)) == NULL)
 	return -1;
     return clicon_proto_validate(s, clicon_candidate_db(h));
+#endif
 }
