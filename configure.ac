@@ -59,9 +59,27 @@ AC_CHECK_LIB(cligen,cligen_init,,AC_MSG_ERROR("cligen libs are required. Install
 AC_CHECK_HEADERS(clicon/clicon.h,,AC_MSG_ERROR("clicon headers are required. Install and rerun configure."), [[#include <cligen/cligen.h>]])
 AC_CHECK_LIB(clicon,clicon_handle_init,,AC_MSG_ERROR("clicon libs are required. Install and rerrun configre."), -lcligen)
 
+#
+# Check programs
+#
+AC_PATH_PROG(CAT, cat, $PATH)dnl
+AC_DEFINE_UNQUOTED(PROG_CAT, $CAT)
+
+AC_PATH_PROG(FREE,free,$PATH)dnl
+AC_DEFINE_UNQUOTED(PROG_FREE,$FREE)
+
+AC_PATH_PROG(SUDO,sudo,$PATH)dnl
+AC_DEFINE_UNQUOTED(PROG_SUDO,$SUDO)
+
+AC_PATH_PROG(SHUTDOWN,shutdown,$PATH)dnl
+AC_DEFINE_UNQUOTED(PROG_SHUTDOWN,$SHUTDOWN)
+
+AC_PATH_PROG(ARP,arp,$PATH)dnl
+AC_DEFINE_UNQUOTED(PROG_ARP,$ARP)
+
 # Check lspci program used to map PCI bus
-AC_PATH_PROG(LSPCI, lspci, /usr/sbin/lspci)
-AC_DEFINE_UNQUOTED(PROG_LSPCI, "$LSPCI")
+AC_PATH_PROG(LSPCI,lspci,$PATH)
+AC_DEFINE_UNQUOTED(PROG_LSPCI,$LSPCI)
 
 # This is where CLICON include files and libs are
 AC_ARG_WITH(clicon,

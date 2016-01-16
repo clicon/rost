@@ -7,10 +7,8 @@
 #ifndef _IOS_MACROS_H_
 #define _IOS_MACROS_H_
 
-/* CPP Stringify */
-#define STRINGIFY(s) __str(s)
-#define __str(s) #s
-
+#include "rost_config.h"
+#include "rost_macros.h"
 
 /*
  * IOS CLI modes

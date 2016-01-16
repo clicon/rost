@@ -96,6 +96,6 @@ reload("Halt and perform a cold restart") in("Reload after a time interval") <mi
 
 reload("Halt and perform a cold restart") halt("Halt system") in("Reload after a time interval") <minutes:number>("Delay before reload"), cli_reload("/usr/bin/sudo /sbin/shutdown -h +%n"), ADMIN;
 reload("Halt and perform a cold restart") halt("Halt system") in("Reload after a time interval") <minutes:number>("Delay before reload") <LINE:rest>("Reason for reload"), cli_reload("/usr/bin/sudo /sbin/shutdown -h +%n %r"), ADMIN;
-reload("Halt and perform a cold restart") cancel("Cancel pending reload"), cli_reload("cancel(/usr/bin/sudo /sbin/shutdown -c"), ADMIN;
-reload("Halt and perform a cold restart") cancel("Cancel pending reload") <LINE:rest>("Reason for cancel"), cli_reload("cancel(/usr/bin/sudo /sbin/shutdown -c %r"), ADMIN;
+reload("Halt and perform a cold restart") cancel("Cancel pending reload"), cli_reload_cancel("/usr/bin/sudo /sbin/shutdown -c"), ADMIN;
+reload("Halt and perform a cold restart") cancel("Cancel pending reload") <LINE:rest>("Reason for cancel"), cli_reload_cancel("/usr/bin/sudo /sbin/shutdown -c %r"), ADMIN;
 

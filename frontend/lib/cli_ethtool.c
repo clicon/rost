@@ -71,7 +71,7 @@ ethtool_client_gset(clicon_handle h, char *ifname, const char *label)
 	goto done;
     if ((s = clicon_sock(h)) == NULL)
 	goto done;
-    if (clicon_rpc_connect(msg, s, (char **)&tmp, &eclen, label) < 0)
+    if (clicon_proto_connect(msg, s, (char **)&tmp, &eclen, label) < 0)
 	goto done;
 #endif
     ec = tmp;
@@ -113,7 +113,7 @@ ethtool_client_getlink(clicon_handle h, char *ifname, uint8_t *link)
 	goto done;
     if ((s = clicon_sock(h)) == NULL)
 	goto done;
-    if (clicon_rpc_connect(msg, s, (char **)&ret, &len, __FUNCTION__) < 0)
+    if (clicon_proto_connect(msg, s, (char **)&ret, &len, __FUNCTION__) < 0)
 	goto done;
 #endif
     *link = (uint8_t)*ret;
@@ -148,7 +148,7 @@ ethtool_client_gstats(clicon_handle h, char *ifname, const char *label)
     
     if ((s = clicon_sock(h)) == NULL)
 	goto done;
-    if (clicon_rpc_connect(msg, s, (char **)&tmp, &etslen, label) < 0)
+    if (clicon_proto_connect(msg, s, (char **)&tmp, &etslen, label) < 0)
 	goto done;
 #endif
     ets = tmp;

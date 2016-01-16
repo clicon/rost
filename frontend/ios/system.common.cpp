@@ -38,8 +38,8 @@ ping("Send echo messages") <string>("Ping destination address or hostname") size
 ping("Send echo messages") <string>("Ping destination address or hostname") size("specify datagram size") <number range[36:1824]> repeat("specify repeat count") <number>, cli_run("ping %s -s%n -c%n"), PING;
 
 /* SHOW ARP */
-show("Show running system information") arp("ARP table"), cli_run("/sbin/arp -n"), SHOW;
-show("Show running system information") arp("ARP table") <interface:string expand_interface()>("ARP table for interface"), cli_run("/sbin/arp -ni %s"), SHOW;
+show("Show running system information") arp("ARP table"), cli_run(STRINGIFY(CONCAT(PROG_ARP, -n))), SHOW;
+show("Show running system information") arp("ARP table") <interface:string expand_interface()>("ARP table for interface"), cli_run(STRINGIFY(CONCAT(PROG_ARP, -ni %s))), SHOW;
 
 /* SHOW CLOCK */
 show("Show running system information") clock("Display the system clock"), cli_run("date"), SHOW;

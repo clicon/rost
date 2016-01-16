@@ -49,6 +49,12 @@
 #undef ROST_IMAGE_DIR
 #undef ROST_CONFIG_DIR
 
+
+#undef PROG_CAT
+#undef PROG_FREE
+#undef PROG_SUDO
+#undef PROG_SHUTDOWN
+#undef PROG_ARP
 #undef PROG_LSPCI
 
 #undef STDC_HEADERS

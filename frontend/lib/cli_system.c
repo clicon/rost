@@ -50,6 +50,7 @@
 #include <clicon/clicon_cli.h>
 
 /* lib */
+#include "rost_macros.h"
 #include "system.h"
 #include "ethtool.h"
 #include "cli_procfs.h"
@@ -192,7 +193,7 @@ cli_show_inventory(clicon_handle h, cvec *vars, cg_var *arg)
 	    if (rost_ethtool_drvinfo(sp->pi_ifname, &info) == 0 &&
 		info.bus_info && strlen(info.bus_info)) {
 		cmd = chunk_sprintf(__FUNCTION__,
-				    "%s -s %s", PROG_LSPCI, info.bus_info);
+				    STRINGIFY(PROG_LSPCI) " -s %s", info.bus_info);
 		if (cmd && (f=popen(cmd, "r")) && fgets(buf, sizeof(buf)-1,f)){
 		    cli_output(stdout, "%-8s: %s\n", 
 			       sp->pi_ifname,
@@ -245,9 +246,9 @@ cli_reload(clicon_handle h, cvec *vars, cg_var *arg)
   if (cmd == NULL)
     return 0;
   
-  if ((ret = clicon_proc_daemon(cmd)) != 0)
+  if ((ret = clicon_proc_run(cmd, NULL, 1)) != 0)
     clicon_err(OE_UNDEF, ret, "reload: '%s' returned %d", cmd, ret);
-  
+
   free(cmd);
   return 0;
 }

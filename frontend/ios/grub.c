@@ -56,7 +56,6 @@ cli_modify_boot(clicon_handle h, char *img, struct grub_conf *(*grub_mod)())
   FILE *f = NULL;
   char file[] = "/tmp/grubXXXXXX";
   struct grub_conf *g;
-  struct clicon_msg *msg;
 
   /* Add new image */
   if ((g = grub_mod(NULL, img)) == NULL)
@@ -77,16 +76,19 @@ cli_modify_boot(clicon_handle h, char *img, struct grub_conf *(*grub_mod)())
 
   /* copy file to grub location, using config daemon is required */
   if (geteuid() != 0) {
-#if CLICON_3_1
+#if CLICON_VERSION_MAJOR >= 3 && CLICON_VERSION_MINOR >= 1
       if (clicon_rpc_copy(h, file, GRUB_DIR "/menu.lst") < 0)
 	  goto catch;
 #else
-    msg = clicon_msg_copy_encode(file, GRUB_DIR "/menu.lst", __FUNCTION__);
-    if (msg == NULL)
-      goto catch;
-    if (clicon_rpc_connect(msg, clicon_sock(h), 
-			   NULL, 0, __FUNCTION__) < 0)
-      goto catch;
+      {
+	struct clicon_msg *msg;
+	msg = clicon_msg_copy_encode(file, GRUB_DIR "/menu.lst", __FUNCTION__);
+	if (msg == NULL)
+	  goto catch;
+	if (clicon_rpc_connect(msg, clicon_sock(h), 
+			       NULL, 0, __FUNCTION__) < 0)
+	  goto catch;
+      }
 #endif
   }
   else { /* root */

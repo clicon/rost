@@ -622,6 +622,11 @@ ac_includes_default="\
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 LSPCI
+ARP
+SHUTDOWN
+SUDO
+FREE
+CAT
 EGREP
 GREP
 curl_LIBS
@@ -1334,7 +1339,7 @@ if test -n "$ac_init_help"; then
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-clicon=PATH	  set clicon sdk installation PATH
+  --with-clicon=PATH	  set clicon sdk installation PATHH
   --with-ipv6             with IPv6 support
   --with-quagga_dir       set quagga's confapi directory (/var/lib/quagga)
   --with-rost_dir          set rost configure directory
@@ -4175,6 +4180,234 @@ else
 fi
 
 
+#
+# Check programs
+#
+# Extract the first word of "cat", so it can be a program name with args.
+set dummy cat; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_CAT+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $CAT in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_CAT="$CAT" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_CAT="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_CAT" && ac_cv_path_CAT="$PATH"
+  ;;
+esac
+fi
+CAT=$ac_cv_path_CAT
+if test -n "$CAT"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $CAT" >&5
+$as_echo "$CAT" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define PROG_CAT $CAT
+_ACEOF
+
+
+# Extract the first word of "free", so it can be a program name with args.
+set dummy free; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_FREE+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $FREE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_FREE="$FREE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_FREE="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_FREE" && ac_cv_path_FREE="$PATH"
+  ;;
+esac
+fi
+FREE=$ac_cv_path_FREE
+if test -n "$FREE"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $FREE" >&5
+$as_echo "$FREE" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define PROG_FREE $FREE
+_ACEOF
+
+
+# Extract the first word of "sudo", so it can be a program name with args.
+set dummy sudo; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_SUDO+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $SUDO in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_SUDO="$SUDO" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_SUDO="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_SUDO" && ac_cv_path_SUDO="$PATH"
+  ;;
+esac
+fi
+SUDO=$ac_cv_path_SUDO
+if test -n "$SUDO"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SUDO" >&5
+$as_echo "$SUDO" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define PROG_SUDO $SUDO
+_ACEOF
+
+
+# Extract the first word of "shutdown", so it can be a program name with args.
+set dummy shutdown; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_SHUTDOWN+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $SHUTDOWN in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_SHUTDOWN="$SHUTDOWN" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_SHUTDOWN="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_SHUTDOWN" && ac_cv_path_SHUTDOWN="$PATH"
+  ;;
+esac
+fi
+SHUTDOWN=$ac_cv_path_SHUTDOWN
+if test -n "$SHUTDOWN"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SHUTDOWN" >&5
+$as_echo "$SHUTDOWN" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define PROG_SHUTDOWN $SHUTDOWN
+_ACEOF
+
+
+# Extract the first word of "arp", so it can be a program name with args.
+set dummy arp; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_ARP+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $ARP in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ARP="$ARP" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_ARP="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_ARP" && ac_cv_path_ARP="$PATH"
+  ;;
+esac
+fi
+ARP=$ac_cv_path_ARP
+if test -n "$ARP"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ARP" >&5
+$as_echo "$ARP" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define PROG_ARP $ARP
+_ACEOF
+
+
 # Check lspci program used to map PCI bus
 # Extract the first word of "lspci", so it can be a program name with args.
 set dummy lspci; ac_word=$2
@@ -4203,7 +4436,7 @@ done
   done
 IFS=$as_save_IFS
 
-  test -z "$ac_cv_path_LSPCI" && ac_cv_path_LSPCI="/usr/sbin/lspci"
+  test -z "$ac_cv_path_LSPCI" && ac_cv_path_LSPCI="$PATH"
   ;;
 esac
 fi
@@ -4218,7 +4451,7 @@ fi
 
 
 cat >>confdefs.h <<_ACEOF
-#define PROG_LSPCI "$LSPCI"
+#define PROG_LSPCI $LSPCI
 _ACEOF
 
 
