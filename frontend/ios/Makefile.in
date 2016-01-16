@@ -39,7 +39,7 @@ INSTALL		= @INSTALL@
 APPNAME		= @APPNAME@
 SUBDIRS = 
 
-SRC     =  master.c system.c quagga.c syslog.c grub.c \
+SRC     =  master.c ios-config.c system.c quagga.c syslog.c grub.c \
 	   linux-vlan.c linux-tunnel.c
 OBJS    = $(SRC:.c=.o)
 SHOBJS	= $(OBJS:.o=.so)
