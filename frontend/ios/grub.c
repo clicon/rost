@@ -85,7 +85,7 @@ cli_modify_boot(clicon_handle h, char *img, struct grub_conf *(*grub_mod)())
 	msg = clicon_msg_copy_encode(file, GRUB_DIR "/menu.lst", __FUNCTION__);
 	if (msg == NULL)
 	  goto catch;
-	if (clicon_rpc_connect(msg, clicon_sock(h), 
+	if (clicon_proto_connect(msg, clicon_sock(h), 
 			       NULL, 0, __FUNCTION__) < 0)
 	  goto catch;
       }
