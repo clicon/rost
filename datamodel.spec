@@ -41,8 +41,7 @@ system.boot.url[]                                    $!url $default $fallback # 
 ipv4.domain                                          $domain   # !?
 ipv4.name-server[]                                   $!address:ipv4addr
 ipv4.forwarding                                      $status:int32
-ipv4.route.static[]                                  $!prefix:ipv4prefix $!nexthop:ipv4addr $distance:int32
-ipv4.route.static.null[]                             $!prefix:ipv4prefix $reject $blackhole $distance:int32
+ipv4.route.static[]                                  $!prefix:ipv4prefix $!nexthop:ipv4addr $distance:int32 $name
 ipv4.arp[]                                           $!address:ipv4addr $!mac:macaddr
 ipv4.as-path.access-list[]                           $!name $!action $!regexp:rest
 ipv4.prefix-list[]                                   $!name

@@ -1080,13 +1080,6 @@ static struct qaction qactions[] = {
 	ZEBRA_API_SOCK
     },
 
-    {
-	"ipv4.route.static.null[]",
-	"ip route $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->reject ? \" $" ROST_CURKEY "->reject\")@IF($" ROST_CURKEY "->blackhole ? \" $" ROST_CURKEY "->blackhole\")@IF($" ROST_CURKEY "->distance ? \" $" ROST_CURKEY "->distance\")",
-	"no ip route $" ROST_CURKEY "->prefix@IF($" ROST_CURKEY "->reject ? \" $" ROST_CURKEY "->reject\")@IF($" ROST_CURKEY "->blackhole ? \" $" ROST_CURKEY "->blackhole\")@IF($" ROST_CURKEY "->distance ? \" $" ROST_CURKEY "->distance\")",
-	ZEBRA_API_SOCK
-    },
-
 #if notanymore
     {
 	"access-list[]",

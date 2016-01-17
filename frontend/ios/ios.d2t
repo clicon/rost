@@ -44,9 +44,11 @@
 @IF($router.bgp->as)
 @INCLUDE("${ROST_PLUGIN_DIR}/ios-router-bgp.d2t")
 @END
-@EACH($ipv4.route.static[], $rt, "ip route \$rt->prefix \$rt->nexthop \$rt->distance\n")
+@EACH($ipv4.route.static[], $rt)
+ip route $rt->prefix $rt->nexthop@IF($rt->distance ? " $rt->distance")@IF($rt->name ? " name $rt->name")\n
+@END
 @EACH($ipv4.route.static.null[], $rt)
-ip route $rt->prefix @IF($rt->reject ? "reject" : "blackhole") $rt->distance\n
+ip route $rt->prefix null0@IF($rt->distance ? " $rt->distance")@IF($rt->name ? " name $rt->name")\n
 @END
 !\n
 @EACH($ipv4.arp[], $arp, "ip arp \$arp->address \$arp->mac\n")
