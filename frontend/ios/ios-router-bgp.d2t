@@ -101,6 +101,7 @@ router bgp $router.bgp->as\n
 @IF($peergroup.activate->activate == (bool)false ? " no neighbor $peergroup->peergroup activate\n")
 @END#PEER-GROUP
 @EACH($router.bgp.neighbor[], $neigh)
+@IF($neigh.peer-group ? " neighbor $neigh->neighbor peer-group $neigh.peer-group->peergroup\n")
 @IF($neigh.remote-as ? " neighbor $neigh->neighbor remote-as $neigh.remote-as->remote_as\n")
 @IF($neigh.local-as)
  neighbor $neigh->neighbor local-as $neigh.local-as->localas@IF($neigh.local-as->no_prepend ? " $neigh.local-as->no_prepend")\n"
